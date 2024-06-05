@@ -1,45 +1,46 @@
 #!/usr/bin/env python
 
-import matplotlib.pyplot as plt
 import numpy as np
 import cfpack as cfp
-from cfpack import print, stop
+from cfpack import print, stop, hdfio
 import argparse
 import os
-import subprocess
 
 # ===== the following applies in case we are running this in script mode =====
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Plot files')
 
-    choices = ['cfp', 'flash1x', 'flash1y', 'flash1z']
+    choices = ['cfp', 'flashplotlib']
     parser.add_argument('-a', '--action', metavar='action', nargs='*', default=choices, choices=choices,
-                        help='choice: between flashplotlib plotting (flash) and cfpack plotting (cfp); flash options: flash1x (FMMx); flash1y (FMMy) and flash1z (FMMz)')
-
-    parser.add_argument('-f', '-file_names', metavar='file', type=str, nargs='+', help='file name for cfpack to plot them;  file names: FMM_0.0_0.0.npy, FMM_90.0_0.0.npy, ChemoMHD_hdf5_plt_cnt_0000')
+                        help='choice: between flashplotlib plotting (flash) and cfpack plotting (cfp)')
 
     args = parser.parse_args()
 
+    # set paths and create plot directory
+    path = "../Data/"
+    outpath = "../plots/"
+    if not os.path.isdir(outpath):
+        cfp.run_shell_command('mkdir '+outpath)
+
+    # set some global option/variables
+    vmin = -0.4
+    vmax = +0.4
+
+    # loop through chosen actions
     for action in args.action:
 
+        # cfpack plotting
         if action == choices[0]:
-            stop()
-            os.chdir("Data/Data_SimEnd/Othin")
-            data=np.load(args.file_names[0])
-            cfp.plot_map(data, show=True, cmap = 'seismic')
+            files = ["FMM_0.0_0.0.npy", "FMM_90.0_0.0.npy"]
+            for file in files:
+                data = np.load(path+"Data_1tff/Othin/"+file)
+                data = np.flipud(data).T
+                cfp.plot_map(data, cmap='seismic', cmap_label=r"$v$ (km/s)", vmin=vmin, vmax=vmax, save=outpath+file[:-3]+"pdf")
 
+        # flashplotlib
         if action == choices[1]:
-            os.chdir("Data/Flashfile")
-            data=args.file_names[0]
-            subprocess.run(["flashplotlib.py","-i",data, "-d", "velx", "-nolog", "-cmap","seismic","-mw","-direction", "x"])
-
-        if action == choices[2]:
-            os.chdir("Data/Flashfile")
-            data=args.file_names[0]
-            subprocess.run(["flashplotlib.py","-i",data, "-d", "vely", "-nolog", "-cmap","seismic","-mw","-direction", "y"])
-
-        if action == choices[3]:
-            os.chdir("Data/Flashfile")
-            data=args.file_names[0]
-            subprocess.run(["flashplotlib.py","-i",data, "-d", "velz", "-nolog", "-cmap","seismic","-mw","-direction", "z"])
+            file = path + "ChemoMHD_hdf5_plt_cnt_0000"
+            for dir in ['x', 'y', 'z']:
+                cmd = "flashplotlib.py -i "+file+" -d vel"+dir+" -nolog -cmap seismic -mw -direction "+dir+" -outtype pdf -outdir "+outpath+" -vmin "+str(vmin*1e5)+" -vmax "+str(vmax*1e5)
+                cfp.run_shell_command(cmd)
