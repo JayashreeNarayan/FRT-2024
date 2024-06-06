@@ -40,7 +40,7 @@ if __name__ == "__main__":
 
         # flashplotlib
         if action == choices[1]:
-            file = path + "ChemoMHD_hdf5_plt_cnt_0000"
+            file = path + "ChemoMHD_hdf5_plt_cnt_0001"
             for dir in ['x', 'y', 'z']:
                 cmd = "flashplotlib.py -i "+file+" -d vel"+dir+" -nolog -cmap seismic -mw -direction "+dir+" -outtype pdf -outdir "+outpath+" -vmin "+str(vmin*1e5)+" -vmax "+str(vmax*1e5)
                 cfp.run_shell_command(cmd)
