@@ -55,5 +55,5 @@ if __name__ == "__main__":
             files = ["PPV_0_0.npy","PPV_90_0.npy"]
             for file in files:
                 data = zeromoment(path+"Data_1tff/"+file)
-                cfp.plot_map(data, cmap='seismic', cmap_label=r"$Density$ (g/cm^3)", vmin=vmin, vmax=vmax, save=outpath+file[:-3]+"pdf")
+                cfp.plot_map(data, cmap='seismic', cmap_label=r"$Density (g/cm^3)$", vmin=vmin, vmax=vmax, save=outpath+file[:-3]+"pdf")
                 
