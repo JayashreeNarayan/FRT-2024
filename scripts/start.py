@@ -6,12 +6,17 @@ from cfpack import print, stop, hdfio
 import argparse
 import os
 
+def zeromoment(PPV):
+    PPV = np.load(PPV)
+    K = np.sum(PPV,axis=2)*0.05
+    return K
+
 # ===== the following applies in case we are running this in script mode =====
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Plot files')
 
-    choices = ['cfp', 'flashplotlib']
+    choices = ['cfp', 'flashplotlib', 'PPV']
     parser.add_argument('-a', '--action', metavar='action', nargs='*', default=choices, choices=choices,
                         help='choice: between flashplotlib plotting (flash) and cfpack plotting (cfp)')
 
@@ -44,3 +49,11 @@ if __name__ == "__main__":
             for dir in ['x', 'y', 'z']:
                 cmd = "flashplotlib.py -i "+file+" -d vel"+dir+" -nolog -cmap seismic -mw -direction "+dir+" -outtype pdf -outdir "+outpath+" -vmin "+str(vmin*1e5)+" -vmax "+str(vmax*1e5)
                 cfp.run_shell_command(cmd)
+
+        #zero moment maps from PPV cubes
+        if action == choices[2]:
+            files = ["PPV_0_0.npy","PPV_90_0.npy"]
+            for file in files:
+                data = zeromoment(path+"Data_1tff"+file)
+                cfp.plot_map(data, cmap='seismic', cmap_label=r"$Density$ (g/cm^3)", vmin=vmin, vmax=vmax, save=outpath+file[:-3]+"pdf")
+                
