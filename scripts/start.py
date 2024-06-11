@@ -11,7 +11,7 @@ def zero_moment(PPV, dv=0.05):
     mom0 = np.sum(PPV, axis=2) * dv
     return mom0
 
-# function that creates the 1st-moment map from a PPV cube with the velocity axis=2, v-channel width dv and veocity array 'Vrange'
+# part of the function that creates the 1st-moment map from a PPV cube with the velocity axis=2, v-channel width dv and veocity array 'Vrange'
 def first_moment_num(PPV, Vrange, dv=0.05):
     mom1 = np.sum(PPV*Vrange,axis=2) * dv
     return mom1
@@ -21,7 +21,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Plot files')
 
-    choices = ['cfp', 'flashplotlib', 'PPV0', 'PPV1']
+    choices = ['cfp', 'flashplotlib', 'PPV']
     parser.add_argument('-a', '--action', metavar='action', nargs='*', default=choices, choices=choices,
                         help='choice: between flashplotlib plotting (flash) and cfpack plotting (cfp)')
 
