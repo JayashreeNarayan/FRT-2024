@@ -21,7 +21,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Plot files')
 
-    choices = ['cfp', 'flashplotlib', 'PPV0']
+    choices = ['cfp', 'flashplotlib', 'PPV']
     parser.add_argument('-a', '--action', metavar='action', nargs='*', default=choices, choices=choices,
                         help='choice: between flashplotlib plotting (flash) and cfpack plotting (cfp)')
 
