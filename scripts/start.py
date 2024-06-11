@@ -73,3 +73,13 @@ if __name__ == "__main__":
                 mom1 = first_moment(data, Vrange)
                 cfp.plot_map(mom1, cmap='seismic', cmap_label=r"$v$ (km/s)", save=outpath+file[:-4]+"_mom1.pdf")
 
+	# PPV cubes - first moment map
+        if action == choices[3]:
+            files = ["PPV_0_0.npy","PPV_90_0.npy"]
+            for file in files:
+                data = np.load(path+"Data_1tff/"+file)
+                Vrange = np.load(path+"Data_1tff/"+"Vrange.npy")
+                mom1 = first_moment(data, Vrange)
+                cfp.plot_map(mom1, cmap='seismic', cmap_label=r"$v$ (km/s)", save=outpath+file[:-4]+"_mom1.pdf")
+
+
