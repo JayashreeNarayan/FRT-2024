@@ -6,20 +6,32 @@ from cfpack import print, stop, hdfio
 import argparse
 import os
 
-# function that creates the 0-moment map from a PPV cube with the velocity axis=2 and v-channel width dv
-def zero_moment(PPV, dv=0.05):
+# function that creates the 0-moment map from a PPV cube with the velocity axis=2 and velocity channels in 'Vrange'
+def zero_moment(PPV, Vrange):
+    dv = Vrange[1]-Vrange[0] # get velocity channel width
     mom0 = np.sum(PPV, axis=2) * dv
     return mom0
 
-# part of the function that creates the 1st-moment map from a PPV cube with the velocity axis=2, v-channel width dv and veocity array 'Vrange'
-def first_moment_num(PPV, Vrange, dv=0.05):
-    mom1 = np.sum(PPV*Vrange,axis=2) * dv
-    return mom1
+# Same as zero_moment, but for the 1st moment
+def first_moment(PPV, Vrange):
+    dv = Vrange[1]-Vrange[0] # get velocity channel width
+    mom0 = zero_moment(PPV, Vrange) # moment-0 for normalisation
+    mom1 = np.sum(PPV*Vrange, axis=2) * dv
+    return mom1 / mom0
 
-#function that returns the gaussian smoothed version of the data - data being a 2D array or a PPV cube
+# Same as first_moment, but for the 2nd moment
+def second_moment(PPV, Vrange):
+    dv = Vrange[1]-Vrange[0] # get velocity channel width
+    mom0 = zero_moment(PPV, Vrange) # moment-0 for normalisation
+    mom2 = np.sum(PPV*Vrange**2, axis=2) * dv / mom0
+    mom1 = np.sum(PPV*Vrange, axis=2) * dv / mom0
+    mom2 = np.sqrt(mom2 - mom1**2)
+    return mom2
+
+# function that returns a Gaussian smoothed version of the data - data being a 2D array
 def smoothing(data):
-    box_width = np.asarray(np.shape(data))[0]
-    return cfp.gauss_smooth(data,sigma=None,fwhm=box_width/2)
+    npix = data.shape[0]
+    return cfp.gauss_smooth(data, fwhm=npix/2)
 
 # ===== the following applies in case we are running this in script mode =====
 if __name__ == "__main__":
@@ -41,6 +53,9 @@ if __name__ == "__main__":
     # set some global option/variables
     vmin = -0.4
     vmax = +0.4
+    moment_maps = ["mom0", "mom1", "mom2"]
+    cmaps = ['plasma', 'seismic', 'viridis']
+    cmap_labels = [r"Density (g/cm$^3$)", r"$v$ (km/s)", r"$\sigma_v$ (km/s)"]
 
     # loop through chosen actions
     for action in args.action:
@@ -64,15 +79,26 @@ if __name__ == "__main__":
 
         # PPV cubes - 0 moment map and consequently first moment map
         if action == choices[2]:
-            files = ["PPV_0_0.npy","PPV_90_0.npy"]
+
+            files = ["PPV_0_0.npy", "PPV_90_0.npy"]
+            moms = []
             for file in files:
-                data = np.load(path+"Data_1tff/"+file)
-                mom0 = zero_moment(data)
-                cfp.plot_map(mom0, cmap='seismic', cmap_label=r"Density (g/cm$^3$)", save=outpath+file[:-4]+"_mom0.pdf")
+
+                # read PPV data and V axis
+                PPV = np.load(path+"Data_1tff/"+file)
                 Vrange = np.load(path+"Data_1tff/"+"Vrange.npy")
-                mom1 = first_moment_num(data, Vrange)
-                cfp.plot_map(mom1/mom0, cmap='seismic', cmap_label=r"$v$ (km/s)", save=outpath+file[:-4]+"_mom1.pdf")
-                smooth_data_mom0=smoothing(mom0)         #gaussiansmoothing for moment 0
-                cfp.plot_map(smooth_data_mom0,cmap='seismic',cmap_label=r"$v$ (km/s)",save=outpath+file[:-4]+"_mom0_smooth.pdf")
-                smooth_data_mom1=smoothing(mom1/mom0)    #gaussian smoothing for moment 1
-                cfp.plot_map(smooth_data_mom1,cmap='seismic',cmap_label=r"$v$ (km/s)",save=outpath+file[:-4]+"_mom1_smooth.pdf")
+
+                # loop over moments
+                for imom, moment_map in enumerate(moment_maps):
+                    # compute moment maps
+                    print("Computing moment "+str(imom)+" map...")
+                    if imom==0: mom = zero_moment(PPV, Vrange)
+                    if imom==1: mom = first_moment(PPV, Vrange)
+                    if imom==2: mom = second_moment(PPV, Vrange)
+                    moms.append(mom) # append to bigger list of moment maps
+                    # plot moment maps
+                    cfp.plot_map(moms[imom], cmap=cmaps[imom], cmap_label=cmap_labels[imom], save=outpath+file[:-4]+"_"+moment_map+".pdf")
+
+                # smoothing
+                smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
+                cfp.plot_map(smooth_mom1, cmap=cmaps[1], cmap_label=cmap_labels[1], save=outpath+file[:-4]+"_"+moment_maps[1]+"_smooth.pdf")
