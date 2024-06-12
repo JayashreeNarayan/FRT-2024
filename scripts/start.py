@@ -16,6 +16,11 @@ def first_moment_num(PPV, Vrange, dv=0.05):
     mom1 = np.sum(PPV*Vrange,axis=2) * dv
     return mom1
 
+#function that returns the gaussian smoothed version of the data - data being a 2D array or a PPV cube
+def smoothing(data):
+    box_width = np.asarray(np.shape(data))[0]
+    return cfp.gauss_smooth(data,sigma=None,fwhm=box_width/2)
+
 # ===== the following applies in case we are running this in script mode =====
 if __name__ == "__main__":
 
@@ -47,7 +52,7 @@ if __name__ == "__main__":
                 data = np.load(path+"Data_1tff/Othin/"+file)
                 data = np.flipud(data).T
                 cfp.plot_map(data, cmap='seismic',cmap_label=r"$v$ (km/s)", vmin=vmin, vmax=vmax, save=outpath+file[:-3]+"pdf")
-                smooth_data =cfp.gauss_smooth(data,sigma=None,fwhm=64)
+                smooth_data=smoothing(data)
                 cfp.plot_map(smooth_data,cmap='seismic',cmap_label=r"$v$ (km/s)",save=outpath+file[:-4]+"_smooth.pdf")
 
         # flashplotlib
@@ -67,3 +72,7 @@ if __name__ == "__main__":
                 Vrange = np.load(path+"Data_1tff/"+"Vrange.npy")
                 mom1 = first_moment_num(data, Vrange)
                 cfp.plot_map(mom1/mom0, cmap='seismic', cmap_label=r"$v$ (km/s)", save=outpath+file[:-4]+"_mom1.pdf")
+                smooth_data_mom0=smoothing(mom0)         #gaussiansmoothing for moment 0
+                cfp.plot_map(smooth_data_mom0,cmap='seismic',cmap_label=r"$v$ (km/s)",save=outpath+file[:-4]+"_mom0_smooth.pdf")
+                smooth_data_mom1=smoothing(mom1/mom0)    #gaussian smoothing for moment 1
+                cfp.plot_map(smooth_data_mom1,cmap='seismic',cmap_label=r"$v$ (km/s)",save=outpath+file[:-4]+"_mom1_smooth.pdf")
