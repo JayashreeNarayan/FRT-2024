@@ -46,7 +46,9 @@ if __name__ == "__main__":
             for file in files:
                 data = np.load(path+"Data_1tff/Othin/"+file)
                 data = np.flipud(data).T
-                cfp.plot_map(data, cmap='seismic', cmap_label=r"$v$ (km/s)", vmin=vmin, vmax=vmax, save=outpath+file[:-3]+"pdf")
+                cfp.plot_map(data, cmap='seismic',cmap_label=r"$v$ (km/s)", vmin=vmin, vmax=vmax, save=outpath+file[:-3]+"pdf")
+                smooth_data =cfp.gauss_smooth(data,sigma=None,fwhm=64)
+                cfp.plot_map(smooth_data,cmap='seismic',cmap_label=r"$v$ (km/s)",save=outpath+file[:-4]+"_smooth.pdf")
 
         # flashplotlib
         if action == choices[1]:
