@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import numpy as np
+import matplotlib.pyplot as plt
 import cfpack as cfp
 from cfpack import print, stop, hdfio
 import argparse
@@ -40,7 +41,7 @@ if __name__ == "__main__":
 
     choices = ['cfp', 'flashplotlib', 'PPV']
     parser.add_argument('-a', '--action', metavar='action', nargs='*', default=choices, choices=choices,
-                        help='choice: between flashplotlib plotting (flash) and cfpack plotting (cfp)')
+                        help='choice: between flashplotlib plotting (flash) and cfpack plotting (cfp) and PPV plotting')
 
     args = parser.parse_args()
 
@@ -53,7 +54,7 @@ if __name__ == "__main__":
     # set some global option/variables
     vmin = -0.4
     vmax = +0.4
-    moment_maps = ["mom0", "mom1", "mom2"]
+    moment_maps = ["mom0", "mom1", "mom2"] # Data for all moment maps
     cmaps = ['plasma', 'seismic', 'viridis']
     cmap_labels = [r"Density (g/cm$^3$)", r"$v$ (km/s)", r"$\sigma_v$ (km/s)"]
 
@@ -77,12 +78,12 @@ if __name__ == "__main__":
                 cmd = "flashplotlib.py -i "+file+" -d vel"+dir+" -nolog -cmap seismic -mw -direction "+dir+" -outtype pdf -outdir "+outpath+" -vmin "+str(vmin*1e5)+" -vmax "+str(vmax*1e5)
                 cfp.run_shell_command(cmd)
 
-        # PPV cubes - 0 moment map and consequently first moment map
+        # PPV cubes - 0 moment map and consequently first moment map; smoothing and also gaussian correction
         if action == choices[2]:
 
             files = ["PPV_0_0.npy", "PPV_90_0.npy"]
-            moms = []
             for file in files:
+                moms = []
 
                 # read PPV data and V axis
                 PPV = np.load(path+"Data_1tff/"+file)
@@ -101,4 +102,9 @@ if __name__ == "__main__":
 
                 # smoothing
                 smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
+                corrected_data = first_moment(PPV, Vrange) - smooth_mom1 # Gaussian correction
+                stop()
+                cfp.plot_map(corrected_data, cmap=cmaps[1], cmap_label=cmap_labels[1], save=outpath+file[:-4]+"_corrected.pdf") #plotting gaussian correction
                 cfp.plot_map(smooth_mom1, cmap=cmaps[1], cmap_label=cmap_labels[1], save=outpath+file[:-4]+"_"+moment_maps[1]+"_smooth.pdf")
+
+            
