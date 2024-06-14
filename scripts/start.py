@@ -102,9 +102,11 @@ if __name__ == "__main__":
 
                 # smoothing
                 smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
-                corrected_data = first_moment(PPV, Vrange) - smooth_mom1 # Gaussian correction
-                stop()
-                cfp.plot_map(corrected_data, cmap=cmaps[1], cmap_label=cmap_labels[1], save=outpath+file[:-4]+"_corrected.pdf") #plotting gaussian correction
                 cfp.plot_map(smooth_mom1, cmap=cmaps[1], cmap_label=cmap_labels[1], save=outpath+file[:-4]+"_"+moment_maps[1]+"_smooth.pdf")
+                
+                # Gaussian correction
+                corrected_data = first_moment(PPV, Vrange) - smooth_mom1 # Gaussian correction
+                cfp.plot_map(corrected_data, cmap=cmaps[1], cmap_label=cmap_labels[1], save=outpath+file[:-4]+"_corrected.pdf") #plotting gaussian correction
+                
 
             
