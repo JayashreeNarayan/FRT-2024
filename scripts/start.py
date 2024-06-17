@@ -3,7 +3,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import cfpack as cfp
-from cfpack import print, stop, hdfio
+from cfpack import print, stop, hdfio, matplotlibrc
 import argparse
 import os
 
@@ -34,12 +34,17 @@ def smoothing(data):
     npix = data.shape[0]
     return cfp.gauss_smooth(data, fwhm=npix/2, mode='nearest')
 
+def get_vmin_vmax_centred(data):
+    minmax = np.max([-data.min(), data.max()])
+    return -minmax, +minmax
+
+
 # ===== the following applies in case we are running this in script mode =====
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Plot files')
 
-    choices = ['cfp', 'flashplotlib', 'PPV']
+    choices = ['cfp', 'flashplotlib', 'ppv']
     parser.add_argument('-a', '--action', metavar='action', nargs='*', default=choices, choices=choices,
                         help='choice: between flashplotlib plotting (flash) and cfpack plotting (cfp) and PPV plotting')
 
@@ -91,19 +96,37 @@ if __name__ == "__main__":
 
                 # loop over moments
                 for imom, moment_map in enumerate(moment_maps):
+                    vmin = None; vmax = None
                     # compute moment maps
                     print("Computing moment "+str(imom)+" map...")
                     if imom==0: mom = zero_moment(PPV, Vrange)
-                    if imom==1: mom = first_moment(PPV, Vrange)
+                    if imom==1:
+                        mom = first_moment(PPV, Vrange)
+                        vmin, vmax = get_vmin_vmax_centred(mom)
                     if imom==2: mom = second_moment(PPV, Vrange)
                     moms.append(mom) # append to bigger list of moment maps
                     # plot moment maps
-                    cfp.plot_map(moms[imom], cmap=cmaps[imom], cmap_label=cmap_labels[imom], save=outpath+file[:-4]+"_"+moment_map+".pdf")
+                    cfp.plot_map(moms[imom], cmap=cmaps[imom], cmap_label=cmap_labels[imom], save=outpath+file[:-4]+"_"+moment_map+".pdf", vmin=vmin, vmax=vmax)
+
+                # make PDF of orginal mom1 and plot
+                pdf_obj = cfp.get_pdf(moms[1])
+                vmin, vmax = get_vmin_vmax_centred(moms[1])
+                cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="pdf", save=outpath+file[:-4]+"_"+moment_maps[1]+"_PDF.pdf", xlabel=cmap_labels[1], ylabel="PDF", ylog=True, xlim=[vmin,vmax])
 
                 # smoothing (low-pass filtering) of moment 1
+                print("Now doing low-pass filter on moment 1")
                 smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
-                cfp.plot_map(smooth_mom1, cmap=cmaps[1], cmap_label=cmap_labels[1], save=outpath+file[:-4]+"_"+moment_maps[1]+"_smooth.pdf")
+                vmin, vmax = get_vmin_vmax_centred(smooth_mom1)
+                cfp.plot_map(smooth_mom1, cmap=cmaps[1], cmap_label=cmap_labels[1], save=outpath+file[:-4]+"_"+moment_maps[1]+"_smooth.pdf", vmin=vmin, vmax=vmax)
 
                 # Low-pass-filtered moment 1
+                print("Now subtracting low-pass-filtered moment 1")
                 corrected_data = moms[1] - smooth_mom1 # subtraction
-                cfp.plot_map(corrected_data, cmap=cmaps[1], cmap_label=cmap_labels[1], save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected.pdf")
+                vmin, vmax = get_vmin_vmax_centred(corrected_data)
+                cfp.plot_map(corrected_data, cmap=cmaps[1], cmap_label=cmap_labels[1], save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected.pdf", vmin=vmin, vmax=vmax)
+                # make PDF and plot
+                pdf_obj = cfp.get_pdf(corrected_data)
+                plt = cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="histogram")
+                cfp.plot(x=0.1, y=0.9, text="Low-pass-filtered moment 1", transform=plt.gca().transAxes)
+                cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected_PDF.pdf", xlabel=cmap_labels[1], ylabel="PDF", ylog=True, xlim=[vmin,vmax])
+
