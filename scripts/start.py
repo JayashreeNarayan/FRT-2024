@@ -29,10 +29,10 @@ def second_moment(PPV, Vrange):
     mom2 = np.sqrt(mom2 - mom1**2)
     return mom2
 
-# function that returns a Gaussian smoothed version of the data - data being a 2D array
+# function that returns a Gaussian-smoothed version of the data - data being a 2D array
 def smoothing(data):
     npix = data.shape[0]
-    return cfp.gauss_smooth(data, fwhm=npix/2)
+    return cfp.gauss_smooth(data, fwhm=npix/2, mode='nearest')
 
 # ===== the following applies in case we are running this in script mode =====
 if __name__ == "__main__":
@@ -100,13 +100,10 @@ if __name__ == "__main__":
                     # plot moment maps
                     cfp.plot_map(moms[imom], cmap=cmaps[imom], cmap_label=cmap_labels[imom], save=outpath+file[:-4]+"_"+moment_map+".pdf")
 
-                # smoothing
+                # smoothing (low-pass filtering) of moment 1
                 smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
                 cfp.plot_map(smooth_mom1, cmap=cmaps[1], cmap_label=cmap_labels[1], save=outpath+file[:-4]+"_"+moment_maps[1]+"_smooth.pdf")
-                
-                # Gaussian correction
-                corrected_data = first_moment(PPV, Vrange) - smooth_mom1 # Gaussian correction
-                cfp.plot_map(corrected_data, cmap=cmaps[1], cmap_label=cmap_labels[1], save=outpath+file[:-4]+"_corrected.pdf") #plotting gaussian correction
-                
 
-            
+                # Low-pass-filtered moment 1
+                corrected_data = moms[1] - smooth_mom1 # subtraction
+                cfp.plot_map(corrected_data, cmap=cmaps[1], cmap_label=cmap_labels[1], save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected.pdf")
