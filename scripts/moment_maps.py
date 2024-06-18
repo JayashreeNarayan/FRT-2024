@@ -44,9 +44,9 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Plot files')
 
-    choices = ['cfp', 'flashplotlib', 'ppv']
+    choices = ['othin', 'flash', 'ppv']
     parser.add_argument('-a', '--action', metavar='action', nargs='*', default=choices, choices=choices,
-                        help='choice: between flashplotlib plotting (flash) and cfpack plotting (cfp) and PPV plotting')
+                        help='Choice: Between plotting the first moment maps with flashplotlib directly from the FLASH data (flash), plotting the optically thin first moment maps with cfpack (othin) and plotting the optically thick moment maps from PPV cubes (ppv)')
 
     args = parser.parse_args()
 
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     # loop through chosen actions
     for action in args.action:
 
-        # cfpack plotting
+        # Plotting the optically thin first moment maps with cfpack
         if action == choices[0]:
             files = ["FMM_0.0_0.0.npy", "FMM_90.0_0.0.npy"]
             for file in files:
@@ -76,7 +76,7 @@ if __name__ == "__main__":
                 smooth_data=smoothing(data)
                 cfp.plot_map(smooth_data,cmap='seismic',cmap_label=r"$v$ (km/s)",save=outpath+file[:-4]+"_smooth.pdf")
 
-        # flashplotlib
+        # Plotting the first moment maps with flashplotlib directly from the FLASH data
         if action == choices[1]:
             file = path + "ChemoMHD_hdf5_plt_cnt_0001"
             for dir in ['x', 'y', 'z']:
