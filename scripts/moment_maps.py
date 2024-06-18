@@ -169,3 +169,4 @@ if __name__ == "__main__":
                     cfp.plot(x=0.05, y=0.9, text="Low-pass-filtered moment 1", transform=plt.gca().transAxes)
                     cfp.plot(save=outpath+folder+"_"+file[:-4]+"_"+moment_maps[1]+"_corrected_PDF.pdf", xlabel=cmap_labels[1], ylabel="PDF", ylog=True, xlim=[vmin,vmax])
 
+
