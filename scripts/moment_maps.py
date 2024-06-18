@@ -148,7 +148,7 @@ if __name__ == "__main__":
 
                 # Make PDF and plot
                 pdf_obj = cfp.get_pdf(corrected_data)
-                plt = cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="histogram")
-                cfp.plot(x=0.1, y=0.9, text="Low-pass-filtered moment 1", transform=plt.gca().transAxes)
+                cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="histogram")
+                cfp.plot(x=0.05, y=0.9, text="Low-pass-filtered moment 1", normalised_coords=True)
                 cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected_PDF.pdf", xlabel=cmap_labels[1], ylabel="PDF", ylog=True, xlim=[vmin,vmax])
 
