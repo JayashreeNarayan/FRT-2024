@@ -62,7 +62,7 @@ if __name__ == "__main__":
     moment_maps = ["mom0", "mom1", "mom2"] # Data for all moment maps
     cmaps = ['plasma', 'seismic', 'viridis']
     cmap_labels = [r"Density (g/cm$^3$)", r"$v$ (km/s)", r"$\sigma_v$ (km/s)"]
-    xylabels=["x (pc)", "y (pc)", "z (pc)"]
+    xyzlabels = ["$x$ (pc)", "$y$ (pc)", "$z$ (pc)"]
 
     # loop through chosen actions
     for action in args.action:
@@ -77,10 +77,10 @@ if __name__ == "__main__":
                     data = np.load(path+folder+"/Othin/"+file)
                     data = np.flipud(data).T
                     cfp.plot_map(data, cmap='seismic',cmap_label=r"$v$ (km/s)", vmin=vmin, vmax=vmax)
-                    if file == "FMM_0.0_0.0.npy":
-                        cfp.plot(xlabel=xylabels[0], ylabel=xylabels[1], save=outpath+folder+file[:-3]+"pdf")
-                    else:
-                        cfp.plot(xlabel=xylabels[2], ylabel=xylabels[1], save=outpath+folder+"_"+file[:-3]+"pdf")
+                    ylabel = xyzlabels[1]
+                    if file == "FMM_0.0_0.0.npy": xlabel = xyzlabels[0]
+                    else: xlabel = xyzlabels[2]
+                    cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+folder+"_"+file[:-3]+"pdf")
 
                     # Smoothing of the optically thin moment maps
                     smooth_data = smoothing(data)
