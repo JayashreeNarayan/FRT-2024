@@ -85,19 +85,19 @@ if __name__ == "__main__":
                     # Smoothing of the optically thin moment maps
                     smooth_data = smoothing(data)
                     cfp.plot_map(smooth_data,cmap='seismic',cmap_label=r"$v$ (km/s)")
-                    if file == "FMM_0.0_0.0.npy":
-                        cfp.plot(xlabel=xylabels[0], ylabel=xylabels[1], save=outpath+folder+file[:-4]+"_smooth.pdf")
-                    else:
-                        cfp.plot(xlabel=xylabels[2], ylabel=xylabels[1], save=outpath+folder+"_"+file[:-4]+"_smooth.pdf")
+                    ylabel = xyzlabels[1]
+                    if file == "FMM_0.0_0.0.npy": xlabel = xyzlabels[0]
+                    else: xlabel = xyzlabels[2]
+                    cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+folder+"_"+file[:-4]+"_smooth.pdf")
 
                     # Gaussian-correction of the smoothed data
                     corrected_data_othin = data - smooth_data
                     vmin, vmax = get_vmin_vmax_centred(corrected_data_othin)
                     cfp.plot_map(corrected_data_othin, cmap=cmaps[1], cmap_label=cmap_labels[1], vmin=vmin, vmax=vmax)
-                    if file == "FMM_0.0_0.0.npy":
-                        cfp.plot(xlabel=xylabels[0], ylabel=xylabels[1], save=outpath+folder+file[:-4]+"_"+moment_maps[1]+"_corrected.pdf")
-                    else:
-                        cfp.plot(xlabel=xylabels[2], ylabel=xylabels[1], save=outpath+folder+"_"+file[:-4]+"_"+moment_maps[1]+"_corrected.pdf")
+                    ylabel=xyzlabels[1]
+                    if file == "FMM_0.0_0.0.npy": xlabel=xyzlabels[0]
+                    else: xlabel=xyzlabels[2]
+                    cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+folder+"_"+file[:-4]+"_"+moment_maps[1]+"_corrected.pdf")
 
         # Plotting the first moment maps with flashplotlib directly from the FLASH data
         if action == choices[1]:
@@ -133,10 +133,11 @@ if __name__ == "__main__":
                         
                         # plot moment maps
                         cfp.plot_map(moms[imom], cmap=cmaps[imom], cmap_label=cmap_labels[imom], vmin=vmin, vmax=vmax)
+                        
                         if file == "PPV_0_0.npy":
-                            cfp.plot(xlabel=xylabels[0], ylabel=xylabels[1], save=outpath+folder+"_"+file[:-4]+"_"+moment_map+".pdf")
+                            cfp.plot(xlabel=xyzlabels[0], ylabel=xyzlabels[1], save=outpath+folder+"_"+file[:-4]+"_"+moment_map+".pdf")
                         else:
-                            cfp.plot(xlabel=xylabels[1], ylabel=xylabels[2], save=outpath+folder+"_"+file[:-4]+"_"+moment_map+".pdf")
+                            cfp.plot(xlabel=xyzlabels[1], ylabel=xyzlabels[2], save=outpath+folder+"_"+file[:-4]+"_"+moment_map+".pdf")
 
                     # Make PDF of orginal mom1 and plot
                     pdf_obj = cfp.get_pdf(moms[1])
@@ -149,9 +150,9 @@ if __name__ == "__main__":
                     vmin, vmax = get_vmin_vmax_centred(smooth_mom1)
                     cfp.plot_map(smooth_mom1, cmap=cmaps[1], cmap_label=cmap_labels[1], vmin=vmin, vmax=vmax)
                     if file == "PPV_0_0.npy":
-                        cfp.plot(xlabel=xylabels[0], ylabel=xylabels[1], save=outpath+folder+"_"+file[:-4]+"_"+moment_maps[1]+"_smooth.pdf")
+                        cfp.plot(xlabel=xyzlabels[0], ylabel=xyzlabels[1], save=outpath+folder+"_"+file[:-4]+"_"+moment_maps[1]+"_smooth.pdf")
                     else:
-                        cfp.plot(xlabel=xylabels[1], ylabel=xylabels[2], save=outpath+folder+"_"+file[:-4]+"_"+moment_maps[1]+"_smooth.pdf")
+                        cfp.plot(xlabel=xyzlabels[1], ylabel=xyzlabels[2], save=outpath+folder+"_"+file[:-4]+"_"+moment_maps[1]+"_smooth.pdf")
 
                     # Low-pass-filtered moment 1
                     print("Now subtracting low-pass-filtered moment 1")
@@ -159,9 +160,9 @@ if __name__ == "__main__":
                     vmin, vmax = get_vmin_vmax_centred(corrected_data)
                     cfp.plot_map(corrected_data, cmap=cmaps[1], cmap_label=cmap_labels[1], vmin=vmin, vmax=vmax)
                     if file == "PPV_0_0.npy":
-                        cfp.plot(xlabel=xylabels[0], ylabel=xylabels[1], save=outpath+folder+"_"+file[:-4]+"_"+moment_maps[1]+"_corrected.pdf")
+                        cfp.plot(xlabel=xyzlabels[0], ylabel=xyzlabels[1], save=outpath+folder+"_"+file[:-4]+"_"+moment_maps[1]+"_corrected.pdf")
                     else:
-                        cfp.plot(xlabel=xylabels[1], ylabel=xylabels[2], save=outpath+folder+"_"+file[:-4]+"_"+moment_maps[1]+"_corrected.pdf")
+                        cfp.plot(xlabel=xyzlabels[1], ylabel=xyzlabels[2], save=outpath+folder+"_"+file[:-4]+"_"+moment_maps[1]+"_corrected.pdf")
 
                     # Make PDF and plot
                     pdf_obj = cfp.get_pdf(corrected_data)
