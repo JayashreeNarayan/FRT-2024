@@ -132,7 +132,7 @@ if __name__ == "__main__":
                     
                     # plot moment maps
                     cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar=False)
-                    #colourbar(cmap='seismic', vmin=vmin, vmax=vmax, label=cmap_labels[1])
+                    colourbar(cmap='seismic', vmin=vmin, vmax=vmax, label=cmap_labels[1])
                     
                     if file == "PPV_0_0.npy":
                         cfp.plot(xlabel=xyzlabels[0], ylabel=xyzlabels[1], save=outpath+file[:-4]+"_"+moment_map+".pdf")
@@ -161,7 +161,7 @@ if __name__ == "__main__":
                 corrected_data = moms[1] - smooth_mom1 # subtraction
                 #vmin, vmax = get_vmin_vmax_centred(corrected_data)
                 cfp.plot_map(corrected_data, cmap=cmaps[1], vmin=vmin, vmax=vmax, colorbar=False)
-                #colourbar(cmap='seismic', vmin=vmin, vmax=vmax, label=cmap_labels[1])
+                colourbar(cmap='seismic', vmin=vmin, vmax=vmax, label=cmap_labels[1])
                 if file == "PPV_0_0.npy":
                     cfp.plot(xlabel=xyzlabels[0], ylabel=xyzlabels[1], save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected.pdf")
                 else:
