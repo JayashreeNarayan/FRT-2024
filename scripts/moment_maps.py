@@ -163,11 +163,12 @@ if __name__ == "__main__":
 
                 # Make PDF of orginal mom1 and plot
                 pdf_obj = cfp.get_pdf(moms[1])
-                vmin, vmax = get_vmin_vmax_centred(moms[1])
+                vmin=-0.4
+                vmax=+0.4
                 cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="pdf")
-                cfp.plot(x=0.05, y=0.9, text="Low-pass-filtered moment 1, Optically thin case", backgroundcolor="white", fontsize="x-small", transform=plt.gca().transAxes)
-                cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_PDF.pdf", xlabel=cmap_labels[1], ylabel="PDF", ylog=True, xlim=[vmin,vmax])
-                
+                cfp.plot(x=0.05, y=0.9, text="Moment 1 map, Optically thick case", backgroundcolor="white", fontsize="x-small", transform=plt.gca().transAxes)
+                cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_PDF.pdf", xlabel=cmap_labels[1], ylabel="PDF", ylog=True, xlim=[vmin,vmax], ylim=[1.e-2,5.e1])
+                print("Standard deviation of the moment 1 data, optically thick case: ", np.std(moms[1]))
 
                 # Smoothing (low-pass filtering) of moment 1
                 print("Now doing low-pass filter on moment 1")
@@ -180,7 +181,7 @@ if __name__ == "__main__":
                 else:
                     cfp.plot(xlabel=xyzlabels[1], ylabel=xyzlabels[2], save=outpath+file[:-4]+"_"+moment_maps[1]+"_smooth.pdf")
 
-                # Low-pass-filtered moment 1
+                # Generating Low-pass-filtered moment 1 and then plotting it
                 print("Now subtracting low-pass-filtered moment 1")
                 corrected_data = moms[1] - smooth_mom1 # subtraction
                 cfp.plot_map(corrected_data, cmap=cmaps[1], vmin=vmin, vmax=vmax, colorbar=False) # common colorbar for Fig. 2
@@ -189,11 +190,12 @@ if __name__ == "__main__":
                 else:
                     cfp.plot(xlabel=xyzlabels[1], ylabel=xyzlabels[2], save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected.pdf")
 
-                # Make PDF and plot
+                # Make PDF of low-pass-filtered moment 1 and also plot it
                 pdf_obj = cfp.get_pdf(corrected_data)
                 cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="histogram")
                 cfp.plot(x=0.05, y=0.9, text="Low-pass-filtered moment 1, Optically thick case", backgroundcolor="white", fontsize="x-small", transform=plt.gca().transAxes)
-                cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected_PDF.pdf", xlabel=cmap_labels[1], ylabel="PDF", ylog=True, xlim=[vmin,vmax])
+                cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected_PDF.pdf", xlabel=cmap_labels[1], ylabel="PDF", ylog=True, xlim=[vmin,vmax], ylim=[1.e-2,5.e1])
+                print("Standard deviation of the low pass filtered data, optically thick case: ", np.std(corrected_data))
 
                 # plotting a common colorbar, only for seismic, universal vmin and vmax
-                cfp.plot_colorbar(cmap=cmaps[1], vmin=-0.4, vmax=+0.4, label=cmap_labels[1], save=outpath+cmaps[1]+"_colorbar.pdf")
+                cfp.plot_colorbar(cmap=cmaps[1], vmin=-0.4, vmax=+0.4, label=cmap_labels[1], save=outpath+cmaps[1]+"_colorbar.pdf", panels=2)
