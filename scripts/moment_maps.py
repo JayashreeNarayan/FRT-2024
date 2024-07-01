@@ -80,14 +80,14 @@ if __name__ == "__main__":
                 if file == "SMM_0.0_0.0.npy": # Since the 2nd moment map needs different plot variables
                     vmin, vmax = get_vmin_vmax_centred(data) # Since this map is only needed for Fig 1., we don't have to use a universal vmin and vmax
                     cfp.plot_map(data, cmap=cmaps[2], vmin=vmin, vmax=vmax, cmap_label=cmap_labels[2], xlim=[-1,1], ylim=[-1,1], aspect='equal') # colorbar needed since this is for Fig.1
-                    t = plt.text(0.03, 0.93, 'Optically thin, CO (1-0)', transform=plt.gca().transAxes)
+                    t = plt.text(0.03, 0.93, 'Optically thin', transform=plt.gca().transAxes)
                     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
                     cfp.plot(xlabel=xyzlabels[0], ylabel=xyzlabels[1], save=outpath+file[:-3]+"pdf")
 
                 elif file == "ZMM_0.0_0.0.npy": # zeroth moment map has separate plot variables, and is needed only for Fig. 1
                     vmin, vmax = get_vmin_vmax_centred(data) # Since this map is only needed for Fig 1., we don't have to use a universal vmin and vmax
                     cfp.plot_map(data, cmap=cmaps[0], vmin=vmin, vmax=vmax, cmap_label=cmap_labels[0], xlim=[-1,1], ylim=[-1,1], aspect='equal') # colorbar needed since this is for Fig.1
-                    t = plt.text(0.03, 0.93, 'Optically thin, CO (1-0)', transform=plt.gca().transAxes)
+                    t = plt.text(0.03, 0.93, 'Optically thin', transform=plt.gca().transAxes)
                     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))               
                     cfp.plot(xlabel=xyzlabels[0], ylabel=xyzlabels[1], save=outpath+file[:-3]+"pdf") 
 
@@ -105,17 +105,17 @@ if __name__ == "__main__":
                     # Also plotting the same with colorbars for Fig. 1
                     vmin, vmax = get_vmin_vmax_centred(data) # Since this is for Fig. 1, we cannot use a universal vmin and vmax
                     cfp.plot_map(data, cmap=cmaps[1], vmin=vmin, vmax=vmax, cmap_label=cmap_labels[1], xlim=[-1,1], ylim=[-1,1], aspect='equal')
-                    t = plt.text(0.03, 0.93, 'Optically thin, CO (1-0)', transform=plt.gca().transAxes)
+                    t = plt.text(0.03, 0.93, 'Optically thin', transform=plt.gca().transAxes)
                     t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
                     cfp.plot(xlabel=xyzlabels[0], ylabel=xyzlabels[1], save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
 
                     # Creating the PDF for the optically thin case - 1st-moment, without filtering
                     pdf_obj = cfp.get_pdf(data)
-                    vmin=-1
-                    vmax=+1
+                    vmin=-0.6
+                    vmax=+0.6
                     sigma = round(np.std(data),3)
                     cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="pdf")
-                    cfp.plot(x=0.05, y=0.85, text=r"1st-moment"+"\n"+r"Optically thin case $\sigma$ = "+str(sigma), axes_format=["",None], fontsize='small', backgroundcolor="white", transform=plt.gca().transAxes)
+                    cfp.plot(x=0.05, y=0.85, text=r"1st-moment"+"\n"+r"Optically thin case $\sigma$ = "+str(sigma)+r"$~km\,s^{-1}$", axes_format=["",None], fontsize='small', backgroundcolor="white", transform=plt.gca().transAxes)
                     cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_PDF.pdf", xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[vmin,vmax], ylim=[1.e-2,5.e1])
                     #print("Standard deviation of the moment 1 data, optically thin case: ", np.std(data))
 
@@ -150,8 +150,8 @@ if __name__ == "__main__":
                     pdf_obj = cfp.get_pdf(corrected_data_othin)
                     cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="histogram", axes_format=["",""])
                     sigma = round(np.std(corrected_data_othin),3)
-                    cfp.plot(x=0.05, y=0.85, text=r"Low-pass-filtered 1st-moment"+"\n"+r"Optically thin case, $\sigma$ = "+str(sigma), backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
-                    cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected_PDF.pdf", xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[-1,1], ylim=[1.e-2,5.e1])
+                    cfp.plot(x=0.05, y=0.85, text=r"Low-pass-filtered 1st-moment"+"\n"+r"Optically thin case, $\sigma$ = "+str(sigma)+r"$~km\,s^{-1}$", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
+                    cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected_PDF.pdf", xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[-0.6,0.6], ylim=[1.e-2,5.e1])
 
         # Plotting the zeroth moment maps with flashplotlib directly from the FLASH data , used only in Fig. 1 so we need a colorbar
         if action == choices[1]:
@@ -169,17 +169,17 @@ if __name__ == "__main__":
                 moms = []
 
                 # read PPV data and V axis
-                PPV = np.load(path+"/Data_1tff/"+file)
-                PPV = rescale_data(PPV)
+                PPV = np.load(path+"/Data_1tff/"+file) # loading the data
+                PPV = rescale_data(PPV) # rescaling data to data/mean(data)
                 Vrange = np.load(path+"/Data_1tff/"+"Vrange.npy")
 
                 # loop over moments
                 for imom, moment_map in enumerate(moment_maps):
                     # compute moment maps
                     print("Computing moment "+str(imom)+" map...")
-                    if imom==0: mom = zero_moment(PPV, Vrange)
-                    if imom==1: mom = first_moment(PPV, Vrange)
-                    if imom==2: mom = second_moment(PPV, Vrange)
+                    if imom==0: mom = -zero_moment(PPV, Vrange)
+                    if imom==1: mom = -first_moment(PPV, Vrange)
+                    if imom==2: mom = -second_moment(PPV, Vrange)
                     moms.append(mom) # append to bigger list of moment maps
                     
                     # plot moment maps, since PPV is used in both Fig.1 and 2, we need one set with colorbars and one set without                    
@@ -211,11 +211,11 @@ if __name__ == "__main__":
 
                 # Make PDF of orginal mom1 and plot
                 pdf_obj = cfp.get_pdf(moms[1])
-                vmin=-1
-                vmax=+1
+                vmin=-0.6
+                vmax=+0.6
                 cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="pdf")
                 sigma = round(np.std(moms[1]),3)
-                cfp.plot(x=0.05, y=0.85, text=r"1st-moment"+"\n"+r"Optically thick case, $\sigma$ = "+str(sigma),  fontsize='small', backgroundcolor="white", transform=plt.gca().transAxes)
+                cfp.plot(x=0.05, y=0.85, text=r"1st-moment"+"\n"+r"Optically thick case, $\sigma$ = "+str(sigma)+r"$~km\,s^{-1}$",  fontsize='small', backgroundcolor="white", transform=plt.gca().transAxes)
                 cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_PDF.pdf", xlabel=cmap_labels[1], ylabel="PDF", axes_format=[None,None], fontsize='small', ylog=True, xlim=[vmin,vmax], ylim=[1.e-2,5.e1])
 
                 # Smoothing (low-pass filtering) of moment 1
@@ -246,8 +246,8 @@ if __name__ == "__main__":
                 pdf_obj = cfp.get_pdf(corrected_data)
                 cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="histogram")
                 sigma = round(np.std(corrected_data),3)
-                cfp.plot(x=0.05, y=0.85, text=r"Low-pass-filtered 1st-moment"+"\n"+r"Optically thick case, $\sigma$ = "+str(sigma), axes_format=[None,""], backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
-                cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected_PDF.pdf", xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[-1,1], ylim=[1.e-2,5.e1])
+                cfp.plot(x=0.05, y=0.85, text=r"Low-pass-filtered 1st-moment"+"\n"+r"Optically thick case, $\sigma$ = "+str(sigma)+r"$~km\,s^{-1}$", axes_format=[None,""], backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
+                cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected_PDF.pdf", xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[-0.6,0.6], ylim=[1.e-2,5.e1])
 
             # plotting a common colorbar, only for seismic, universal vmin and vmax
             cfp.plot_colorbar(cmap=cmaps[1], vmin=-0.4, vmax=+0.4, label=cmap_labels[1], save=outpath+cmaps[1]+"_colorbar.pdf", panels=2)
