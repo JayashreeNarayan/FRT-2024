@@ -177,9 +177,9 @@ if __name__ == "__main__":
                 for imom, moment_map in enumerate(moment_maps):
                     # compute moment maps
                     print("Computing moment "+str(imom)+" map...")
-                    if imom==0: mom = -zero_moment(PPV, Vrange)
+                    if imom==0: mom = zero_moment(PPV, Vrange)
                     if imom==1: mom = -first_moment(PPV, Vrange)
-                    if imom==2: mom = -second_moment(PPV, Vrange)
+                    if imom==2: mom = second_moment(PPV, Vrange)
                     moms.append(mom) # append to bigger list of moment maps
                     
                     # plot moment maps, since PPV is used in both Fig.1 and 2, we need one set with colorbars and one set without                    
