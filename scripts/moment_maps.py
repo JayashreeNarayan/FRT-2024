@@ -178,7 +178,7 @@ if __name__ == "__main__":
                     # compute moment maps
                     print("Computing moment "+str(imom)+" map...")
                     if imom==0: mom = zero_moment(PPV, Vrange)
-                    if imom==1: mom = -first_moment(PPV, Vrange)
+                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the optically thin images
                     if imom==2: mom = second_moment(PPV, Vrange)
                     moms.append(mom) # append to bigger list of moment maps
                     
