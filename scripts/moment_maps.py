@@ -32,12 +32,12 @@ def first_moment(PPV, Vrange):
     dv = Vrange[1]-Vrange[0] # get velocity channel width
     mom0 = zero_moment(PPV, Vrange) # moment-0 for normalisation
     mom1 = np.sum(PPV*Vrange, axis=2) * dv
-    return (mom1 / mom0).T
+    return (mom1 / mom0.T).T
 
 # Same as first_moment, but for the 2nd moment
 def second_moment(PPV, Vrange):
     dv = Vrange[1]-Vrange[0] # get velocity channel width
-    mom0 = zero_moment(PPV, Vrange) # moment-0 for normalisation
+    mom0 = (zero_moment(PPV, Vrange)).T # moment-0 for normalisation
     mom2 = np.sum(PPV*Vrange**2, axis=2) * dv / mom0
     mom1 = np.sum(PPV*Vrange, axis=2) * dv / mom0
     mom2 = np.sqrt(mom2 - mom1**2)
@@ -191,7 +191,7 @@ if __name__ == "__main__":
                     pdf_obj = cfp.get_pdf(corrected_data_othin)
                     cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="histogram", axes_format=["",""])
                     sigma = round(np.std(corrected_data_othin),3)
-                    cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos, text=r"Low-pass-filtered 1st-moment"+"\n"+img_names[1]+r"; $\sigma$ = "+str(sigma)+r"$~\mathrm{km\,s^{-1}}$", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
+                    cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.1, text=r"Low-pass-filtered 1st-moment"+"\n"+img_names[1]+r"; $\sigma$ = "+str(sigma)+r"$~\mathrm{km\,s^{-1}}$", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
                     t = plt.text(LOS_PDF_names_xpos, LOS_PDF_names_ypos, LOS_labels[get_LOS(file)] , transform=plt.gca().transAxes) # for LOS
                     t.set_bbox(dict(facecolor='white', alpha=0., linewidth=0))
                     cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected_PDF.pdf", xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[1.e-2, 1.e2])
@@ -266,7 +266,7 @@ if __name__ == "__main__":
                 pdf_obj = cfp.get_pdf(moms[1])
                 cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="pdf")
                 sigma = round(np.std(moms[1]),3)
-                cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos, text=r"1st-moment"+"\n"+img_names[0]+r"; $\sigma$ = "+str(sigma)+r"$~\mathrm{km\,s^{-1}}$",  fontsize='small', backgroundcolor="white", transform=plt.gca().transAxes)
+                cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.1, text=r"1st-moment"+"\n"+img_names[0]+r"; $\sigma$ = "+str(sigma)+r"$~\mathrm{km\,s^{-1}}$",  fontsize='small', backgroundcolor="white", transform=plt.gca().transAxes)
                 t = plt.text(LOS_PDF_names_xpos, LOS_PDF_names_ypos, LOS_labels[get_LOS(file)] , transform=plt.gca().transAxes) # for LOS
                 t.set_bbox(dict(facecolor='white', alpha=0., linewidth=0))
                 cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_PDF.pdf", xlabel=cmap_labels[1], ylabel="PDF", axes_format=[None,None], fontsize='small', ylog=True, xlim=[xmin,xmax], ylim=[1.e-2,1.e2])
@@ -299,7 +299,7 @@ if __name__ == "__main__":
                 pdf_obj = cfp.get_pdf(corrected_data)
                 cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="histogram")
                 sigma = round(np.std(corrected_data),3)
-                cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos, text=r"Low-pass-filtered 1st-moment"+"\n"+img_names[0]+r"; $\sigma$ = "+str(sigma)+r"$~\mathrm{km\,s^{-1}}$", axes_format=[None,""], backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
+                cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.1, text=r"Low-pass-filtered 1st-moment"+"\n"+img_names[0]+r"; $\sigma$ = "+str(sigma)+r"$~\mathrm{km\,s^{-1}}$", axes_format=[None,""], backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
                 t = plt.text(LOS_PDF_names_xpos, LOS_PDF_names_ypos, LOS_labels[get_LOS(file)] , transform=plt.gca().transAxes) # for LOS
                 t.set_bbox(dict(facecolor='white', alpha=0., linewidth=0))
                 cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected_PDF.pdf", xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[1.e-2,1.e2])
