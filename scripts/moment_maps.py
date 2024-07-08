@@ -72,10 +72,10 @@ if __name__ == "__main__":
     xmax=+0.6
 
     # LOS labels positions
-    LOS_labels_xpos = 0.77
-    LOS_labels_ypos = 0.85
-    LOS_PDF_labels_xpos = 0.85
-    LOS_PDF_labels_ypos = 0.8
+    LOS_labels_xpos = 0.75
+    LOS_labels_ypos = 0.82
+    LOS_PDF_labels_xpos = 0.82
+    LOS_PDF_labels_ypos = 0.75
 
     # image title positions
     img_names_xpos = 0.05
@@ -93,7 +93,7 @@ if __name__ == "__main__":
 
     moment_maps = ["mom0", "mom1", "mom2"] # Data for all moment maps
     cmaps = ['plasma', 'seismic', 'viridis']
-    cmap_labels = [r"$\mathrm{I/\langle I \rangle}$", r"$\mathrm{v_{LOS}~(km\,s^{-1}})$", r"$\mathrm{\sigma_{v_{LOS}}~(km\,s^{-1}})$"]
+    cmap_labels = [r"${I/\langle I \rangle}$", r"$\mathrm{v_{LOS}~(km\,s^{-1}})$", r"$\mathrm{\sigma_{v_{LOS}}~(km\,s^{-1}})$"]
     LOS_labels = [r"$\left(\begin{array}{c} 0 \\ 0 \\ 1 \end{array}\right) $", r"$\left(\begin{array}{c} 1 \\ 0 \\ 1 \end{array}\right) $", r"$\left(\begin{array}{c} 1 \\ 0 \\ 0 \end{array}\right) $"]
     xyzlabels = [r"POS$_1$", r"POS$_2$"]
     img_names = ["Synthetic CO (1-0)", "Optically thin emission"]
