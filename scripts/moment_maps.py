@@ -35,7 +35,7 @@ def first_moment(PPV, Vrange):
 # Same as first_moment, but for the 2nd moment
 def second_moment(PPV, Vrange):
     dv = Vrange[1]-Vrange[0] # get velocity channel width
-    mom0 = (zero_moment(PPV, Vrange)).T # moment-0 for normalisation
+    mom0 = (zero_moment(PPV, Vrange)) # moment-0 for normalisation
     mom2 = np.sum(PPV*Vrange**2, axis=2) * dv / mom0
     mom1 = np.sum(PPV*Vrange, axis=2) * dv / mom0
     mom2 = np.sqrt(mom2 - mom1**2)
@@ -268,18 +268,18 @@ if __name__ == "__main__":
 
                     # plot moment maps, since PPV is used in both Fig.1 and 2, we need one set with colorbars and one set without
                     # Set with a common colorbar (Fig. 2)        
-                    if imom == 0:
+                    if imom == 0: # 0th moment
                         vmin = vmin_0
                         vmax = vmax_0
-                        if get_LOS(file) == 2 | get_LOS(file) == 0: moms[imom] = moms[imom].T # transpose only for the 90,0 data
-                    if imom == 1: # only moment 1 has this universality 
+                        moms[imom] = moms[imom].T # transpose for all
+                    if imom == 1: # 1st moment
                         vmin = vmin_1
                         vmax = vmax_1
-                        if get_LOS(file) == 2 | get_LOS(file) == 0: moms[imom] = moms[imom].T # transpose only for the 90,0 data
-                    if imom == 2:
+                        if get_LOS(file) == 0 | get_LOS(file) == 1: moms[imom] = moms[imom].T # transpose for all but 90.0
+                    if imom == 2: # 2nd moment
                         vmin = vmin_2
                         vmax = vmax_2
-                        if get_LOS(file) == 2 | get_LOS(file) == 0: moms[imom] = moms[imom].T # transpose only for the 90,0 data
+                        if get_LOS(file) == 1: moms[imom] = moms[imom].T # transpose for only the 45.0
                     
                     cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar=False, axes_format=[None, None], xlim=[-1,1], ylim=[-1,1], aspect='equal')
                     t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes)
