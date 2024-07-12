@@ -251,7 +251,6 @@ if __name__ == "__main__":
                 # for the files with 45 degrees -  we have to resize the data
                 if get_LOS(file) == 1: # this means that theta is 45 degrees
                     PPV = resize_45(PPV, "3D")
-                    print(np.shape(PPV)) # just to make sure it is (128, 128, 64) post resizing
                     xlabel = xyzlabels[1] # y-axis on the bottom 
                     ylabel = xyzlabels[3] # combination of x and z on the vertical
 
