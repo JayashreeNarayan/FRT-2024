@@ -101,7 +101,7 @@ if __name__ == "__main__":
 
     # defining the min and max of the maps universally so that all of them can be compared
     vmin_0 = 0. # zeroth moment map
-    vmax_0 = 10.0
+    vmax_0 = 8.0
     vmin_1 = -0.5 # 1st
     vmax_1 = 0.5
     vmin_2 = 0. # 2nd
@@ -261,7 +261,7 @@ if __name__ == "__main__":
                 for imom, moment_map in enumerate(moment_maps):
                     # compute moment maps
                     print("Computing moment "+str(imom)+" map...")
-                    if imom==0: mom = zero_moment(rescale_data(PPV), Vrange) # need to rescale the 0th moment map alone
+                    if imom==0: mom = zero_moment(PPV, Vrange); mom = rescale_data(mom)  # need to rescale the 0th moment map alone
                     if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the optically thin images
                     if imom==2: mom = second_moment(PPV, Vrange)
                     moms.append(mom) # append to bigger list of moment maps
