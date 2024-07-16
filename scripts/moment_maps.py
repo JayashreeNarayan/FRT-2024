@@ -15,6 +15,12 @@ def get_LOS(file):
     if theta == "45.0": return 1
     if theta == "90.0": return 2
 
+def fourier_spectrum(data):
+    FT = cfp.get_spectrum(data)
+    K = FT.get('k')
+    P = FT.get('P_tot')
+    return [K,P]
+
 # function that divides data by its mean to avoid units
 def rescale_data(data):
     return data/np.mean(data)
@@ -86,6 +92,13 @@ if __name__ == "__main__":
     xmax=+0.45
     ymin=1.e-2
     ymax=1.e2
+
+    # Fourier labels
+    FTlabels = ["Optically Thin", "Synthetic CO"]
+    FT_xy_labels = [r"$K$", r"$P_{\mathrm{tot}}$"]
+    angles = [0, 45, 90]
+    FTdata_Othin = []
+    FTdata_CO = []
 
     # LOS labels positions
     LOS_labels_xpos = 0.75
@@ -229,6 +242,10 @@ if __name__ == "__main__":
                     if axis[1] == None: ylabel = ylabel
                     cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_FMM_sum.pdf")
 
+                    # Fourier Analysis Data for Optically thin maps
+                    K_P = fourier_spectrum(corrected_data_othin)
+                    FTdata_Othin.append(K_P)
+
                     # PDF of the low-pass-filtered data - 1st-moment
                     pdf_obj = cfp.get_pdf(corrected_data_othin)
                     cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="histogram", axes_format=["",""])
@@ -359,6 +376,10 @@ if __name__ == "__main__":
                 if axis[1] == None: ylabel = ylabel
                 cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_FMM_sum.pdf")
 
+                # Fourier Analysis Data for Synthetic CO
+                K_P = fourier_spectrum(corrected_data)
+                FTdata_CO.append(K_P)
+
                 # Make PDF of low-pass-filtered moment 1 and also plot it
                 pdf_obj = cfp.get_pdf(corrected_data)
                 cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="histogram")
@@ -367,3 +388,16 @@ if __name__ == "__main__":
                 t = plt.text(LOS_PDF_labels_xpos, LOS_PDF_labels_ypos, LOS_labels[get_LOS(file)] , transform=plt.gca().transAxes) # for LOS
                 t.set_bbox(dict(facecolor='white', alpha=0., linewidth=0))
                 cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected_PDF.pdf", xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[ymin,ymax])
+
+        FTdata_CO = np.array(FTdata_CO)
+        FTdata_Othin = np.array(FTdata_Othin)
+
+        # Plotting the FTs
+        for i, angle in enumerate(angles):
+            cfp.plot(x=FTdata_CO[i,0], y=FTdata_CO[i,1], xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], ylog=True, label=FTlabels[1])
+            cfp.plot(x=FTdata_Othin[i,0], y=FTdata_Othin[i,1], xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], ylog=True, label=FTlabels[0], legend_loc='upper right', save=outpath+angle+"_FT.pdf")
+            t = plt.text(LOS_PDF_labels_xpos, LOS_PDF_labels_ypos-0.2, LOS_labels[i] , transform=plt.gca().transAxes) # for LOS
+            t.set_bbox(dict(facecolor='white', alpha=0., linewidth=0))
+                    
+        
+            
