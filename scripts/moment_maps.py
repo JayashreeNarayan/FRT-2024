@@ -82,9 +82,9 @@ if __name__ == "__main__":
         cfp.run_shell_command('mkdir '+outpath)
 
     # set some global option/variables
-    xmin=-0.5
-    xmax=+0.5
-    ymin=1.e-3
+    xmin=-0.45
+    xmax=+0.45
+    ymin=1.e-2
     ymax=1.e2
 
     # LOS labels positions
@@ -102,8 +102,8 @@ if __name__ == "__main__":
     # defining the min and max of the maps universally so that all of them can be compared
     vmin_0 = 0. # zeroth moment map
     vmax_0 = 8.0
-    vmin_1 = -0.5 # 1st
-    vmax_1 = 0.5
+    vmin_1 = -0.45 # 1st
+    vmax_1 = 0.45
     vmin_2 = 0. # 2nd
     vmax_2 = 0.7
 
@@ -111,7 +111,7 @@ if __name__ == "__main__":
     cmaps = ['plasma', 'seismic', 'viridis']
     cmap_labels = [r"${I/\langle I \rangle}$", r"${{v_{\mathrm{LOS}}}~(\mathrm{km\,s^{-1}})}$", r"${\sigma_{v_{\mathrm{LOS}}}~(\mathrm{km\,s^{-1}})}$"]
     LOS_labels = [r"$\left(\begin{array}{c} 0 \\ 0 \\ 1 \end{array}\right) $", r"$\left(\begin{array}{c} 1 \\ 0 \\ 1 \end{array}\right) $", r"$\left(\begin{array}{c} 1 \\ 0 \\ 0 \end{array}\right) $"]
-    xyzlabels = [r"POS$_1$", r"POS$_2$", r"POS$_3$", r"$\sqrt{POS_1^2 + POS_2^2}$"]
+    xyzlabels = [r"$x$", r"$y$", r"$z$", r"$\sqrt{x^2 + z^2}$"]
     img_names = ["Synthetic CO (1-0)", "Optically thin"]
 
     # loop through chosen actions
@@ -170,8 +170,8 @@ if __name__ == "__main__":
                     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
                     cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
 
-                else: # all the first moment maps
-                    cfp.plot_map(data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=["",None], xlim=[-1,1], ylim=[-1,1], aspect='equal') # Done for the 1st moment maps separately, needed for Fig. 2
+                else: # all the first moment maps - for Appen. fig
+                    cfp.plot_map(data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=["",None], xlim=[-1,1], ylim=[-1,1], aspect='equal') # Done for the 1st moment maps separately, needed for Appen. Fig. 
                     t = plt.text(img_names_xpos, img_names_ypos, img_names[1] , transform=plt.gca().transAxes)
                     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
                     t = plt.text(LOS_labels_xpos, LOS_labels_ypos, LOS_labels[get_LOS(file)] , transform=plt.gca().transAxes) # for LOS
@@ -198,7 +198,7 @@ if __name__ == "__main__":
                 # Smoothing of the optically thin moment maps - done only for moment 1 maps, skipping moment 2 data
                 if file[:1] == "F": # 2nd and 0th moment map is not to be smoothed or gaussian corrected 
                     smooth_data = smoothing(data)
-                    cfp.plot_map(smooth_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=["",""], xlim=[-1,1], ylim=[-1,1], aspect='equal') # Needed for Fig. 2 so, no colorbar, universal vmin and vmax to be used.
+                    cfp.plot_map(smooth_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=["",""], xlim=[-1,1], ylim=[-1,1], aspect='equal') # Needed for Appen. Fig.  so, no colorbar, universal vmin and vmax to be used.
                     t = plt.text(img_names_xpos, img_names_ypos, img_names[1] , transform=plt.gca().transAxes)
                     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
                     t = plt.text(LOS_labels_xpos, LOS_labels_ypos, LOS_labels[get_LOS(file)] , transform=plt.gca().transAxes) # for LOS
@@ -213,6 +213,21 @@ if __name__ == "__main__":
                     t = plt.text(LOS_labels_xpos, LOS_labels_ypos, LOS_labels[get_LOS(file)] , transform=plt.gca().transAxes) # for LOS
                     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
                     cfp.plot(xlabel="", ylabel="", save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected.pdf")
+
+                    # For Fig. 4 - FMM summary plot
+                    if get_LOS(file) == 0 : axis = ["",None]
+                    if get_LOS(file) == 1 : axis = ["",""]
+                    if get_LOS(file) == 2 : axis = ["",""]
+                    cfp.plot_map(corrected_data_othin, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=axis, xlim=[-1,1], ylim=[-1,1], aspect='equal') 
+                    t = plt.text(img_names_xpos, img_names_ypos, img_names[1] , transform=plt.gca().transAxes)
+                    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
+                    t = plt.text(LOS_labels_xpos, LOS_labels_ypos, LOS_labels[get_LOS(file)] , transform=plt.gca().transAxes) # for LOS
+                    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
+                    if axis[0] == "": xlabel = ""
+                    if axis[0] == None: xlabel = xlabel
+                    if axis[1] == "": ylabel = ""
+                    if axis[1] == None: ylabel = ylabel
+                    cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_FMM_sum.pdf")
 
                     # PDF of the low-pass-filtered data - 1st-moment
                     pdf_obj = cfp.get_pdf(corrected_data_othin)
@@ -266,8 +281,8 @@ if __name__ == "__main__":
                     if imom==2: mom = second_moment(PPV, Vrange)
                     moms.append(mom) # append to bigger list of moment maps
 
-                    # plot moment maps, since PPV is used in both Fig.1 and 2, we need one set with colorbars and one set without
-                    # Set with a common colorbar (Fig. 2)        
+                    # plot moment maps, since PPV is used in both Fig.1 and Appen. , we need one set with colorbars and one set without
+                    # Set with a common colorbar (Appen. Fig.)        
                     if imom == 0: # 0th moment
                         vmin = vmin_0
                         vmax = vmax_0
@@ -281,6 +296,7 @@ if __name__ == "__main__":
                         vmax = vmax_2
                         if get_LOS(file) == 1: moms[imom] = moms[imom].T # transpose for only the 45.0
                     
+                    # For Appen. Fig.
                     cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar=False, axes_format=[None, None], xlim=[-1,1], ylim=[-1,1], aspect='equal')
                     t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes)
                     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
@@ -311,7 +327,7 @@ if __name__ == "__main__":
                 # Smoothing (low-pass filtering) of moment 1
                 print("Now doing low-pass filter on moment 1")
                 smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
-                cfp.plot_map(smooth_mom1, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect='equal') # commmon colorbar for Fig. 2
+                cfp.plot_map(smooth_mom1, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect='equal') # commmon colorbar for Appen. Fig. 
                 t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes)
                 t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
                 t = plt.text(LOS_labels_xpos, LOS_labels_ypos, LOS_labels[get_LOS(file)] , transform=plt.gca().transAxes) # for LOS
@@ -321,12 +337,27 @@ if __name__ == "__main__":
                 # Generating corrected map and then plotting it
                 print("Now subtracting low-pass-filtered moment 1")
                 corrected_data = moms[1] - smooth_mom1 # subtraction
-                cfp.plot_map(corrected_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect ='equal') # common colorbar for Fig. 2
+                cfp.plot_map(corrected_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect ='equal') # common colorbar for Appen. Fig. 
                 t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes)
                 t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
                 t = plt.text(LOS_labels_xpos, LOS_labels_ypos, LOS_labels[get_LOS(file)] , transform=plt.gca().transAxes) # for LOS
                 t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
                 cfp.plot(xlabel=xlabel, ylabel="", save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected.pdf")
+
+                # For Fig. 4 - FMM summary plot
+                if get_LOS(file) == 0 : axis = [None,None]
+                if get_LOS(file) == 1 : axis = [None,""]
+                if get_LOS(file) == 2 : axis = [None,""]
+                cfp.plot_map(corrected_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=axis, xlim=[-1,1], ylim=[-1,1], aspect='equal') # Done for the 1st moment maps separately, needed for Appen. Fig. 
+                t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes)
+                t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
+                t = plt.text(LOS_labels_xpos, LOS_labels_ypos, LOS_labels[get_LOS(file)] , transform=plt.gca().transAxes) # for LOS
+                t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
+                if axis[0] == "": xlabel = ""
+                if axis[0] == None: xlabel = xlabel
+                if axis[1] == "": ylabel = ""
+                if axis[1] == None: ylabel = ylabel
+                cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_FMM_sum.pdf")
 
                 # Make PDF of low-pass-filtered moment 1 and also plot it
                 pdf_obj = cfp.get_pdf(corrected_data)
