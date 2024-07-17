@@ -259,14 +259,14 @@ if __name__ == "__main__":
             FTdata_Othin = np.array(FTdata_Othin)
 
         # Plotting the zeroth moment maps with flashplotlib directly from the FLASH data , used only in Fig. 1 so we need a colorbar
-        '''
+        
         if action == choices[1]:
             file = path + "ChemoMHD_hdf5_plt_cnt_0001"
             for dir in ['x', 'y', 'z']:
                 cmd = "flashplotlib.py -i "+file+" -d vel"+dir+" -nolog -cmap seismic -mw -direction "+dir+" -outtype pdf -outdir "+outpath+" -cmap_label \"velocity\" -time_scale 0"
                 #cmd = "flashplotlib.py -i "+file+" -nolog -cmap plasma -direction "+dir+" -outtype pdf -outdir "+outpath+" -cmap_label \"Density (g/cm$^3$)\" -time_scale 0"
                 cfp.run_shell_command(cmd)
-        '''
+        
         # PPV cubes - 0 moment map and consequently first moment map; smoothing and also gaussian correction
         if action == choices[2]:
 
@@ -397,6 +397,6 @@ if __name__ == "__main__":
     # Plotting the FTs
     for i, angle in enumerate(angles):
         cfp.plot(x=FTdata_CO[i,0], y=FTdata_CO[i,1], xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], ylog=True, label=FTlabels[1])
-        cfp.plot(x=FTdata_Othin[i,0], y=FTdata_Othin[i,1], xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], ylog=True, label=FTlabels[0], legend_loc='upper right', save=outpath+str(angle)+"_FT.pdf")
         t = plt.text(LOS_PDF_labels_xpos, LOS_PDF_labels_ypos-0.2, LOS_labels[i] , transform=plt.gca().transAxes) # for LOS
         t.set_bbox(dict(facecolor='white', alpha=0., linewidth=0))
+        cfp.plot(x=FTdata_Othin[i,0], y=FTdata_Othin[i,1], xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], ylog=True, label=FTlabels[0], legend_loc='upper right', save=outpath+str(angle)+"_FT.pdf")
