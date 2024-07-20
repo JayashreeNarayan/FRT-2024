@@ -203,7 +203,7 @@ if __name__ == "__main__":
                     # Creating the PDF for the optically thin case - 1st-moment, without filtering
                     pdf_obj = cfp.get_pdf(data)
                     sigma = round(np.std(data),3)
-                    cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="pdf")
+                    cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="pdf", bin_width=1)
                     cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos, text=r"1st-moment"+"\n"+img_names[1]+r"; $\sigma$ = "+str(sigma)+r"$~\mathrm{km\,s^{-1}}$", axes_format=["",None], fontsize='small', backgroundcolor="white", transform=plt.gca().transAxes)
                     t = plt.text(LOS_PDF_labels_xpos, LOS_PDF_labels_ypos, LOS_labels[get_LOS(file)] , transform=plt.gca().transAxes) # for LOS
                     t.set_bbox(dict(facecolor='white', alpha=0, linewidth=0))
@@ -249,7 +249,7 @@ if __name__ == "__main__":
 
                     # PDF of the low-pass-filtered data - 1st-moment
                     pdf_obj = cfp.get_pdf(corrected_data_othin)
-                    cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="histogram", axes_format=["",""])
+                    cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="histogram", axes_format=["",""], bin_width=1)
                     sigma = round(np.std(corrected_data_othin),3)
                     cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos, text=r"Low-pass-filtered 1st-moment"+"\n"+img_names[1]+r"; $\sigma$ = "+str(sigma)+r"$~\mathrm{km\,s^{-1}}$", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
                     t = plt.text(LOS_PDF_labels_xpos, LOS_PDF_labels_ypos, LOS_labels[get_LOS(file)] , transform=plt.gca().transAxes) # for LOS
@@ -337,7 +337,7 @@ if __name__ == "__main__":
 
                 # Make PDF of orginal mom1 and plot
                 pdf_obj = cfp.get_pdf(moms[1])
-                cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="pdf")
+                cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="pdf", bin_width=1)
                 sigma = round(np.std(moms[1]),3)
                 cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos, text=r"1st-moment"+"\n"+img_names[0]+r"; $\sigma$ = "+str(sigma)+r"$~\mathrm{km\,s^{-1}}$",  fontsize='small', backgroundcolor="white", transform=plt.gca().transAxes)
                 t = plt.text(LOS_PDF_labels_xpos, LOS_PDF_labels_ypos, LOS_labels[get_LOS(file)] , transform=plt.gca().transAxes) # for LOS
@@ -385,14 +385,12 @@ if __name__ == "__main__":
 
                 # Make PDF of low-pass-filtered moment 1 and also plot it
                 pdf_obj = cfp.get_pdf(corrected_data)
-                cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="histogram")
+                cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="histogram", bin_width=1)
                 sigma = round(np.std(corrected_data),3)
                 cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos, text=r"Low-pass-filtered 1st-moment"+"\n"+img_names[0]+r"; $\sigma$ = "+str(sigma)+r"$~\mathrm{km\,s^{-1}}$", axes_format=[None,""], backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
                 t = plt.text(LOS_PDF_labels_xpos, LOS_PDF_labels_ypos, LOS_labels[get_LOS(file)] , transform=plt.gca().transAxes) # for LOS
                 t.set_bbox(dict(facecolor='white', alpha=0., linewidth=0))
                 cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected_PDF.pdf", xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[ymin,ymax])
-
-            FTdata_CO_10 = np.array(FTdata_CO_10)
         
         # PPV cubes for CO (2-1) lines - 0 moment map and consequently first moment map; smoothing and also gaussian correction
         if action == choices[3]:
@@ -464,7 +462,7 @@ if __name__ == "__main__":
 
                 # Make PDF of orginal mom1 and plot
                 pdf_obj = cfp.get_pdf(moms[1])
-                cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="pdf")
+                cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="pdf", bin_width=1)
                 sigma = round(np.std(moms[1]),3)
                 cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos, text=r"1st-moment"+"\n"+img_names[2]+r"; $\sigma$ = "+str(sigma)+r"$~\mathrm{km\,s^{-1}}$",  fontsize='small', backgroundcolor="white", transform=plt.gca().transAxes)
                 t = plt.text(LOS_PDF_labels_xpos, LOS_PDF_labels_ypos, LOS_labels[get_LOS(file)] , transform=plt.gca().transAxes) # for LOS
@@ -512,7 +510,7 @@ if __name__ == "__main__":
 
                 # Make PDF of low-pass-filtered moment 1 and also plot it
                 pdf_obj = cfp.get_pdf(corrected_data)
-                cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="histogram")
+                cfp.plot(x=pdf_obj.bin_edges, y=pdf_obj.pdf, type="histogram", bin_width=1)
                 sigma = round(np.std(corrected_data),3)
                 cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos, text=r"Low-pass-filtered 1st-moment"+"\n"+img_names[2]+r"; $\sigma$ = "+str(sigma)+r"$~\mathrm{km\,s^{-1}}$", axes_format=[None,""], backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
                 t = plt.text(LOS_PDF_labels_xpos, LOS_PDF_labels_ypos, LOS_labels[get_LOS(file)] , transform=plt.gca().transAxes) # for LOS
@@ -520,18 +518,18 @@ if __name__ == "__main__":
                 cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected_PDF.pdf", xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[ymin,ymax])
 
             FTdata_CO_21 = np.array(FTdata_CO_21)
-        
+            FTdata_CO_10 = np.array(FTdata_CO_10)        
 
     # Plotting the FTs
     for i, angle in enumerate(angles):
         # FT between CO (1-0) and Optically thin
-        cfp.plot(x=FTdata_CO_10[i,0], y=FTdata_CO_10[i,1], xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], ylog=True, label=img_names[0])
+        cfp.plot(x=FTdata_CO_10[i,0], y=FTdata_CO_10[i,1], xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], ylog=True,  xlog=True, label=img_names[0])
         t = plt.text(LOS_PDF_labels_xpos, LOS_PDF_labels_ypos-0.2, LOS_labels[i] , transform=plt.gca().transAxes) # for LOS
         t.set_bbox(dict(facecolor='white', alpha=0., linewidth=0))
         cfp.plot(x=FTdata_Othin[i,0], y=FTdata_Othin[i,1], xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], ylog=True, label=img_names[1], legend_loc='upper right', save=outpath+str(angle)+"_FT.pdf")
 
         # FT between CO (2-1) and Optically thin
-        cfp.plot(x=FTdata_CO_21[i,0], y=FTdata_CO_21[i,1], xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], ylog=True, label=img_names[2])
+        cfp.plot(x=FTdata_CO_21[i,0], y=FTdata_CO_21[i,1], xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], ylog=True,  xlog=True, label=img_names[2])
         t = plt.text(LOS_PDF_labels_xpos, LOS_PDF_labels_ypos-0.2, LOS_labels[i] , transform=plt.gca().transAxes) # for LOS
         t.set_bbox(dict(facecolor='white', alpha=0., linewidth=0))
         cfp.plot(x=FTdata_Othin[i,0], y=FTdata_Othin[i,1], xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], ylog=True, label=img_names[1], legend_loc='upper right', save=outpath+str(angle)+"_J21_FT.pdf")
