@@ -517,8 +517,8 @@ if __name__ == "__main__":
                 t.set_bbox(dict(facecolor='white', alpha=0., linewidth=0))
                 cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected_PDF.pdf", xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[ymin,ymax])
 
-            FTdata_CO_21 = np.array(FTdata_CO_21)
-            FTdata_CO_10 = np.array(FTdata_CO_10)        
+            FTdata_CO_21 = np.array(FTdata_CO_21, dtype=object)
+            FTdata_CO_10 = np.array(FTdata_CO_10, dtype=object)        
 
     # Plotting the FTs
     for i, angle in enumerate(angles):
