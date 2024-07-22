@@ -536,17 +536,19 @@ if __name__ == "__main__":
     # Plotting the FTs
     for i, angle in enumerate(angles):
         # FT between CO (1-0) and Optically thin
-        ax1 = cfp.plot(x=FTdata_CO_10[i,0], y=FTdata_CO_10[i,1], xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], ylog=True,  xlog=True, xlim=[kmin,kmax], label=img_names[0])
+        plt1, fig1, ax1 = cfp.plot(x=FTdata_CO_10[i,0], y=FTdata_CO_10[i,1], xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], ylog=True,  xlog=True, xlim=[kmin,kmax], label=img_names[0])
         secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
-        secax1.set_xlabel('Parsec')
-        t = plt.text(LOS_PDF_labels_xpos, LOS_PDF_labels_ypos-0.2, LOS_labels[i] , transform=plt.gca().transAxes) # for LOS
+        secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
+        secax1.tick_params(top=False)
+        t = plt.text(LOS_PDF_labels_xpos, LOS_PDF_labels_ypos, LOS_labels[i] , transform=plt.gca().transAxes) # for LOS
         t.set_bbox(dict(facecolor='white', alpha=0., linewidth=0))
         cfp.plot(x=FTdata_Othin[i,0], y=FTdata_Othin[i,1], xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], ylog=True, xlog=True, xlim=[kmin,kmax], label=img_names[1], legend_loc='lower left', save=outpath+str(angle)+"_FT.pdf")
 
         # FT between CO (2-1) and Optically thin
-        ax2 = cfp.plot(x=FTdata_CO_21[i,0], y=FTdata_CO_21[i,1], xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], ylog=True,  xlog=True, xlim=[kmin,kmax], label=img_names[2])
+        plt2, fig2, ax2 = cfp.plot(x=FTdata_CO_21[i,0], y=FTdata_CO_21[i,1], xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], ylog=True,  xlog=True, xlim=[kmin,kmax], label=img_names[2])
         secax2 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
-        secax2.set_xlabel('Parsec')
-        t = plt.text(LOS_PDF_labels_xpos, LOS_PDF_labels_ypos-0.2, LOS_labels[i] , transform=plt.gca().transAxes) # for LOS
+        secax2.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
+        secax2.tick_params(top=False, left=True, bottom=True, )
+        t = plt.text(LOS_PDF_labels_xpos, LOS_PDF_labels_ypos, LOS_labels[i] , transform=plt.gca().transAxes) # for LOS
         t.set_bbox(dict(facecolor='white', alpha=0., linewidth=0))
         cfp.plot(x=FTdata_Othin[i,0], y=FTdata_Othin[i,1], xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], ylog=True, xlog=True, xlim=[kmin,kmax], label=img_names[1], legend_loc='lower left', save=outpath+str(angle)+"_J21_FT.pdf")
