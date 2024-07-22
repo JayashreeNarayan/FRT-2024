@@ -335,7 +335,7 @@ if __name__ == "__main__":
                     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
                     t = plt.text(LOS_labels_xpos, LOS_labels_ypos, LOS_labels[get_LOS(file)] , transform=plt.gca().transAxes) # for LOS
                     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))                        
-                    cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_"+moment_map+".pdf")
+                    cfp.plot(xlabel="", ylabel=ylabel, save=outpath+file[:-4]+"_"+moment_map+".pdf")
 
                     # Set with individual colorbars (Fig. 1)
                     cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar = True, cmap_label=cmap_labels[imom], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
@@ -365,7 +365,7 @@ if __name__ == "__main__":
                 t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
                 t = plt.text(LOS_labels_xpos, LOS_labels_ypos, LOS_labels[get_LOS(file)] , transform=plt.gca().transAxes) # for LOS
                 t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-                cfp.plot(xlabel=xlabel, ylabel="", save=outpath+file[:-4]+"_"+moment_maps[1]+"_smooth.pdf")
+                cfp.plot(xlabel="", ylabel="", save=outpath+file[:-4]+"_"+moment_maps[1]+"_smooth.pdf")
 
                 # Generating corrected map and then plotting it
                 print("Now subtracting low-pass-filtered moment 1")
@@ -375,7 +375,7 @@ if __name__ == "__main__":
                 t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
                 t = plt.text(LOS_labels_xpos, LOS_labels_ypos, LOS_labels[get_LOS(file)] , transform=plt.gca().transAxes) # for LOS
                 t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-                cfp.plot(xlabel=xlabel, ylabel="", save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected.pdf")
+                cfp.plot(xlabel="", ylabel="", save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected.pdf")
 
                 # For Fig. 4 - FMM summary plot
                 if get_LOS(file) == 0 : axis = ["",None]
