@@ -415,6 +415,7 @@ if __name__ == "__main__":
 
                         # plotting a common colorbar, only for seismic, universal vmin and vmax
                         cfp.plot_colorbar(cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, label=cmap_labels[1], save=outpath+cmaps[1]+"_colorbar.pdf", panels=2)
+                        cfp.plot_colorbar(cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, label=cmap_labels[1], save=outpath+cmaps[1]+"_colorbar_p1.pdf", panels=1)
             
                 # Smoothing (low-pass filtering) of moment 1
                 print("Now doing low-pass filter on moment 1")
@@ -655,7 +656,7 @@ if __name__ == "__main__":
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
     secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
     secax1.tick_params(which = 'major', top=False)
-    cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.55, text=r"Low-pass filtered", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
+    cfp.plot(x=img_PDF_names_xpos+0.1, y=img_PDF_names_ypos-0.55, text=r"Low-pass filtered", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(legend_loc='lower left', xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], fontsize='small', ylog=True,  xlog=True, xlim=[kmin,kmax], save=outpath+"FT_after.pdf")
 
     # Plotting the FTs - before correction, 1tff
@@ -698,17 +699,17 @@ if __name__ == "__main__":
 
     # Plotting the PDFs
     # for optically thin case
-    cfp.plot(x=PDF_obj_bins[0], y=PDF_obj_pdf[0], type="pdf", bar_width=1, label=PDF_img_names(0, sigma[0]), linestyle=linestyle[0])
-    cfp.plot(x=PDF_obj_bins[1], y=PDF_obj_pdf[1], type="pdf", bar_width=1, label=PDF_img_names(1, sigma[1]), linestyle=linestyle[1])
-    cfp.plot(x=PDF_obj_bins[2], y=PDF_obj_pdf[2], type="pdf", bar_width=1, label=PDF_img_names(2, sigma[2]), linestyle=linestyle[2])
+    cfp.plot(x=PDF_obj_bins[0], y=PDF_obj_pdf[0], type="pdf", bar_width=1, label=PDF_img_names(0, sigma[0]))
+    cfp.plot(x=PDF_obj_bins[1], y=PDF_obj_pdf[1], type="pdf", bar_width=1, label=PDF_img_names(1, sigma[1]))
+    cfp.plot(x=PDF_obj_bins[2], y=PDF_obj_pdf[2], type="pdf", bar_width=1, label=PDF_img_names(2, sigma[2]))
     
     cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.2, text=r"1st-moment", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[ymin,ymax], legend_loc='upper left', save=outpath+"before_correction_PDF.pdf")
 
     # for optically Thick case
-    cfp.plot(x=PDF_obj_bins_corrected[0], y=PDF_obj_pdf_corrected[0], type="pdf", bar_width=1, label=PDF_img_names(0, sigma_corrected[0]), linestyle=linestyle[0])
-    cfp.plot(x=PDF_obj_bins_corrected[1], y=PDF_obj_pdf_corrected[1], type="pdf", bar_width=1, label=PDF_img_names(1, sigma_corrected[1]), linestyle=linestyle[1])
-    cfp.plot(x=PDF_obj_bins_corrected[2], y=PDF_obj_pdf_corrected[2], type="pdf", bar_width=1, label=PDF_img_names(2, sigma_corrected[2]), linestyle=linestyle[2])
+    cfp.plot(x=PDF_obj_bins_corrected[0], y=PDF_obj_pdf_corrected[0], type="pdf", bar_width=1, label=PDF_img_names(0, sigma_corrected[0]))
+    cfp.plot(x=PDF_obj_bins_corrected[1], y=PDF_obj_pdf_corrected[1], type="pdf", bar_width=1, label=PDF_img_names(1, sigma_corrected[1]))
+    cfp.plot(x=PDF_obj_bins_corrected[2], y=PDF_obj_pdf_corrected[2], type="pdf", bar_width=1, label=PDF_img_names(2, sigma_corrected[2]))
     
     cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.2, text=r"Low-pass filtered", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[ymin,ymax], legend_loc='upper left', save=outpath+"after_correction_PDF.pdf")
