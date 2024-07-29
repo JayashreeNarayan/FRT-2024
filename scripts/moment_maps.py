@@ -243,9 +243,9 @@ if __name__ == "__main__":
                     corrected_data_othin = data - smooth_data
                     if get_LOS(file) == 1:
                         cfp.plot_map(corrected_data_othin, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=[None,None], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                        t = plt.text(img_names_xpos, img_names_ypos, img_names[1] , transform=plt.gca().transAxes) 
+                        t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes) 
                         t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-                        cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected.pdf")
+                        cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_corrected.pdf")
 
                     # For FMM summary plot
                     if get_LOS(file) == 0 : axis = ["",None]
@@ -334,9 +334,9 @@ if __name__ == "__main__":
                     # Gaussian-correction of the smoothed data
                     corrected_data_othin = data - smooth_data
                     cfp.plot_map(corrected_data_othin, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=[None,None], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                    t = plt.text(img_names_xpos, img_names_ypos, img_names[1] , transform=plt.gca().transAxes) 
+                    t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes) 
                     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-                    cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected_SE.pdf")
+                    cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_corrected_SE.pdf")
 
                     # Fourier Analysis Data for Optically thin maps
                     K_P = fourier_spectrum(corrected_data_othin)
@@ -431,10 +431,10 @@ if __name__ == "__main__":
                     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
                     cfp.plot(xlabel=xlabel, ylabel="", save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected.pdf")
 
-                # For Fig. 4 - FMM summary plot
+                # For A1 - FMM summary plot
                 if get_LOS(file) == 0 : axis = ["",""]
                 if get_LOS(file) == 1 : axis = ["",""]
-                if get_LOS(file) == 2 : axis = ["",None]
+                if get_LOS(file) == 2 : axis = [None,""]
                 cfp.plot_map(corrected_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=axis, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # Done for the 1st moment maps separately, needed for Appen. Fig. 
                 t = plt.text(img_names_xpos, img_names_ypos, img_names[1] , transform=plt.gca().transAxes)
                 t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
@@ -610,7 +610,7 @@ if __name__ == "__main__":
                 # For Fig. 4 - FMM summary plot
                 if get_LOS(file) == 0 : axis = ["",""]
                 if get_LOS(file) == 1 : axis = ["",""]
-                if get_LOS(file) == 2 : axis = ["",None]
+                if get_LOS(file) == 2 : axis = [None,""]
                 cfp.plot_map(corrected_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=axis, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # Done for the 1st moment maps separately, needed for Appen. Fig. 
                 t = plt.text(img_names_xpos, img_names_ypos, img_names[2] , transform=plt.gca().transAxes)
                 t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
@@ -675,8 +675,8 @@ if __name__ == "__main__":
         cfp.plot(x=X, y=Y, alpha=0.5)
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
     secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
-    secax1.tick_params(axis='x', direction='in', length=0, which = 'minor', top=False, bottom=True, left=True, right=True)
-    cfp.plot(x=img_PDF_names_xpos+0.002, y=img_PDF_names_ypos-0.55, text=r"Low-pass filtered", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
+    secax1.tick_params(axis='x', direction='in', length=0, which = 'minor', top=False, bottom=True)
+    cfp.plot(x=img_PDF_names_xpos+0.003, y=img_PDF_names_ypos-0.55, text=r"Low-pass filtered", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(legend_loc='lower left', xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], fontsize='small', ylog=True,  xlog=True, xlim=[kmin,kmax], save=outpath+"FT_after.pdf")
     
     # Plotting the FTs - after correction, SimEnd
@@ -695,7 +695,7 @@ if __name__ == "__main__":
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
     secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
     secax1.tick_params(axis='x', direction='in', length=0, which = 'minor', top=False, bottom=True)
-    cfp.plot(x=img_PDF_names_xpos+0.002, y=img_PDF_names_ypos-0.55, text=r"1st-moment", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
+    cfp.plot(x=img_PDF_names_xpos+0.004, y=img_PDF_names_ypos-0.6, text=r"1st-moment", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(legend_loc='lower left', xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], fontsize='small', ylog=True,  xlog=True, xlim=[kmin,kmax], save=outpath+"FT_after_SE.pdf")
 
     # Plotting the PDFs
