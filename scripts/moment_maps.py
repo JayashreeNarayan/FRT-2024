@@ -249,8 +249,8 @@ if __name__ == "__main__":
 
                     # For FMM summary plot
                     if get_LOS(file) == 0 : axis = ["",None]
-                    if get_LOS(file) == 1 : axis = ["",""]
-                    if get_LOS(file) == 2 : axis = ["",""]
+                    if get_LOS(file) == 1 : axis = ["",None]
+                    if get_LOS(file) == 2 : axis = [None,None]
                     cfp.plot_map(corrected_data_othin, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=axis, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
                     t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes)
                     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
@@ -414,8 +414,9 @@ if __name__ == "__main__":
                         cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_"+moment_map+"_cb.pdf")
 
                         # plotting a common colorbar, only for seismic, universal vmin and vmax
-                        cfp.plot_colorbar(cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, label=cmap_labels[1], save=outpath+cmaps[1]+"_colorbar.pdf", panels=2)
+                        cfp.plot_colorbar(cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, label=cmap_labels[1], save=outpath+cmaps[1]+"_colorbar_p2.pdf", panels=2)
                         cfp.plot_colorbar(cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, label=cmap_labels[1], save=outpath+cmaps[1]+"_colorbar_p1.pdf", panels=1)
+                        cfp.plot_colorbar(cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, label=cmap_labels[1], save=outpath+cmaps[1]+"_colorbar_p3.pdf", panels=3)
             
                 # Smoothing (low-pass filtering) of moment 1
                 print("Now doing low-pass filter on moment 1")
@@ -431,9 +432,9 @@ if __name__ == "__main__":
                     cfp.plot(xlabel=xlabel, ylabel="", save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected.pdf")
 
                 # For Fig. 4 - FMM summary plot
-                if get_LOS(file) == 0 : axis = ["",None]
+                if get_LOS(file) == 0 : axis = ["",""]
                 if get_LOS(file) == 1 : axis = ["",""]
-                if get_LOS(file) == 2 : axis = ["",""]
+                if get_LOS(file) == 2 : axis = ["",None]
                 cfp.plot_map(corrected_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=axis, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # Done for the 1st moment maps separately, needed for Appen. Fig. 
                 t = plt.text(img_names_xpos, img_names_ypos, img_names[1] , transform=plt.gca().transAxes)
                 t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
@@ -445,7 +446,7 @@ if __name__ == "__main__":
                 if axis[1] == None: ylabel = ylabel
                 cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_FMM_sum.pdf")
 
-                # Fourier Analysis Data for Synthetic CO
+                # Fourier Analysis Data for Synthetic CO (1-0)
                 if get_LOS(file) == 1:
                     K_P = fourier_spectrum(corrected_data)
                     FTdata.append(K_P)
@@ -607,9 +608,9 @@ if __name__ == "__main__":
                     cfp.plot(xlabel=xlabel, ylabel="", save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected.pdf")
 
                 # For Fig. 4 - FMM summary plot
-                if get_LOS(file) == 0 : axis = [None,None]
-                if get_LOS(file) == 1 : axis = [None,""]
-                if get_LOS(file) == 2 : axis = [None,""]
+                if get_LOS(file) == 0 : axis = ["",""]
+                if get_LOS(file) == 1 : axis = ["",""]
+                if get_LOS(file) == 2 : axis = ["",None]
                 cfp.plot_map(corrected_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=axis, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # Done for the 1st moment maps separately, needed for Appen. Fig. 
                 t = plt.text(img_names_xpos, img_names_ypos, img_names[2] , transform=plt.gca().transAxes)
                 t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
@@ -640,25 +641,6 @@ if __name__ == "__main__":
                     PDF_obj_pdf_corrected.append(K.pdf)
                     sigma_corrected.append(round(np.std(corrected_data),3))
 
-    # Plotting the FTs - after correction, 1tff
-    FTdata = np.array(FTdata, dtype=object)
-    for i in range(len(FTdata)):
-        cfp.plot(x=FTdata[i,0], y=FTdata[i,1], label=img_names[i], linestyle=linestyle[i])
-        print(FTdict_values(i, FTdata))
-        K = cfp.fit(func, xdat=FTdata[i,0][1:], ydat=FTdata[i,1][1:], params=FTdict_values(i, FTdata))
-        print(K.perr)
-        Y=[]; X=[]
-        a = K.popt[0]; n = K.popt[1]
-        for j in FTdata[0,0]:
-            Y.append(a*(j**n))
-            X.append(j)
-        cfp.plot(x=X, y=Y, alpha=0.5)
-    secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
-    secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
-    secax1.tick_params(which = 'major', top=False)
-    cfp.plot(x=img_PDF_names_xpos+0.1, y=img_PDF_names_ypos-0.55, text=r"Low-pass filtered", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
-    cfp.plot(legend_loc='lower left', xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], fontsize='small', ylog=True,  xlog=True, xlim=[kmin,kmax], save=outpath+"FT_after.pdf")
-
     # Plotting the FTs - before correction, 1tff
     FTdata_raw = np.array(FTdata_raw, dtype=object)
     for i in range(len(FTdata_raw)):
@@ -674,9 +656,28 @@ if __name__ == "__main__":
         cfp.plot(x=X, y=Y, alpha=0.5)
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
     secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
-    secax1.tick_params(which = 'major', top=False)
-    cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.55, text=r"1st-moment", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
+    secax1.tick_params(axis='x', direction='in', length=0, which = 'minor', top=False, bottom=True)
+    cfp.plot(x=img_PDF_names_xpos+0.002, y=img_PDF_names_ypos-0.55, text=r"1st-moment", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(legend_loc='lower left', xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1],  fontsize='small', ylog=True,  xlog=True, xlim=[kmin,kmax], save=outpath+"FT_before.pdf")
+
+    # Plotting the FTs - after correction, 1tff
+    FTdata = np.array(FTdata, dtype=object)
+    for i in range(len(FTdata)):
+        cfp.plot(x=FTdata[i,0], y=FTdata[i,1], label=img_names[i], linestyle=linestyle[i])
+        print(FTdict_values(i, FTdata))
+        K = cfp.fit(func, xdat=FTdata[i,0][1:], ydat=FTdata[i,1][1:], params=FTdict_values(i, FTdata))
+        print(K.perr)
+        Y=[]; X=[]
+        a = K.popt[0]; n = K.popt[1]
+        for j in FTdata[0,0]:
+            Y.append(a*(j**n))
+            X.append(j)
+        cfp.plot(x=X, y=Y, alpha=0.5)
+    secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
+    secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
+    secax1.tick_params(axis='x', direction='in', length=0, which = 'minor', top=False, bottom=True, left=True, right=True)
+    cfp.plot(x=img_PDF_names_xpos+0.002, y=img_PDF_names_ypos-0.55, text=r"Low-pass filtered", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
+    cfp.plot(legend_loc='lower left', xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], fontsize='small', ylog=True,  xlog=True, xlim=[kmin,kmax], save=outpath+"FT_after.pdf")
     
     # Plotting the FTs - after correction, SimEnd
     FTdata_SE = np.array(FTdata_SE, dtype=object)
@@ -693,8 +694,8 @@ if __name__ == "__main__":
         cfp.plot(x=X, y=Y, alpha=0.5)
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
     secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
-    secax1.tick_params(which = 'major', top=False)
-    cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.55, text=r"1st-moment", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
+    secax1.tick_params(axis='x', direction='in', length=0, which = 'minor', top=False, bottom=True)
+    cfp.plot(x=img_PDF_names_xpos+0.002, y=img_PDF_names_ypos-0.55, text=r"1st-moment", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(legend_loc='lower left', xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], fontsize='small', ylog=True,  xlog=True, xlim=[kmin,kmax], save=outpath+"FT_after_SE.pdf")
 
     # Plotting the PDFs
