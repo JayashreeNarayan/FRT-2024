@@ -158,6 +158,7 @@ if __name__ == "__main__":
     all_sigmas =[]
 
     linestyle=['solid', 'dotted', 'dashed', 'dashdot', 'loosely dotted']
+    line_colours=['black', 'magenta', 'blue']
 
     moment_maps = ["mom0", "mom1", "mom2"] # Data for all moment maps
     cmaps = ['plasma', 'seismic', 'viridis']
@@ -269,7 +270,7 @@ if __name__ == "__main__":
                         sigma_corrected.append(round(np.std(corrected_data_othin),3))
 
             # Generating graphs for For SimEnd time 
-            files = ["FMM_45_SE.npy", "SMM_45_SE.npy", "ZMM_45_SE.npy"]
+            files = ["FMM_45.0_SE.npy", "SMM_45.0_SE.npy", "ZMM_45.0_SE.npy"]
             for file in files:
                 data = np.load(path+"/Data_SimEnd/Othin/"+file)
                 data = resize_45(data, "2D")
@@ -673,7 +674,7 @@ if __name__ == "__main__":
                 
                     # For Appen. Fig.
                     cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar=False, axes_format=["", ""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                    t = plt.text(img_names_xpos, img_names_ypos, img_names[1] , transform=plt.gca().transAxes)
+                    t = plt.text(img_names_xpos, img_names_ypos, img_names[2] , transform=plt.gca().transAxes)
                     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))                      
                     cfp.plot(xlabel="", ylabel="", save=outpath+file[:-4]+"_"+moment_map+"_SE.pdf")
 
@@ -693,7 +694,7 @@ if __name__ == "__main__":
                 all_sigmas.append(('SE', file, round(np.std(corrected_data),3)))
 
                 cfp.plot_map(corrected_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig. 
-                t = plt.text(img_names_xpos, img_names_ypos, img_names[1] , transform=plt.gca().transAxes)
+                t = plt.text(img_names_xpos, img_names_ypos, img_names[2] , transform=plt.gca().transAxes)
                 t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
                 cfp.plot(xlabel=xlabel, ylabel="", save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected_SE.pdf")
 
@@ -709,8 +710,8 @@ if __name__ == "__main__":
 
     # Plotting the FTs - after correction, 1tff
     for i in range(len(FTdata)):
-        x = FTdata[i][0][:kmax]; y = FTdata[i][1][:kmax]
-        cfp.plot(x=x, y=y, label=img_names[i])
+        x=FTdata[i][0][:kmax]; y=FTdata[i][1][:kmax]
+        cfp.plot(x=x, y=y, label=img_names[i], color=line_colours[i])
         #fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]))
         #a = fit_values.popt[0]; n = fit_values.popt[1]
         #cfp.plot(x=x[kmin:], y=np.exp(func(x,*fit_values.popt)), alpha=0.5)
@@ -721,35 +722,24 @@ if __name__ == "__main__":
     cfp.plot(legend_loc='lower left', xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], fontsize='small', ylog=True,  xlog=True, save=outpath+"FT_after.pdf")
     
     # Plotting the FTs - after correction, SimEnd
-    FTdata_SE = np.array(FTdata_SE, dtype=object)
     for i in range(len(FTdata_SE)):
-        cfp.plot(x=FTdata_SE[i,0][:kmax], y=FTdata_SE[i,1][:kmax], label=img_names[i])
-        K = cfp.fit(func, xdat=FTdata_SE[i,0][1:], ydat=FTdata_SE[i,1][1:])
-        Y=[]; X=[]
-        a = K.popt[0]; n = K.popt[1]
-        for j in FTdata_SE[0,0]:
-            Y.append(a*(j**n))
-            X.append(j)
-        cfp.plot(x=X, y=Y, alpha=0.5)
+        x=FTdata_SE[i][0][:kmax]; y=FTdata_SE[i][1][:kmax]
+        cfp.plot(x=x, y=y, label=img_names[i], color=line_colours[i])
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
     secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
     secax1.tick_params(axis='x', direction='in', length=0, which = 'minor', top=False, bottom=True)
-    cfp.plot(x=img_PDF_names_xpos+0.004, y=img_PDF_names_ypos-0.6, text=r"1st-moment", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
+    cfp.plot(x=img_PDF_names_xpos+0.003, y=img_PDF_names_ypos-0.55, text=r"1st-moment", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(legend_loc='lower left', xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], fontsize='small', ylog=True,  xlog=True, save=outpath+"FT_after_SE.pdf")
 
     # Plotting the PDFs for after isolation
-    cfp.plot(x=PDF_obj_bins_corrected[0], y=PDF_obj_pdf_corrected[0], type='pdf', label=PDF_img_names(0, sigma_corrected[0]))
-    cfp.plot(x=PDF_obj_bins_corrected[1], y=PDF_obj_pdf_corrected[1], type='pdf', label=PDF_img_names(1, sigma_corrected[1]))
-    cfp.plot(x=PDF_obj_bins_corrected[2], y=PDF_obj_pdf_corrected[2], type='pdf', label=PDF_img_names(2, sigma_corrected[2]))
-    
+    for i in range(len(PDF_obj_bins_corrected)):
+        cfp.plot(x=PDF_obj_bins_corrected[i], y=PDF_obj_pdf_corrected[i], type='pdf', label=PDF_img_names(i, sigma_corrected[i]), color=line_colours[i])
     cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.2, text=r"Turbulence Isolated", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[ymin,ymax], legend_loc='upper left', save=outpath+"after_correction_PDF.pdf")
 
     # Plotting the PDFs for after isolation - FOR SIMEND
-    cfp.plot(x=PDF_obj_bins_SE[0], y=PDF_obj_pdf_corrected[0], type='pdf', label=PDF_img_names(0, sigma_SE[0]))
-    cfp.plot(x=PDF_obj_bins_SE[1], y=PDF_obj_pdf_corrected[1], type='pdf', label=PDF_img_names(1, sigma_SE[1]))
-    cfp.plot(x=PDF_obj_bins_SE[2], y=PDF_obj_pdf_corrected[2], type='pdf', label=PDF_img_names(2, sigma_SE[2])) 
-    
+    for i in range(len(PDF_obj_bins_SE)):    
+        cfp.plot(x=PDF_obj_bins_SE[i], y=PDF_obj_pdf_corrected[i], type='pdf', label=PDF_img_names(i, sigma_SE[i]), color=line_colours[i])
     cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.2, text=r"Turbulence Isolated", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[ymin,ymax], legend_loc='upper left', save=outpath+"after_correction_SE_PDF.pdf")
 
