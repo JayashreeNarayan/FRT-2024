@@ -84,7 +84,7 @@ def PDF_img_names(i, sigma):
     return img_names[i]+" "+r"; $\sigma$ = "+str(sigma)+r"$~\mathrm{km\,s^{-1}}$"
 
 def func(x,a,n):
-    return np.log(a*(x**n))
+    return a*(x**n)
 
 # ===== the following applies in case we are running this in script mode =====
 if __name__ == "__main__":    
@@ -129,23 +129,33 @@ if __name__ == "__main__":
 
     # defining the min and max of the maps universally so that all of them can be compared
     vmin_0 = 0. # zeroth moment map
-    vmax_0 = 16.0
+    vmax_0 = 6.5
     vmin_1 = -0.55 # 1st
     vmax_1 = 0.55
     vmin_2 = 0. # 2nd
-    vmax_2 = 0.7
+    vmax_2 = 0.4
+
+    # defining the min and max of the maps - for SimEnd alone
+    vmax_0_SE = 12
+    vmax_2_SE = 0.6
 
     # defining kmin and kmax for FT spectra graphs:
     kmin = 3
     kmax = 40
 
     # PDF objects and sigmas
+    PDF_obj_bins = []
+    PDF_obj_pdf = []
+    sigma = []
+    
     PDF_obj_bins_corrected = []
     PDF_obj_pdf_corrected = []
     sigma_corrected = []
     PDF_obj_bins_SE = []
     PDF_obj_pdf_SE = []
     sigma_SE = []
+    
+    all_sigmas =[]
 
     linestyle=['solid', 'dotted', 'dashed', 'dashdot', 'loosely dotted']
 
@@ -223,6 +233,7 @@ if __name__ == "__main__":
 
                     # Gaussian-correction of the smoothed data
                     corrected_data_othin = data - smooth_data
+                    all_sigmas.append((file , round(np.std(corrected_data_othin),3)))
                     if get_LOS(file) == 1:
                         cfp.plot_map(corrected_data_othin, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=[None,None], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
                         t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes) 
@@ -258,7 +269,7 @@ if __name__ == "__main__":
                         sigma_corrected.append(round(np.std(corrected_data_othin),3))
 
             # Generating graphs for For SimEnd time 
-            files = ["FMM45.npy", "SMM45.npy", "ZMM.npy"]
+            files = ["FMM_45_SE.npy", "SMM_45_SE.npy", "ZMM_45_SE.npy"]
             for file in files:
                 data = np.load(path+"/Data_SimEnd/Othin/"+file)
                 data = resize_45(data, "2D")
@@ -266,26 +277,26 @@ if __name__ == "__main__":
                 ylabel = xyzlabels[3] # combination of x and z on the vertical
 
                 if file[:1] == "S": # Since the 2nd moment map needs different plot variables
-                    cfp.plot_map(data, cmap=cmaps[2], vmin=vmin_2, vmax=vmax_2, colorbar = False, cmap_label=cmap_labels[2], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # colorbar needed since this is for Fig.1
+                    cfp.plot_map(data, cmap=cmaps[2], vmin=vmin_2, vmax=vmax_2_SE, colorbar = False, cmap_label=cmap_labels[2], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # colorbar needed since this is for Fig.1
                     t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes) # for img_name
                     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
                     cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_SE.pdf")
 
                     # plotting the same with individual colorbars for Fig. 1 eqv.
-                    cfp.plot_map(data, cmap=cmaps[2], vmin=vmin_2, vmax=vmax_2, colorbar = True, cmap_label=cmap_labels[2], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                    cfp.plot_map(data, cmap=cmaps[2], vmin=vmin_2, vmax=vmax_2_SE, colorbar = True, cmap_label=cmap_labels[2], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
                     t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes)
                     t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
                     cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_cb_SE.pdf") # cb = 'colorbar'
 
                 elif file[:1] == "Z": # zeroth moment map has separate plot variables, and is needed only for Fig. 1
                     data = rescale_data(data)
-                    cfp.plot_map(data, cmap=cmaps[0], vmin=vmin_0, vmax=vmax_0, colorbar = False, cmap_label=cmap_labels[0], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # colorbar needed since this is for Fig.1
+                    cfp.plot_map(data, cmap=cmaps[0], vmin=vmin_0, vmax=vmax_0_SE, colorbar = False, cmap_label=cmap_labels[0], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # colorbar needed since this is for Fig.1
                     t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes)
                     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
                     cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_SE.pdf")
 
                     # plotting the same with individual colorbars for Fig.1 eqv
-                    cfp.plot_map(data, cmap=cmaps[0], vmin=vmin_0, vmax=vmax_0, colorbar = True, cmap_label=cmap_labels[0], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                    cfp.plot_map(data, cmap=cmaps[0], vmin=vmin_0, vmax=vmax_0_SE, colorbar = True, cmap_label=cmap_labels[0], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
                     t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes)
                     t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
                     cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_cb_SE.pdf") # cb = 'colorbar'
@@ -308,6 +319,7 @@ if __name__ == "__main__":
 
                     # Gaussian-correction of the smoothed data
                     corrected_data_othin = data - smooth_data
+                    all_sigmas.append(('SE', file , round(np.std(corrected_data_othin),3)))
                     cfp.plot_map(corrected_data_othin, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=[None,None], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
                     t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes) 
                     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
@@ -407,6 +419,8 @@ if __name__ == "__main__":
                 # Generating corrected map and then plotting it
                 print("Now subtracting turbulence isolated moment 1")
                 corrected_data = moms[1] - smooth_mom1 # subtraction
+                all_sigmas.append((file, round(np.std(corrected_data),3)))
+
                 if get_LOS(file) == 1:
                     cfp.plot_map(corrected_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig. 
                     t = plt.text(img_names_xpos, img_names_ypos, img_names[1] , transform=plt.gca().transAxes)
@@ -442,7 +456,7 @@ if __name__ == "__main__":
                     sigma_corrected.append(round(np.std(corrected_data),3))
             
             # Doing the same as above for Data_SimEnd
-            files = ["PPV_45.npy"] 
+            files = ["PPV_45.0.npy"] 
             for file in files:
                 moms = [] # empty list to store all the moment maps
 
@@ -466,7 +480,7 @@ if __name__ == "__main__":
                     # Set with a common colorbar (Appen. Fig.)        
                     if imom == 0: # 0th moment
                         vmin = vmin_0
-                        vmax = vmax_0
+                        vmax = vmax_0_SE
                         moms[imom] = moms[imom].T # transpose for all
                     if imom == 1: # 1st moment
                         vmin = vmin_1
@@ -474,7 +488,7 @@ if __name__ == "__main__":
                         moms[imom] = moms[imom].T # transpose for all but 90.0
                     if imom == 2: # 2nd moment
                         vmin = vmin_2
-                        vmax = vmax_2
+                        vmax = vmax_2_SE
                         moms[imom] = moms[imom].T # transpose for only the 45.0
                 
                     # For Appen. Fig.
@@ -496,6 +510,8 @@ if __name__ == "__main__":
                 # Generating corrected map and then plotting it
                 print("Now subtracting turbulence isolated moment 1")
                 corrected_data = moms[1] - smooth_mom1 # subtraction
+                all_sigmas.append(('SE', file, round(np.std(corrected_data),3)))
+
                 cfp.plot_map(corrected_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig. 
                 t = plt.text(img_names_xpos, img_names_ypos, img_names[1] , transform=plt.gca().transAxes)
                 t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
@@ -584,6 +600,7 @@ if __name__ == "__main__":
                 # Generating corrected map and then plotting it
                 print("Now subtracting turbulence isolated moment 1")
                 corrected_data = moms[1] - smooth_mom1 # subtraction
+                all_sigmas.append((file, round(np.std(corrected_data),3)))
                 if get_LOS(file) == 1:
                     cfp.plot_map(corrected_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig. 
                     t = plt.text(img_names_xpos, img_names_ypos, img_names[2] , transform=plt.gca().transAxes)
@@ -619,7 +636,7 @@ if __name__ == "__main__":
                     sigma_corrected.append(round(np.std(corrected_data),3))
             
             # Doing the same as above for Data_SimEnd
-            files = ["PPV_45_J21_SE.npy"] 
+            files = ["PPV_45.0_J21_SE.npy"] 
             for file in files:
                 moms = [] # empty list to store all the moment maps
 
@@ -643,7 +660,7 @@ if __name__ == "__main__":
                     # Set with a common colorbar (Appen. Fig.)        
                     if imom == 0: # 0th moment
                         vmin = vmin_0
-                        vmax = vmax_0
+                        vmax = vmax_0_SE
                         moms[imom] = moms[imom].T # transpose for all
                     if imom == 1: # 1st moment
                         vmin = vmin_1
@@ -651,7 +668,7 @@ if __name__ == "__main__":
                         moms[imom] = moms[imom].T # transpose for all but 90.0
                     if imom == 2: # 2nd moment
                         vmin = vmin_2
-                        vmax = vmax_2
+                        vmax = vmax_2_SE
                         moms[imom] = moms[imom].T # transpose for only the 45.0
                 
                     # For Appen. Fig.
@@ -673,6 +690,8 @@ if __name__ == "__main__":
                 # Generating corrected map and then plotting it
                 print("Now subtracting turbulence isolated moment 1")
                 corrected_data = moms[1] - smooth_mom1 # subtraction
+                all_sigmas.append(('SE', file, round(np.std(corrected_data),3)))
+
                 cfp.plot_map(corrected_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig. 
                 t = plt.text(img_names_xpos, img_names_ypos, img_names[1] , transform=plt.gca().transAxes)
                 t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
@@ -705,12 +724,10 @@ if __name__ == "__main__":
     FTdata_SE = np.array(FTdata_SE, dtype=object)
     for i in range(len(FTdata_SE)):
         cfp.plot(x=FTdata_SE[i,0][:kmax], y=FTdata_SE[i,1][:kmax], label=img_names[i])
-        print(FTdict_values(i, FTdata_SE))
-        K = cfp.fit(func, xdat=FTdata_SE[i,0][1:], ydat=FTdata_SE[i,1][1:], params=FTdict_values(i, FTdata_SE))
-        print(K.perr)
+        K = cfp.fit(func, xdat=FTdata_SE[i,0][1:], ydat=FTdata_SE[i,1][1:])
         Y=[]; X=[]
         a = K.popt[0]; n = K.popt[1]
-        for j in FTdata[0,0]:
+        for j in FTdata_SE[0,0]:
             Y.append(a*(j**n))
             X.append(j)
         cfp.plot(x=X, y=Y, alpha=0.5)
@@ -722,16 +739,18 @@ if __name__ == "__main__":
 
     # Plotting the PDFs for after isolation
     cfp.plot(x=PDF_obj_bins_corrected[0], y=PDF_obj_pdf_corrected[0], type='pdf', label=PDF_img_names(0, sigma_corrected[0]))
-    cfp.plot(x=PDF_obj_bins_corrected[1], y=PDF_obj_pdf_corrected[1], label=PDF_img_names(1, sigma_corrected[1]))
-    cfp.plot(x=PDF_obj_bins_corrected[2], y=PDF_obj_pdf_corrected[2], label=PDF_img_names(2, sigma_corrected[2]))
+    cfp.plot(x=PDF_obj_bins_corrected[1], y=PDF_obj_pdf_corrected[1], type='pdf', label=PDF_img_names(1, sigma_corrected[1]))
+    cfp.plot(x=PDF_obj_bins_corrected[2], y=PDF_obj_pdf_corrected[2], type='pdf', label=PDF_img_names(2, sigma_corrected[2]))
     
     cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.2, text=r"Turbulence Isolated", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[ymin,ymax], legend_loc='upper left', save=outpath+"after_correction_PDF.pdf")
 
     # Plotting the PDFs for after isolation - FOR SIMEND
     cfp.plot(x=PDF_obj_bins_SE[0], y=PDF_obj_pdf_corrected[0], type='pdf', label=PDF_img_names(0, sigma_SE[0]))
-    cfp.plot(x=PDF_obj_bins_SE[1], y=PDF_obj_pdf_corrected[1], label=PDF_img_names(1, sigma_SE[1]))
-    cfp.plot(x=PDF_obj_bins_SE[2], y=PDF_obj_pdf_corrected[2], label=PDF_img_names(2, sigma_SE[2])) 
+    cfp.plot(x=PDF_obj_bins_SE[1], y=PDF_obj_pdf_corrected[1], type='pdf', label=PDF_img_names(1, sigma_SE[1]))
+    cfp.plot(x=PDF_obj_bins_SE[2], y=PDF_obj_pdf_corrected[2], type='pdf', label=PDF_img_names(2, sigma_SE[2])) 
     
     cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.2, text=r"Turbulence Isolated", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[ymin,ymax], legend_loc='upper left', save=outpath+"after_correction_SE_PDF.pdf")
+
+    print(all_sigmas)
