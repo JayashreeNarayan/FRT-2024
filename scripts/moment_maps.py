@@ -152,12 +152,13 @@ if __name__ == "__main__":
     kmax = 40
 
     # PDF objects and sigmas
-    PDF_obj_bins = []
-    PDF_obj_pdf = []
-    sigma = []
     PDF_obj_bins_corrected = []
     PDF_obj_pdf_corrected = []
     sigma_corrected = []
+    PDF_obj_bins_SE = []
+    PDF_obj_pdf_SE = []
+    sigma_SE = []
+
     linestyle=['solid', 'dotted', 'dashed', 'dashdot', 'loosely dotted']
 
     moment_maps = ["mom0", "mom1", "mom2"] # Data for all moment maps
@@ -227,13 +228,6 @@ if __name__ == "__main__":
                         t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes)
                         t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
                         cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
-
-                        # Creating the PDF for the optically thin case - 1st-moment, without filtering; only for the 45 degrees case
-                        if get_LOS(file) == 1:
-                            K = cfp.get_pdf(data)
-                            PDF_obj_bins.append(K.bin_edges)
-                            PDF_obj_pdf.append(K.pdf)
-                            sigma.append(round(np.std(data),3))
                     
                 # Smoothing of the optically thin moment maps - done only for moment 1 maps, skipping moment 2 data
                 if file[:1] == "F": # 2nd and 0th moment map is not to be smoothed or gaussian corrected 
@@ -319,13 +313,6 @@ if __name__ == "__main__":
                     t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes)
                     t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
                     cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_cb_SE.pdf") # cb = 'colorbar'
-
-                    # Creating the PDF for the optically thin case - 1st-moment, without filtering; only for the 45 degrees case
-                    if get_LOS(file) == 1:
-                        K = cfp.get_pdf(data)
-                        PDF_obj_bins.append(K.bin_edges)
-                        PDF_obj_pdf.append(K.pdf)
-                        sigma.append(round(np.std(data),3))
                     
                 # Smoothing of the optically thin moment maps - done only for moment 1 maps, skipping moment 2 data
                 if file[:1] == "F": # 2nd and 0th moment map is not to be smoothed or gaussian corrected 
@@ -341,6 +328,13 @@ if __name__ == "__main__":
                     # Fourier Analysis Data for Optically thin maps
                     K_P = fourier_spectrum(corrected_data_othin)
                     FTdata_SE.append(K_P)
+                    
+                    # PDFs for after corection alone - SimEnd Case
+                    if get_LOS(file) == 1:
+                        K = cfp.get_pdf(corrected_data_othin)
+                        PDF_obj_bins_SE.append(K.bin_edges)
+                        PDF_obj_pdf_SE.append(K.pdf)
+                        sigma_SE.append(round(np.std(corrected_data_othin),3))
 
         # Plotting the zeroth moment maps with flashplotlib directly from the FLASH data , used only in Fig. 1 so we need a colorbar
         '''
@@ -418,12 +412,12 @@ if __name__ == "__main__":
                         cfp.plot_colorbar(cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, label=cmap_labels[1], save=outpath+cmaps[1]+"_colorbar_p2.pdf", panels=2)
                         cfp.plot_colorbar(cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, label=cmap_labels[1], save=outpath+cmaps[1]+"_colorbar_p3.pdf", panels=3)
             
-                # Smoothing (low-pass filtering) of moment 1
-                print("Now doing low-pass filter on moment 1")
+                # Smoothing (turbulence isolation) of moment 1
+                print("Now doing turbulence isolation on moment 1")
                 smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
 
                 # Generating corrected map and then plotting it
-                print("Now subtracting low-pass-filtered moment 1")
+                print("Now subtracting turbulence isolated moment 1")
                 corrected_data = moms[1] - smooth_mom1 # subtraction
                 if get_LOS(file) == 1:
                     cfp.plot_map(corrected_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig. 
@@ -452,14 +446,8 @@ if __name__ == "__main__":
                     FTdata.append(K_P)
                     K_P_raw = fourier_spectrum(moms[1])
                     FTdata_raw.append(K_P_raw)
-                        
-                    # Make PDF of orginal mom1 and plot
-                    K = cfp.get_pdf(moms[1])
-                    PDF_obj_bins.append(K.bin_edges)
-                    PDF_obj_pdf.append(K.pdf)
-                    sigma.append(round(np.std(moms[1]),3))
 
-                    # Make PDF of low-pass-filtered moment 1 and also plot it;  only for the 45 degrees case
+                    # Make PDF of turbulence isolated moment 1 and also plot it;  only for the 45 degrees case
                     K = cfp.get_pdf(corrected_data)
                     PDF_obj_bins_corrected.append(K.bin_edges)
                     PDF_obj_pdf_corrected.append(K.pdf)
@@ -513,21 +501,28 @@ if __name__ == "__main__":
                     t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
                     cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_"+moment_map+"_cb_SE.pdf")
         
-                # Smoothing (low-pass filtering) of moment 1
-                print("Now doing low-pass filter on moment 1")
+                # Smoothing (turbulence isolation) of moment 1
+                print("Now doing turbulence isolation on moment 1")
                 smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
 
                 # Generating corrected map and then plotting it
-                print("Now subtracting low-pass-filtered moment 1")
+                print("Now subtracting turbulence isolated moment 1")
                 corrected_data = moms[1] - smooth_mom1 # subtraction
                 cfp.plot_map(corrected_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig. 
                 t = plt.text(img_names_xpos, img_names_ypos, img_names[1] , transform=plt.gca().transAxes)
                 t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
                 cfp.plot(xlabel=xlabel, ylabel="", save=outpath+file[:-4]+"_"+moment_maps[1]+"_corrected_SE.pdf")
 
-                # Fourier Analysis Data for Synthetic CO
+                # Fourier Analysis Data for Synthetic CO - SimEnd
                 K_P = fourier_spectrum(corrected_data)
                 FTdata_SE.append(K_P)
+                
+                # Getting the PDF for SimEnd - CO (1-0)
+                if get_LOS(file) == 1:
+                    K = cfp.get_pdf(corrected_data)
+                    PDF_obj_bins_SE.append(K.bin_edges)
+                    PDF_obj_pdf_SE.append(K.pdf)
+                    sigma_SE.append(round(np.std(corrected_data),3))
             
         # PPV cubes for CO (2-1) lines - 0 moment map and consequently first moment map; smoothing and also gaussian correction
         if action == choices[3]:
@@ -594,12 +589,12 @@ if __name__ == "__main__":
                         # plotting a common colorbar, only for seismic, universal vmin and vmax
                         cfp.plot_colorbar(cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, label=cmap_labels[1], save=outpath+cmaps[1]+"_colorbar.pdf", panels=2)
         
-                # Smoothing (low-pass filtering) of moment 1
-                print("Now doing low-pass filter on moment 1")
+                # Smoothing (turbulence isolation) of moment 1
+                print("Now doing turbulence isolation on moment 1")
                 smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
 
                 # Generating corrected map and then plotting it
-                print("Now subtracting low-pass-filtered moment 1")
+                print("Now subtracting turbulence isolated moment 1")
                 corrected_data = moms[1] - smooth_mom1 # subtraction
                 if get_LOS(file) == 1:
                     cfp.plot_map(corrected_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig. 
@@ -629,41 +624,16 @@ if __name__ == "__main__":
                     K_P_raw = fourier_spectrum(moms[1])
                     FTdata_raw.append(K_P_raw)
                         
-                    # Make PDF of orginal mom1 and plot
-                    K = cfp.get_pdf(moms[1])
-                    PDF_obj_bins.append(K.bin_edges)
-                    PDF_obj_pdf.append(K.pdf)
-                    sigma.append(round(np.std(moms[1]),3))
-
-                    # Make PDF of low-pass-filtered moment 1 and also plot it
+                    # Make PDF of turbulence isolated moment 1 and also plot it
                     K = cfp.get_pdf(corrected_data)
                     PDF_obj_bins_corrected.append(K.bin_edges)
                     PDF_obj_pdf_corrected.append(K.pdf)
                     sigma_corrected.append(round(np.std(corrected_data),3))
 
-    # Plotting the FTs - before correction, 1tff
-    FTdata_raw = np.array(FTdata_raw, dtype=object)
-    for i in range(len(FTdata_raw)):
-        cfp.plot(x=FTdata_raw[i,0], y=FTdata_raw[i,1], label=img_names[i], linestyle=linestyle[i])
-        print(FTdict_values(i, FTdata_raw))
-        K = cfp.fit(func, xdat=FTdata_raw[i,0][1:], ydat=FTdata_raw[i,1][1:], params=FTdict_values(i, FTdata_raw))
-        print(K.perr)
-        Y=[]; X=[]
-        a = K.popt[0]; n = K.popt[1]
-        for j in FTdata_raw[0,0]:
-            Y.append(a*(j**n))
-            X.append(j)
-        cfp.plot(x=X, y=Y, alpha=0.5)
-    secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
-    secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
-    secax1.tick_params(axis='x', direction='in', length=0, which = 'minor', top=False, bottom=True)
-    cfp.plot(x=img_PDF_names_xpos+0.002, y=img_PDF_names_ypos-0.55, text=r"1st-moment", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
-    cfp.plot(legend_loc='lower left', xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1],  fontsize='small', ylog=True,  xlog=True, xlim=[kmin,kmax], save=outpath+"FT_before.pdf")
-
     # Plotting the FTs - after correction, 1tff
     FTdata = np.array(FTdata, dtype=object)
     for i in range(len(FTdata)):
-        cfp.plot(x=FTdata[i,0], y=FTdata[i,1], label=img_names[i], linestyle=linestyle[i])
+        cfp.plot(x=FTdata[i,0][:kmax], y=FTdata[i,1][:kmax], label=img_names[i], linestyle=linestyle[i])
         print(FTdict_values(i, FTdata))
         K = cfp.fit(func, xdat=FTdata[i,0][1:], ydat=FTdata[i,1][1:], params=FTdict_values(i, FTdata))
         print(K.perr)
@@ -677,12 +647,12 @@ if __name__ == "__main__":
     secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
     secax1.tick_params(axis='x', direction='in', length=0, which = 'minor', top=False, bottom=True)
     cfp.plot(x=img_PDF_names_xpos+0.003, y=img_PDF_names_ypos-0.55, text=r"Low-pass filtered", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
-    cfp.plot(legend_loc='lower left', xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], fontsize='small', ylog=True,  xlog=True, xlim=[kmin,kmax], save=outpath+"FT_after.pdf")
+    cfp.plot(legend_loc='lower left', xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], fontsize='small', ylog=True,  xlog=True, save=outpath+"FT_after.pdf")
     
     # Plotting the FTs - after correction, SimEnd
     FTdata_SE = np.array(FTdata_SE, dtype=object)
     for i in range(len(FTdata_SE)):
-        cfp.plot(x=FTdata_SE[i,0], y=FTdata_SE[i,1], label=img_names[i], linestyle=linestyle[i])
+        cfp.plot(x=FTdata_SE[i,0][:kmax], y=FTdata_SE[i,1][:kmax], label=img_names[i], linestyle=linestyle[i])
         print(FTdict_values(i, FTdata_SE))
         K = cfp.fit(func, xdat=FTdata_SE[i,0][1:], ydat=FTdata_SE[i,1][1:], params=FTdict_values(i, FTdata_SE))
         print(K.perr)
@@ -696,21 +666,20 @@ if __name__ == "__main__":
     secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
     secax1.tick_params(axis='x', direction='in', length=0, which = 'minor', top=False, bottom=True)
     cfp.plot(x=img_PDF_names_xpos+0.004, y=img_PDF_names_ypos-0.6, text=r"1st-moment", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
-    cfp.plot(legend_loc='lower left', xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], fontsize='small', ylog=True,  xlog=True, xlim=[kmin,kmax], save=outpath+"FT_after_SE.pdf")
+    cfp.plot(legend_loc='lower left', xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], fontsize='small', ylog=True,  xlog=True, save=outpath+"FT_after_SE.pdf")
 
-    # Plotting the PDFs
-    # for optically thin case
-    cfp.plot(x=PDF_obj_bins[0], y=PDF_obj_pdf[0], type="pdf", bar_width=1, label=PDF_img_names(0, sigma[0]))
-    cfp.plot(x=PDF_obj_bins[1], y=PDF_obj_pdf[1], type="pdf", bar_width=1, label=PDF_img_names(1, sigma[1]))
-    cfp.plot(x=PDF_obj_bins[2], y=PDF_obj_pdf[2], type="pdf", bar_width=1, label=PDF_img_names(2, sigma[2]))
+    # Plotting the PDFs for after isolation
+    cfp.plot(x=PDF_obj_bins_corrected[0], y=PDF_obj_pdf_corrected[0], type='pdf', label=PDF_img_names(0, sigma_corrected[0]))
+    cfp.plot(PDF_obj_pdf_corrected[1], bar_width=1, label=PDF_img_names(1, sigma_corrected[1]), linestyle=linestyle[1])
+    cfp.plot(PDF_obj_pdf_corrected[2], bar_width=1, label=PDF_img_names(2, sigma_corrected[2]), linestyle=linestyle[2])
     
-    cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.2, text=r"1st-moment", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
-    cfp.plot(xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[ymin,ymax], legend_loc='upper left', save=outpath+"before_correction_PDF.pdf")
-
-    # for optically Thick case
-    cfp.plot(x=PDF_obj_bins_corrected[0], y=PDF_obj_pdf_corrected[0], type="pdf", bar_width=1, label=PDF_img_names(0, sigma_corrected[0]))
-    cfp.plot(x=PDF_obj_bins_corrected[1], y=PDF_obj_pdf_corrected[1], type="pdf", bar_width=1, label=PDF_img_names(1, sigma_corrected[1]))
-    cfp.plot(x=PDF_obj_bins_corrected[2], y=PDF_obj_pdf_corrected[2], type="pdf", bar_width=1, label=PDF_img_names(2, sigma_corrected[2]))
-    
-    cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.2, text=r"Low-pass filtered", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
+    cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.2, text=r"Turbulence Isolated", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[ymin,ymax], legend_loc='upper left', save=outpath+"after_correction_PDF.pdf")
+
+    # Plotting the PDFs for after isolation - FOR SIMEND
+    cfp.plot(x=PDF_obj_bins_SE[0], y=PDF_obj_pdf_corrected[0], type='pdf', label=PDF_img_names(0, sigma_SE[0]))
+    cfp.plot(PDF_obj_pdf_SE[1], label=PDF_img_names(1, sigma_SE[1]), linestyle=linestyle[1])
+    #cfp.plot(PDF_obj_pdf_SE[2], label=PDF_img_names(2, sigma_SE[2]), linestyle=linestyle[2]) # for J21 - not here yet
+    
+    cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.2, text=r"Turbulence Isolated", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
+    cfp.plot(xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[ymin,ymax], legend_loc='upper left', save=outpath+"after_correction_SE_PDF.pdf")
