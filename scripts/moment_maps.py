@@ -83,6 +83,10 @@ def PDF_img_names(i, sigma):
     img_names = ["Optically thin", "Synthetic CO (1-0)", "Synthetic CO (2-1)"]
     return img_names[i]+" "+r"; $\sigma$ = "+str(sigma)+r"$~\mathrm{km\,s^{-1}}$"
 
+def FT_slope_labels(err):
+    err_n=np.round(err[1][0],3)
+    return ";~slope="+str(n)+r"$\pm$"+str(abs(err_n))
+
 def func(x,a,n):
     return np.log(a*(x**n))
 
@@ -158,7 +162,7 @@ if __name__ == "__main__":
     
     all_sigmas =[]
 
-    linestyle=['solid', 'dotted', 'dashed', 'dashdot', 'loosely dotted']
+    linestyle=['dotted', 'dashed', 'dashdot', 'loosely dotted']
     line_colours=['black', 'magenta', 'blue']
 
     moment_maps = ["mom0", "mom1", "mom2"] # Data for all moment maps
@@ -727,10 +731,11 @@ if __name__ == "__main__":
     # Plotting the FTs - before isolation, 1tff
     for i in range(len(FTdata_raw)):
         x=FTdata_raw[i][0][:kmax]; y=FTdata_raw[i][1][:kmax]
-        cfp.plot(x=x, y=y, label=img_names[i], color=line_colours[i])
-        #fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]))
-        #a = fit_values.popt[0]; n = fit_values.popt[1]
-        #cfp.plot(x=x[kmin:], y=np.exp(func(x,*fit_values.popt)), alpha=0.5)
+        params = {"a":[1e-4, 1e-2, 1], "n":[-4, -2, -1]}
+        fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]), params=params)
+        a=np.round(fit_values.popt[0],3); n=np.round(fit_values.popt[1],3)
+        cfp.plot(x=x, y=y, label=img_names[i]+FT_slope_labels(fit_values.perr), color=line_colours[i])
+        cfp.plot(x=x[kmin:], y=np.exp(func(x[kmin:], *fit_values.popt)), alpha=0.5, color=line_colours[i], linestyle=linestyle[0])
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
     secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
     secax1.tick_params(axis='x', direction='in', length=0, which = 'minor', top=False, bottom=True)
@@ -740,10 +745,11 @@ if __name__ == "__main__":
     # Plotting the FTs - after isolation, 1tff
     for i in range(len(FTdata)):
         x=FTdata[i][0][:kmax]; y=FTdata[i][1][:kmax]
-        cfp.plot(x=x, y=y, label=img_names[i], color=line_colours[i])
         params = {"a":[1e-4, 1e-2, 1], "n":[-4, -2, -1]}
         fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]), params=params)
-        cfp.plot(x=x[kmin:], y=np.exp(func(x[kmin:], *fit_values.popt)), alpha=0.5)
+        a=np.round(fit_values.popt[0],3); n=np.round(fit_values.popt[1],3)
+        cfp.plot(x=x, y=y, label=img_names[i]+FT_slope_labels(fit_values.perr), color=line_colours[i])
+        cfp.plot(x=x[kmin:], y=np.exp(func(x[kmin:], *fit_values.popt)), alpha=0.5, color=line_colours[i], linestyle=linestyle[0])
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
     secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
     secax1.tick_params(axis='x', direction='in', length=0, which = 'minor', top=False, bottom=True)
@@ -753,7 +759,11 @@ if __name__ == "__main__":
     # Plotting the FTs - after isolation, SimEnd
     for i in range(len(FTdata_SE)):
         x=FTdata_SE[i][0][:kmax]; y=FTdata_SE[i][1][:kmax]
-        cfp.plot(x=x, y=y, label=img_names[i], color=line_colours[i])
+        params = {"a":[1e-4, 1e-2, 1], "n":[-4, -2, -1]}
+        fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]), params=params)
+        a=np.round(fit_values.popt[0],3); n=np.round(fit_values.popt[1],3)
+        cfp.plot(x=x, y=y, label=img_names[i]+FT_slope_labels(fit_values.perr), color=line_colours[i])
+        cfp.plot(x=x[kmin:], y=np.exp(func(x[kmin:], *fit_values.popt)), alpha=0.5, color=line_colours[i], linestyle=linestyle[0])
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
     secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
     secax1.tick_params(axis='x', direction='in', length=0, which = 'minor', top=False, bottom=True)
