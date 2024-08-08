@@ -695,7 +695,7 @@ if __name__ == "__main__":
                     cfp.plot(xlabel="", ylabel="", save=outpath+file[:-4]+"_"+moment_map+".pdf")
 
                     # Set with individual colorbars (Fig. 1)
-                    cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax_S, colorbar = True, cmap_label=cmap_labels[imom], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                    cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar = True, cmap_label=cmap_labels[imom], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
                     t = plt.text(img_names_xpos, img_names_ypos, img_names[2] , transform=plt.gca().transAxes)
                     t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
                     cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_"+moment_map+"_cb.pdf")
@@ -741,9 +741,9 @@ if __name__ == "__main__":
     for i in range(len(FTdata)):
         x=FTdata[i][0][:kmax]; y=FTdata[i][1][:kmax]
         cfp.plot(x=x, y=y, label=img_names[i], color=line_colours[i])
-        #fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]))
-        #a = fit_values.popt[0]; n = fit_values.popt[1]
-        #cfp.plot(x=x[kmin:], y=np.exp(func(x,*fit_values.popt)), alpha=0.5)
+        params = {"a":[1e-4, 1e-2, 1], "n":[-4, -2, -1]}
+        fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]), params=params)
+        cfp.plot(x=x[kmin:], y=np.exp(func(x[kmin:], *fit_values.popt)), alpha=0.5)
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
     secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
     secax1.tick_params(axis='x', direction='in', length=0, which = 'minor', top=False, bottom=True)
