@@ -747,7 +747,7 @@ if __name__ == "__main__":
         x=FTdata[i][0][:kmax]; y=FTdata[i][1][:kmax]
         params = {"a":[1e-4, 1e-2, 1], "n":[-4, -2, -1]}
         fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]), params=params)
-        a=np.round(fit_values.popt[0],3); n=np.round(fit_values.popt[1],3)
+        a=np.round(fit_values.popt[0],3); n=np.round(fit_values.popt[1],3); print(fit_values.pstd)
         cfp.plot(x=x, y=y, label=img_names[i]+FT_slope_labels(fit_values.perr), color=line_colours[i])
         cfp.plot(x=x[kmin:], y=np.exp(func(x[kmin:], *fit_values.popt)), alpha=0.5, color=line_colours[i], linestyle=linestyle[0])
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
