@@ -80,11 +80,12 @@ def resize_45(data, choice):
         return rescaled_data
 
 def PDF_img_names(i, sigma):
+    sigma=np.round(sigma,2)
     img_names = ["Optically thin", "Synthetic CO (1-0)", "Synthetic CO (2-1)"]
     return img_names[i]+" "+r"; $\sigma$ = "+str(sigma)+r"$~\mathrm{km\,s^{-1}}$"
 
-def FT_slope_labels(err):
-    err_n=np.round(err[1][0],3)
+def FT_slope_labels(err,n):
+    err_n=np.round(err[1][0],2)
     return ";~slope="+str(n)+r"$\pm$"+str(abs(err_n))
 
 def func(x,a,n):
@@ -161,6 +162,7 @@ if __name__ == "__main__":
     sigma_SE = []
     
     all_sigmas =[]
+    all_sigmas_before = []
 
     linestyle=['dotted', 'dashed', 'dashdot', 'loosely dotted']
     line_colours=['black', 'magenta', 'blue']
@@ -236,7 +238,7 @@ if __name__ == "__main__":
                 # Smoothing of the optically thin moment maps - done only for moment 1 maps, skipping moment 2 data
                 if file[:1] == "F": # 2nd and 0th moment map is not to be smoothed or Turbulence isolated 
                     smooth_data = smoothing(data)
-
+                    all_sigmas_before.append((file , round(np.std(data),3)))
                     # Turbulence isolation of the smoothed data
                     isolated_data_othin = data - smooth_data
                     all_sigmas.append((file , round(np.std(isolated_data_othin),3)))
@@ -327,7 +329,7 @@ if __name__ == "__main__":
                 # Smoothing of the optically thin moment maps - done only for moment 1 maps, skipping moment 2 data
                 if file[:1] == "F": # 2nd and 0th moment map is not to be smoothed or Turbulence isolated 
                     smooth_data = smoothing(data)
-
+                    all_sigmas_before.append((file , round(np.std(data),3)))
                     # Turbulence isolation of the smoothed data
                     isolated_data_othin = data - smooth_data
                     all_sigmas.append(('SE', file , round(np.std(isolated_data_othin),3)))
@@ -426,6 +428,7 @@ if __name__ == "__main__":
                 # Smoothing (turbulence isolation) of moment 1
                 print("Now doing turbulence isolation on moment 1")
                 smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
+                all_sigmas_before.append((file , round(np.std(moms[1]),3)))
 
                 # Generating isolated map and then plotting it
                 print("Now subtracting turbulence isolated moment 1")
@@ -522,6 +525,7 @@ if __name__ == "__main__":
                 # Smoothing (turbulence isolation) of moment 1
                 print("Now doing turbulence isolation on moment 1")
                 smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
+                all_sigmas_before.append((file , round(np.std(moms[1]),3)))
 
                 # Generating isolated map and then plotting it
                 print("Now subtracting turbulence isolated moment 1")
@@ -612,6 +616,7 @@ if __name__ == "__main__":
                 # Smoothing (turbulence isolation) of moment 1
                 print("Now doing turbulence isolation on moment 1")
                 smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
+                all_sigmas_before.append((file , round(np.std(moms[1]),3)))
 
                 # Generating isolated map and then plotting it
                 print("Now subtracting turbulence isolated moment 1")
@@ -707,6 +712,7 @@ if __name__ == "__main__":
                 # Smoothing (turbulence isolation) of moment 1
                 print("Now doing turbulence isolation on moment 1")
                 smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
+                all_sigmas_before.append((file , round(np.std(moms[1]),3)))
 
                 # Generating isolated map and then plotting it
                 print("Now subtracting turbulence isolated moment 1")
@@ -733,8 +739,8 @@ if __name__ == "__main__":
         x=FTdata_raw[i][0][:kmax]; y=FTdata_raw[i][1][:kmax]
         params = {"a":[1e-4, 1e-2, 1], "n":[-4, -2, -1]}
         fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]), params=params)
-        a=np.round(fit_values.popt[0],3); n=np.round(fit_values.popt[1],3)
-        cfp.plot(x=x, y=y, label=img_names[i]+FT_slope_labels(fit_values.perr), color=line_colours[i])
+        a=np.round(fit_values.popt[0],2); n=np.round(fit_values.popt[1],2)
+        cfp.plot(x=x, y=y, label=img_names[i]+FT_slope_labels(fit_values.perr,n), color=line_colours[i])
         cfp.plot(x=x[kmin:], y=np.exp(func(x[kmin:], *fit_values.popt)), alpha=0.5, color=line_colours[i], linestyle=linestyle[0])
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
     secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
@@ -747,8 +753,8 @@ if __name__ == "__main__":
         x=FTdata[i][0][:kmax]; y=FTdata[i][1][:kmax]
         params = {"a":[1e-4, 1e-2, 1], "n":[-4, -2, -1]}
         fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]), params=params)
-        a=np.round(fit_values.popt[0],3); n=np.round(fit_values.popt[1],3); print(fit_values.pstd)
-        cfp.plot(x=x, y=y, label=img_names[i]+FT_slope_labels(fit_values.perr), color=line_colours[i])
+        a=np.round(fit_values.popt[0],2); n=np.round(fit_values.popt[1],2); print(fit_values.pstd)
+        cfp.plot(x=x, y=y, label=img_names[i]+FT_slope_labels(fit_values.perr,n), color=line_colours[i])
         cfp.plot(x=x[kmin:], y=np.exp(func(x[kmin:], *fit_values.popt)), alpha=0.5, color=line_colours[i], linestyle=linestyle[0])
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
     secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
@@ -761,8 +767,8 @@ if __name__ == "__main__":
         x=FTdata_SE[i][0][:kmax]; y=FTdata_SE[i][1][:kmax]
         params = {"a":[1e-4, 1e-2, 1], "n":[-4, -2, -1]}
         fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]), params=params)
-        a=np.round(fit_values.popt[0],3); n=np.round(fit_values.popt[1],3)
-        cfp.plot(x=x, y=y, label=img_names[i]+FT_slope_labels(fit_values.perr), color=line_colours[i])
+        a=np.round(fit_values.popt[0],2); n=np.round(fit_values.popt[1],2)
+        cfp.plot(x=x, y=y, label=img_names[i]+FT_slope_labels(fit_values.perr,n), color=line_colours[i])
         cfp.plot(x=x[kmin:], y=np.exp(func(x[kmin:], *fit_values.popt)), alpha=0.5, color=line_colours[i], linestyle=linestyle[0])
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
     secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
@@ -789,3 +795,4 @@ if __name__ == "__main__":
     cfp.plot(xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[ymin,ymax], legend_loc='upper left', save=outpath+"after_isolation_SE_PDF.pdf")
 
     print(all_sigmas)
+    print(all_sigmas_before)
