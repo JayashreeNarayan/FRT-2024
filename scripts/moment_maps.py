@@ -134,7 +134,7 @@ if __name__ == "__main__":
 
     # defining the min and max of the maps universally so that all of them can be compared
     vmin_0 = 0. # zeroth moment map
-    vmax_0 = 6.5
+    vmax_0 = 5.5
     vmin_1 = -0.55 # 1st
     vmax_1 = 0.55
     vmin_2 = 0. # 2nd
@@ -651,12 +651,12 @@ if __name__ == "__main__":
                     FTdata_raw.append(K_P_raw)
                         
                     # Make PDF of turbulence isolated moment 1 and also plot it
-                    K = cfp.get_pdf(moms[1], range=(-0.1,+0.1)) # for without turbulence isolation
+                    K = cfp.get_pdf(moms[1], range=(-0.1,+0.1)) # before turbulence isolation
                     PDF_obj_bins.append(K.bin_edges)
                     PDF_obj_pdf.append(K.pdf)
                     sigma.append(round(np.std(moms[1]),3))
 
-                    K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1)) # for with turbulence isolation
+                    K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1)) # after turbulence isolation
                     PDF_obj_bins_isolated.append(K.bin_edges)
                     PDF_obj_pdf_isolated.append(K.pdf)
                     sigma_isolated.append(round(np.std(isolated_data),3))
@@ -729,7 +729,7 @@ if __name__ == "__main__":
                 FTdata_SE.append(K_P)
                 
                 # Getting the PDF for SimEnd - CO (2-1) - SimEnd
-                K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1))
+                K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1)) # only after turbulence isolation
                 PDF_obj_bins_SE.append(K.bin_edges)
                 PDF_obj_pdf_SE.append(K.pdf)
                 sigma_SE.append(round(np.std(isolated_data),3))
