@@ -82,7 +82,7 @@ def resize_45(data, choice):
 def PDF_img_names(i, sigma):
     sigma=np.round(sigma,2)
     img_names = ["Optically thin", "Synthetic CO (1-0)", "Synthetic CO (2-1)"]
-    return img_names[i]+" "+r"; $\sigma$ = "+str(sigma)+r"$~\mathrm{km\,s^{-1}}$"
+    return img_names[i]+r"; $\sigma$ = "+str(sigma)+r"$~\mathrm{km\,s^{-1}}$"
 
 def FT_slope_labels(err,n):
     err_n=np.round(err[1][0],2)
@@ -134,14 +134,14 @@ if __name__ == "__main__":
 
     # defining the min and max of the maps universally so that all of them can be compared
     vmin_0 = 0. # zeroth moment map
-    vmax_0 = 5.5
+    vmax_0 = 5
     vmin_1 = -0.55 # 1st
     vmax_1 = 0.55
     vmin_2 = 0. # 2nd
     vmax_2 = 0.6
 
     # defining the min and max of the maps - for SimEnd alone
-    vmax_0_SE = 10
+    vmax_0_SE = 6
     vmax_2_SE = 0.6
 
     # defining kmin and kmax for FT spectra graphs:
@@ -173,6 +173,7 @@ if __name__ == "__main__":
     LOS_labels = [r"$\left(\begin{array}{c} 0 \\ 0 \\ 1 \end{array}\right) $", r"$\left(\begin{array}{c} 1 \\ 0 \\ 1 \end{array}\right) $", r"$\left(\begin{array}{c} 1 \\ 0 \\ 0 \end{array}\right) $"]
     xyzlabels = [r"$x$", r"$y$", r"$z$", r"$\sqrt{x^2 + z^2}$"]
     img_names = ["Optically thin", "Synthetic CO (1-0)", "Synthetic CO (2-1)"]
+    img_types=['Before isolation', 'After isolation']
 
     # loop through chosen actions
     for action in args.action:
@@ -736,7 +737,7 @@ if __name__ == "__main__":
 
     # Plotting the FTs - before isolation, 1tff
     for i in range(len(FTdata_raw)):
-        x=FTdata_raw[i][0][:kmax]; y=FTdata_raw[i][1][:kmax]
+        x=FTdata_raw[i][0][1:kmax]; y=FTdata_raw[i][1][1:kmax]
         params = {"a":[1e-4, 1e-2, 1], "n":[-4, -2, -1]}
         fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]), params=params)
         a=np.round(fit_values.popt[0],2); n=np.round(fit_values.popt[1],2)
@@ -745,12 +746,12 @@ if __name__ == "__main__":
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
     secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
     secax1.tick_params(axis='x', direction='in', length=0, which = 'minor', top=False, bottom=True)
-    cfp.plot(x=img_PDF_names_xpos+0.003, y=img_PDF_names_ypos-0.55, text=r"1st-moment", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
+    cfp.plot(x=img_PDF_names_xpos+0.003, y=img_PDF_names_ypos-0.55, text=img_types[0], backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(legend_loc='lower left', xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], fontsize='small', ylog=True,  xlog=True, save=outpath+"FT_before.pdf")
     
     # Plotting the FTs - after isolation, 1tff
     for i in range(len(FTdata)):
-        x=FTdata[i][0][:kmax]; y=FTdata[i][1][:kmax]
+        x=FTdata[i][0][1:kmax]; y=FTdata[i][1][1:kmax]
         params = {"a":[1e-4, 1e-2, 1], "n":[-4, -2, -1]}
         fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]), params=params)
         a=np.round(fit_values.popt[0],2); n=np.round(fit_values.popt[1],2); print(fit_values.pstd)
@@ -759,12 +760,12 @@ if __name__ == "__main__":
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
     secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
     secax1.tick_params(axis='x', direction='in', length=0, which = 'minor', top=False, bottom=True)
-    cfp.plot(x=img_PDF_names_xpos+0.003, y=img_PDF_names_ypos-0.55, text=r"Low-pass filtered", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
+    cfp.plot(x=img_PDF_names_xpos+0.003, y=img_PDF_names_ypos-0.55, text=img_types[1], backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(legend_loc='lower left', xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], fontsize='small', ylog=True,  xlog=True, save=outpath+"FT_after.pdf")
     
     # Plotting the FTs - after isolation, SimEnd
     for i in range(len(FTdata_SE)):
-        x=FTdata_SE[i][0][:kmax]; y=FTdata_SE[i][1][:kmax]
+        x=FTdata_SE[i][0][1:kmax]; y=FTdata_SE[i][1][1:kmax]
         params = {"a":[1e-4, 1e-2, 1], "n":[-4, -2, -1]}
         fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]), params=params)
         a=np.round(fit_values.popt[0],2); n=np.round(fit_values.popt[1],2)
@@ -773,25 +774,25 @@ if __name__ == "__main__":
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
     secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
     secax1.tick_params(axis='x', direction='in', length=0, which = 'minor', top=False, bottom=True)
-    cfp.plot(x=img_PDF_names_xpos+0.003, y=img_PDF_names_ypos-0.55, text=r"1st-moment", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
+    cfp.plot(x=img_PDF_names_xpos+0.003, y=img_PDF_names_ypos-0.55, text=img_types[1], backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(legend_loc='lower left', xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], fontsize='small', ylog=True,  xlog=True, save=outpath+"FT_after_SE.pdf")
 
     # Plotting the PDFs for before isolation
     for i in range(len(PDF_obj_bins)):
         cfp.plot(x=PDF_obj_bins[i], y=PDF_obj_pdf[i], type='pdf', label=PDF_img_names(i, sigma[i]), color=line_colours[i])
-    cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.2, text=r"1st-moment", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
+    cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.2, text=img_types[0], backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[ymin,ymax], legend_loc='upper left', save=outpath+"before_isolation_PDF.pdf")
 
     # Plotting the PDFs for after isolation
     for i in range(len(PDF_obj_bins_isolated)):
         cfp.plot(x=PDF_obj_bins_isolated[i], y=PDF_obj_pdf_isolated[i], type='pdf', label=PDF_img_names(i, sigma_isolated[i]), color=line_colours[i])
-    cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.2, text=r"Turbulence Isolated", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
+    cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.2, text=img_types[1], backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[ymin,ymax], legend_loc='upper left', save=outpath+"after_isolation_PDF.pdf")
 
     # Plotting the PDFs for after isolation - FOR SIMEND
     for i in range(len(PDF_obj_bins_SE)):    
         cfp.plot(x=PDF_obj_bins_SE[i], y=PDF_obj_pdf_isolated[i], type='pdf', label=PDF_img_names(i, sigma_SE[i]), color=line_colours[i])
-    cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.2, text=r"Turbulence Isolated", backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
+    cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.2, text=img_types[1], backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[ymin,ymax], legend_loc='upper left', save=outpath+"after_isolation_SE_PDF.pdf")
 
     print(all_sigmas)
