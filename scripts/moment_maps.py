@@ -80,13 +80,13 @@ def resize_45(data, choice):
         return rescaled_data
 
 def PDF_img_names(i, sigma):
-    sigma=np.round(sigma,2)
+    sigma=cfp.round(sigma, 2, str_ret=True)
     img_names = ["Optically thin", "Synthetic CO (1-0)", "Synthetic CO (2-1)"]
-    return img_names[i]+r": $\sigma$ = "+str(sigma)+r"$~\mathrm{km\,s^{-1}}$"
+    return img_names[i]+r": $\sigma$ = "+sigma+r"$~\mathrm{km\,s^{-1}}$"
 
 def FT_slope_labels(err,n):
-    err_n=np.round(err[1][0],2)
-    return ";~slope="+str(n)+r"$\pm$"+str(abs(err_n))
+    err_n=cfp.round(abs(err[1][0]), 2, str_ret=True)
+    return ";~slope="+n+r"$\pm$"+err_n
 
 def func(x,a,n):
     return np.log(a*(x**n))
@@ -111,7 +111,7 @@ if __name__ == "__main__":
     xmin=-0.45
     xmax=+0.45
     ymin=1.e-2
-    ymax=1.e2
+    ymax=5.e2
 
     # Fourier labels
     FT_xy_labels = [r"$k$", r"$P_\mathrm{tot}$"]
@@ -239,10 +239,10 @@ if __name__ == "__main__":
                 # Smoothing of the optically thin moment maps - done only for moment 1 maps, skipping moment 2 data
                 if file[:1] == "F": # 2nd and 0th moment map is not to be smoothed or Turbulence isolated 
                     smooth_data = smoothing(data)
-                    all_sigmas_before.append((file , round(np.std(data),3)))
+                    all_sigmas_before.append((file , cfp.round(np.std(data), 2, str_ret=True)))
                     # Turbulence isolation of the smoothed data
                     isolated_data_othin = data - smooth_data
-                    all_sigmas.append((file , round(np.std(isolated_data_othin),3)))
+                    all_sigmas.append((file , cfp.round(np.std(isolated_data_othin), 2, str_ret=True)))
                     if get_LOS(file) == 1:
                         cfp.plot_map(isolated_data_othin, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=[None,None], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
                         t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes) 
@@ -275,12 +275,12 @@ if __name__ == "__main__":
                         K = cfp.get_pdf(data, range=(-0.1, 0.1)) # without isolation
                         PDF_obj_bins.append(K.bin_edges)
                         PDF_obj_pdf.append(K.pdf)
-                        sigma.append(round(np.std(data),3))
+                        sigma.append(cfp.round(np.std(data), 2, str_ret=True))
 
                         K = cfp.get_pdf(isolated_data_othin, range=(-0.1,+0.1)) # with isolation
                         PDF_obj_bins_isolated.append(K.bin_edges)
                         PDF_obj_pdf_isolated.append(K.pdf)
-                        sigma_isolated.append(round(np.std(isolated_data_othin),3))
+                        sigma_isolated.append(cfp.round(np.std(isolated_data_othin), 2, str_ret=True))
 
             # Generating graphs for For SimEnd time 
             files = ["FMM_45.0_SE.npy", "SMM_45.0_SE.npy", "ZMM_45.0_SE.npy"]
@@ -330,10 +330,10 @@ if __name__ == "__main__":
                 # Smoothing of the optically thin moment maps - done only for moment 1 maps, skipping moment 2 data
                 if file[:1] == "F": # 2nd and 0th moment map is not to be smoothed or Turbulence isolated 
                     smooth_data = smoothing(data)
-                    all_sigmas_before.append((file , round(np.std(data),3)))
+                    all_sigmas_before.append((file , cfp.round(np.std(data), 2, str_ret=True)))
                     # Turbulence isolation of the smoothed data
                     isolated_data_othin = data - smooth_data
-                    all_sigmas.append(('SE', file , round(np.std(isolated_data_othin),3)))
+                    all_sigmas.append(('SE', file , cfp.round(np.std(isolated_data_othin), 2, str_ret=True)))
                     cfp.plot_map(isolated_data_othin, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=[None,None], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
                     t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes) 
                     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
@@ -348,7 +348,7 @@ if __name__ == "__main__":
                         K = cfp.get_pdf(isolated_data_othin, range=(-0.1,+0.1))
                         PDF_obj_bins_SE.append(K.bin_edges)
                         PDF_obj_pdf_SE.append(K.pdf)
-                        sigma_SE.append(round(np.std(isolated_data_othin),3))
+                        sigma_SE.append(cfp.round(np.std(isolated_data_othin), 2, str_ret=True))
 
         # Plotting the zeroth moment maps with flashplotlib directly from the FLASH data , used only in Fig. 1 so we need a colorbar
         '''
@@ -429,12 +429,12 @@ if __name__ == "__main__":
                 # Smoothing (turbulence isolation) of moment 1
                 print("Now doing turbulence isolation on moment 1")
                 smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
-                all_sigmas_before.append((file , round(np.std(moms[1]),3)))
+                all_sigmas_before.append((file , cfp.round(np.std(moms[1]), 2, str_ret=True)))
 
                 # Generating isolated map and then plotting it
                 print("Now subtracting turbulence isolated moment 1")
                 isolated_data = moms[1] - smooth_mom1 # subtraction
-                all_sigmas.append((file, round(np.std(isolated_data),3)))
+                all_sigmas.append((file, cfp.round(np.std(isolated_data), 2, str_ret=True)))
 
                 if get_LOS(file) == 1:
                     cfp.plot_map(isolated_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig. 
@@ -468,12 +468,12 @@ if __name__ == "__main__":
                     K = cfp.get_pdf(moms[1], range=(-0.1,+0.1)) # for before turbulence isolation
                     PDF_obj_bins.append(K.bin_edges)
                     PDF_obj_pdf.append(K.pdf)
-                    sigma.append(round(np.std(moms[1]),3))
+                    sigma.append(cfp.round(np.std(moms[1]), 2, str_ret=True))
 
                     K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1)) # for after turbulence isolation
                     PDF_obj_bins_isolated.append(K.bin_edges)
                     PDF_obj_pdf_isolated.append(K.pdf)
-                    sigma_isolated.append(round(np.std(isolated_data),3))
+                    sigma_isolated.append(cfp.round(np.std(isolated_data), 2, str_ret=True))
             
             # Doing the same as above for Data_SimEnd
             files = ["PPV_45.0.npy"] 
@@ -526,12 +526,12 @@ if __name__ == "__main__":
                 # Smoothing (turbulence isolation) of moment 1
                 print("Now doing turbulence isolation on moment 1")
                 smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
-                all_sigmas_before.append((file , round(np.std(moms[1]),3)))
+                all_sigmas_before.append((file , cfp.round(np.std(moms[1]), 2, str_ret=True)))
 
                 # Generating isolated map and then plotting it
                 print("Now subtracting turbulence isolated moment 1")
                 isolated_data = moms[1] - smooth_mom1 # subtraction
-                all_sigmas.append(('SE', file, round(np.std(isolated_data),3)))
+                all_sigmas.append(('SE', file, cfp.round(np.std(isolated_data), 2, str_ret=True)))
 
                 cfp.plot_map(isolated_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig. 
                 t = plt.text(img_names_xpos, img_names_ypos, img_names[1] , transform=plt.gca().transAxes)
@@ -547,7 +547,7 @@ if __name__ == "__main__":
                     K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1))
                     PDF_obj_bins_SE.append(K.bin_edges)
                     PDF_obj_pdf_SE.append(K.pdf)
-                    sigma_SE.append(round(np.std(isolated_data),3))
+                    sigma_SE.append(cfp.round(np.std(isolated_data), 2, str_ret=True))
             
         # PPV cubes for CO (2-1) lines - 0 moment map and consequently first moment map; smoothing and also turbulence isolation
         if action == choices[3]:
@@ -617,12 +617,12 @@ if __name__ == "__main__":
                 # Smoothing (turbulence isolation) of moment 1
                 print("Now doing turbulence isolation on moment 1")
                 smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
-                all_sigmas_before.append((file , round(np.std(moms[1]),3)))
+                all_sigmas_before.append((file , cfp.round(np.std(moms[1]), 2, str_ret=True)))
 
                 # Generating isolated map and then plotting it
                 print("Now subtracting turbulence isolated moment 1")
                 isolated_data = moms[1] - smooth_mom1 # subtraction
-                all_sigmas.append((file, round(np.std(isolated_data),3)))
+                all_sigmas.append((file, cfp.round(np.std(isolated_data), 2, str_ret=True)))
                 if get_LOS(file) == 1:
                     cfp.plot_map(isolated_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig. 
                     t = plt.text(img_names_xpos, img_names_ypos, img_names[2] , transform=plt.gca().transAxes)
@@ -655,12 +655,12 @@ if __name__ == "__main__":
                     K = cfp.get_pdf(moms[1], range=(-0.1,+0.1)) # before turbulence isolation
                     PDF_obj_bins.append(K.bin_edges)
                     PDF_obj_pdf.append(K.pdf)
-                    sigma.append(round(np.std(moms[1]),3))
+                    sigma.append(cfp.round(np.std(moms[1]), 2, str_ret=True))
 
                     K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1)) # after turbulence isolation
                     PDF_obj_bins_isolated.append(K.bin_edges)
                     PDF_obj_pdf_isolated.append(K.pdf)
-                    sigma_isolated.append(round(np.std(isolated_data),3))
+                    sigma_isolated.append(cfp.round(np.std(isolated_data), 2, str_ret=True))
             
             # Doing the same as above for Data_SimEnd
             files = ["PPV_45.0_J21_SE.npy"] 
@@ -713,12 +713,12 @@ if __name__ == "__main__":
                 # Smoothing (turbulence isolation) of moment 1
                 print("Now doing turbulence isolation on moment 1")
                 smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
-                all_sigmas_before.append((file , round(np.std(moms[1]),3)))
+                all_sigmas_before.append((file , cfp.round(np.std(moms[1]), 2, str_ret=True)))
 
                 # Generating isolated map and then plotting it
                 print("Now subtracting turbulence isolated moment 1")
                 isolated_data = moms[1] - smooth_mom1 # subtraction
-                all_sigmas.append(('SE', file, round(np.std(isolated_data),3)))
+                all_sigmas.append(('SE', file, cfp.round(np.std(isolated_data), 2, str_ret=True)))
 
                 cfp.plot_map(isolated_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig. 
                 t = plt.text(img_names_xpos, img_names_ypos, img_names[2] , transform=plt.gca().transAxes)
@@ -733,14 +733,14 @@ if __name__ == "__main__":
                 K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1)) # only after turbulence isolation
                 PDF_obj_bins_SE.append(K.bin_edges)
                 PDF_obj_pdf_SE.append(K.pdf)
-                sigma_SE.append(round(np.std(isolated_data),3))
+                sigma_SE.append(cfp.round(np.std(isolated_data), 2, str_ret=True))
 
     # Plotting the FTs - before isolation, 1tff
     for i in range(len(FTdata_raw)):
         x=FTdata_raw[i][0][1:kmax]; y=FTdata_raw[i][1][1:kmax]
         params = {"a":[1e-4, 1e-2, 1], "n":[-4, -2, -1]}
-        fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]), params=params)
-        a=np.round(fit_values.popt[0],2); n=np.round(fit_values.popt[1],2)
+        fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]), perr_method='systematic', params=params)
+        a=cfp.round(fit_values.popt[0], 2, str_ret=True); n=cfp.round(fit_values.popt[1], 2, str_ret=True)
         cfp.plot(x=x, y=y, label=img_names[i]+FT_slope_labels(fit_values.perr,n), color=line_colours[i])
         cfp.plot(x=x[kmin:], y=np.exp(func(x[kmin:], *fit_values.popt)), alpha=0.5, color=line_colours[i], linestyle=linestyle[0])
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
@@ -753,8 +753,8 @@ if __name__ == "__main__":
     for i in range(len(FTdata)):
         x=FTdata[i][0][1:kmax]; y=FTdata[i][1][1:kmax]
         params = {"a":[1e-4, 1e-2, 1], "n":[-4, -2, -1]}
-        fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]), params=params)
-        a=np.round(fit_values.popt[0],2); n=np.round(fit_values.popt[1],2); print(fit_values.pstd)
+        fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]), perr_method='systematic', params=params)
+        a=cfp.round(fit_values.popt[0], 2, str_ret=True); n=cfp.round(fit_values.popt[1], 3, str_ret=True); print(fit_values.pstd)
         cfp.plot(x=x, y=y, label=img_names[i]+FT_slope_labels(fit_values.perr,n), color=line_colours[i])
         cfp.plot(x=x[kmin:], y=np.exp(func(x[kmin:], *fit_values.popt)), alpha=0.5, color=line_colours[i], linestyle=linestyle[0])
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
@@ -767,8 +767,8 @@ if __name__ == "__main__":
     for i in range(len(FTdata_SE)):
         x=FTdata_SE[i][0][1:kmax]; y=FTdata_SE[i][1][1:kmax]
         params = {"a":[1e-4, 1e-2, 1], "n":[-4, -2, -1]}
-        fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]), params=params)
-        a=np.round(fit_values.popt[0],2); n=np.round(fit_values.popt[1],2)
+        fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]), perr_method='systematic', params=params)
+        a=cfp.round(fit_values.popt[0], 2, str_ret=True); n=cfp.round(fit_values.popt[1], 2, str_ret=True)
         cfp.plot(x=x, y=y, label=img_names[i]+FT_slope_labels(fit_values.perr,n), color=line_colours[i])
         cfp.plot(x=x[kmin:], y=np.exp(func(x[kmin:], *fit_values.popt)), alpha=0.5, color=line_colours[i], linestyle=linestyle[0])
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
@@ -798,4 +798,5 @@ if __name__ == "__main__":
     # Printing sigma values for Table 1.
     print(all_sigmas)
     print(all_sigmas_before)
-    for i in 
+    #for i in range():
+        
