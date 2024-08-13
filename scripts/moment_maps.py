@@ -82,7 +82,7 @@ def resize_45(data, choice):
 def PDF_img_names(i, sigma):
     sigma=np.round(sigma,2)
     img_names = ["Optically thin", "Synthetic CO (1-0)", "Synthetic CO (2-1)"]
-    return img_names[i]+r"; $\sigma$ = "+str(sigma)+r"$~\mathrm{km\,s^{-1}}$"
+    return img_names[i]+r": $\sigma$ = "+str(sigma)+r"$~\mathrm{km\,s^{-1}}$"
 
 def FT_slope_labels(err,n):
     err_n=np.round(err[1][0],2)
@@ -134,7 +134,7 @@ if __name__ == "__main__":
 
     # defining the min and max of the maps universally so that all of them can be compared
     vmin_0 = 0. # zeroth moment map
-    vmax_0 = 5
+    vmax_0 = 4
     vmin_1 = -0.55 # 1st
     vmax_1 = 0.55
     vmin_2 = 0. # 2nd
@@ -173,7 +173,7 @@ if __name__ == "__main__":
     LOS_labels = [r"$\left(\begin{array}{c} 0 \\ 0 \\ 1 \end{array}\right) $", r"$\left(\begin{array}{c} 1 \\ 0 \\ 1 \end{array}\right) $", r"$\left(\begin{array}{c} 1 \\ 0 \\ 0 \end{array}\right) $"]
     xyzlabels = [r"$x$", r"$y$", r"$z$", r"$\sqrt{x^2 + z^2}$"]
     img_names = ["Optically thin", "Synthetic CO (1-0)", "Synthetic CO (2-1)"]
-    img_types=['Before isolation', 'After isolation']
+    img_types=['Before turbulence isolation', 'After turbulence isolation']
 
     # loop through chosen actions
     for action in args.action:
@@ -795,5 +795,7 @@ if __name__ == "__main__":
     cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.2, text=img_types[1], backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[ymin,ymax], legend_loc='upper left', save=outpath+"after_isolation_SE_PDF.pdf")
 
+    # Printing sigma values for Table 1.
     print(all_sigmas)
     print(all_sigmas_before)
+    for i in 
