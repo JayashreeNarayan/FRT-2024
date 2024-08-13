@@ -525,7 +525,7 @@ if __name__ == "__main__":
                 # Smoothing (turbulence isolation) of moment 1
                 print("Now doing turbulence isolation on moment 1")
                 smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
-                all_sigmas_before.append(file , np.std(moms[1]))
+                all_sigmas_before.append((file , np.std(moms[1])))
 
                 # Generating isolated map and then plotting it
                 print("Now subtracting turbulence isolated moment 1")
@@ -796,6 +796,6 @@ if __name__ == "__main__":
     # Printing sigma values for Table 1.
     print(all_sigmas)
     print(all_sigmas_before)
-    for i in range():
-        if get_LOS(all_sigmas[i])
+    #for i in range():
+    #    if get_LOS(all_sigmas[i])
         
