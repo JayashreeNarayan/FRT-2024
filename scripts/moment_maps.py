@@ -329,7 +329,7 @@ if __name__ == "__main__":
                 # Smoothing of the optically thin moment maps - done only for moment 1 maps, skipping moment 2 data
                 if file[:1] == "F": # 2nd and 0th moment map is not to be smoothed or Turbulence isolated 
                     smooth_data = smoothing(data)
-                    all_sigmas_before.append((file , np.std(data)))
+                    all_sigmas_before.append(('SE', file , np.std(data)))
                     # Turbulence isolation of the smoothed data
                     isolated_data_othin = data - smooth_data
                     all_sigmas.append(('SE', file , np.std(isolated_data_othin)))
@@ -525,7 +525,7 @@ if __name__ == "__main__":
                 # Smoothing (turbulence isolation) of moment 1
                 print("Now doing turbulence isolation on moment 1")
                 smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
-                all_sigmas_before.append((file , np.std(moms[1])))
+                all_sigmas_before.append(('SE', file , np.std(moms[1])))
 
                 # Generating isolated map and then plotting it
                 print("Now subtracting turbulence isolated moment 1")
@@ -712,7 +712,7 @@ if __name__ == "__main__":
                 # Smoothing (turbulence isolation) of moment 1
                 print("Now doing turbulence isolation on moment 1")
                 smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
-                all_sigmas_before.append((file , np.std(moms[1])))
+                all_sigmas_before.append(('SE', file , np.std(moms[1])))
 
                 # Generating isolated map and then plotting it
                 print("Now subtracting turbulence isolated moment 1")
@@ -754,6 +754,7 @@ if __name__ == "__main__":
         params = {"a":[1e-4, 1e-2, 1], "n":[-4, -2, -1]}
         fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]), perr_method='systematic', params=params)
         a=cfp.round(fit_values.popt[0], 2, str_ret=True); n=cfp.round(fit_values.popt[1], 3, str_ret=True)
+        cfp.plot(x=x, y=y, label=img_names[i]+FT_slope_labels(fit_values.perr,n), color=line_colours[i])
         cfp.plot(x=x[kmin:], y=np.exp(func(x[kmin:], *fit_values.popt)), alpha=0.5, color=line_colours[i], linestyle=linestyle[0])
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
     secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
@@ -794,8 +795,36 @@ if __name__ == "__main__":
     cfp.plot(xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[ymin,ymax], legend_loc='upper left', save=outpath+"after_isolation_SE_PDF.pdf")
 
     # Printing sigma values for Table 1.
-    print(all_sigmas)
-    print(all_sigmas_before)
-    #for i in range():
-    #    if get_LOS(all_sigmas[i])
+    #print(all_sigmas)
+    #print(all_sigmas_before)
+    SE=[]; deg_0=[]; deg_45=[]; deg_90=[]; rel_valb=[]; rel_vala=[]
+    for i in range(0,4):    
+        rel_vala.append(all_sigmas[i][-1])
+        rel_valb.append(all_sigmas_before[i][-1])
+    for i in range(len(all_sigmas)):
+        if all_sigmas[i][0]=='SE':
+            sigma_before=cfp.round(all_sigmas_before[i][-1], 2, str_ret=True)
+            sigma_after=cfp.round(all_sigmas[i][-1], 2, str_ret=True)
+            f_rel_before=cfp.round(all_sigmas_before[i][-1]/rel_valb[3], 2, str_ret=True)
+            f_rel_after=cfp.round(all_sigmas[i][-1]/rel_vala[3], 2, str_ret=True)
+            SE.append(sigma_before+" & "+f_rel_before+" & "+sigma_after+" & "+f_rel_after)
+        else:
+            LOS=get_LOS(all_sigmas_before[i][0])
+            if LOS==0: rel_vb=rel_valb[LOS]; rel_va=rel_vala[LOS]
+            if LOS==1: rel_vb=rel_valb[LOS]; rel_va=rel_vala[LOS]
+            if LOS==2: rel_vb=rel_valb[LOS]; rel_va=rel_vala[LOS]
+            sigma_before=cfp.round(all_sigmas_before[i][-1], 2, str_ret=True)
+            sigma_after=cfp.round(all_sigmas[i][-1], 2, str_ret=True)
+            f_rel_before=cfp.round(all_sigmas_before[i][-1]/rel_vb, 2, str_ret=True)
+            f_rel_after=cfp.round(all_sigmas[i][-1]/rel_va, 2, str_ret=True)
+            if LOS==0: deg_0.append(sigma_before+" & "+f_rel_before+" & "+sigma_after+" & "+f_rel_after)
+            if LOS==1: deg_45.append(sigma_before+" & "+f_rel_before+" & "+sigma_after+" & "+f_rel_after)
+            if LOS==2: deg_90.append(sigma_before+" & "+f_rel_before+" & "+sigma_after+" & "+f_rel_after)
+
+    print(SE)
+    print(deg_0)
+    print(deg_45)
+    print(deg_90)
+
         
+
