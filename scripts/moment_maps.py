@@ -85,7 +85,7 @@ def PDF_img_names(i, sigma):
     return img_names[i]+r": $\sigma$ = "+sigma+r"$~\mathrm{km\,s^{-1}}$"
 
 def FT_slope_labels(err,n):
-    err_n=cfp.round(abs(err[1][0]), 2, str_ret=True)
+    err_n=cfp.round(abs(err[1][0]), 1, str_ret=True)
     return ";~slope="+n+r"$\pm$"+err_n
 
 def func(x,a,n):
@@ -753,7 +753,7 @@ if __name__ == "__main__":
         x=FTdata[i][0][1:kmax]; y=FTdata[i][1][1:kmax]
         params = {"a":[1e-4, 1e-2, 1], "n":[-4, -2, -1]}
         fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]), perr_method='systematic', params=params)
-        a=cfp.round(fit_values.popt[0], 2, str_ret=True); n=cfp.round(fit_values.popt[1], 3, str_ret=True)
+        a=cfp.round(fit_values.popt[0], 2, str_ret=True); n=cfp.round(fit_values.popt[1], 2, str_ret=True)
         cfp.plot(x=x, y=y, label=img_names[i]+FT_slope_labels(fit_values.perr,n), color=line_colours[i])
         cfp.plot(x=x[kmin:], y=np.exp(func(x[kmin:], *fit_values.popt)), alpha=0.5, color=line_colours[i], linestyle=linestyle[0])
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
@@ -795,8 +795,6 @@ if __name__ == "__main__":
     cfp.plot(xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[ymin,ymax], legend_loc='upper left', save=outpath+"after_isolation_SE_PDF.pdf")
 
     # Printing sigma values for Table 1.
-    #print(all_sigmas)
-    #print(all_sigmas_before)
     SE=[]; deg_0=[]; deg_45=[]; deg_90=[]; rel_valb=[]; rel_vala=[]
     for i in range(0,4):    
         rel_vala.append(all_sigmas[i][-1])
