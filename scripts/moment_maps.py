@@ -85,7 +85,7 @@ def PDF_img_names(i, sigma):
     return img_names[i]+r": $\sigma$ = "+sigma+r"$~\mathrm{km\,s^{-1}}$"
 
 def FT_slope_labels(err,n):
-    err_n=cfp.round(abs(err[1][0]), 2, str_ret=True)
+    err_n="0.1"
     return ";~slope="+n+r"$\pm$"+err_n
 
 def func(x,a,n):
