@@ -81,7 +81,7 @@ def resize_45(data, choice):
 
 def PDF_img_names(i, sigma):
     sigma=cfp.round(sigma, 2, str_ret=True)
-    img_names = ["Optically thin", "Synthetic CO (1-0)", "Synthetic CO (2-1)"]
+    img_names = ["Idealized", "Synthetic CO (1-0)", "Synthetic CO (2-1)"]
     return img_names[i]+r": $\sigma$ = "+sigma+r"$~\mathrm{km\,s^{-1}}$"
 
 def FT_slope_labels(err,n):
@@ -244,6 +244,12 @@ if __name__ == "__main__":
                     isolated_data_othin = data - smooth_data
                     all_sigmas.append((file , np.std(isolated_data_othin)))
                     if get_LOS(file) == 1:
+                        #producing the smoothed maps
+                        cfp.plot_map(smooth_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=["",None], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                        t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes) 
+                        t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
+                        cfp.plot(xlabel="", ylabel=ylabel, save=outpath+file[:-4]+"_smooth.pdf")
+
                         cfp.plot_map(isolated_data_othin, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=[None,None], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
                         t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes) 
                         t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
@@ -436,7 +442,13 @@ if __name__ == "__main__":
                 all_sigmas.append((file, np.std(isolated_data)))
 
                 if get_LOS(file) == 1:
-                    cfp.plot_map(isolated_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig. 
+                    # getting the smoothed maps
+                    cfp.plot_map(smooth_mom1, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=["",""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+                    t = plt.text(img_names_xpos, img_names_ypos, img_names[1] , transform=plt.gca().transAxes)
+                    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
+                    cfp.plot(xlabel="", ylabel="", save=outpath+file[:-4]+"_"+moment_maps[1]+"_smooth.pdf")
+
+                    cfp.plot_map(isolated_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')  
                     t = plt.text(img_names_xpos, img_names_ypos, img_names[1] , transform=plt.gca().transAxes)
                     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
                     cfp.plot(xlabel=xlabel, ylabel="", save=outpath+file[:-4]+"_"+moment_maps[1]+"_isolated.pdf")
@@ -623,7 +635,13 @@ if __name__ == "__main__":
                 isolated_data = moms[1] - smooth_mom1 # subtraction
                 all_sigmas.append((file, np.std(isolated_data)))
                 if get_LOS(file) == 1:
-                    cfp.plot_map(isolated_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig. 
+                    # getting the smoothed maps
+                    cfp.plot_map(smooth_mom1, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=["",""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+                    t = plt.text(img_names_xpos, img_names_ypos, img_names[2] , transform=plt.gca().transAxes)
+                    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
+                    cfp.plot(xlabel="", ylabel="", save=outpath+file[:-4]+"_"+moment_maps[1]+"_smooth.pdf")
+
+                    cfp.plot_map(isolated_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
                     t = plt.text(img_names_xpos, img_names_ypos, img_names[2] , transform=plt.gca().transAxes)
                     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
                     cfp.plot(xlabel=xlabel, ylabel="", save=outpath+file[:-4]+"_"+moment_maps[1]+"_isolated.pdf")
