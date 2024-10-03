@@ -6,6 +6,7 @@ import cfpack as cfp
 from cfpack import print, stop, hdfio, matplotlibrc
 import argparse
 import os
+from scipy import stats as st
 from astropy import constants as c
 
 # Functions for FT
@@ -88,6 +89,10 @@ def FT_slope_labels(err,n):
     err_n="0.1"
     return ";~slope="+n+r"$\pm$"+err_n
 
+def skewness_kurtosis(data, type):
+    if type=='s': return st.skew(data, axis=1)
+    elif type=='k': return st.kurtosis(data, axis=1)
+
 def func(x,a,n):
     return np.log(a*(x**n))
 
@@ -152,14 +157,20 @@ if __name__ == "__main__":
     PDF_obj_bins = [] # for before isolation
     PDF_obj_pdf = []
     sigma = []
+    skewness =[]
+    kurtosis =[]
 
     PDF_obj_bins_isolated = [] # for after isolation
     PDF_obj_pdf_isolated = []
     sigma_isolated = []
+    skewness_isolated =[]
+    kurtosis_isolated =[]
 
     PDF_obj_bins_SE = [] # for SE case
     PDF_obj_pdf_SE = []
     sigma_SE = []
+    skewness_SE =[]
+    kurtosis_SE =[]
     
     all_sigmas =[]
     all_sigmas_before = []
@@ -240,9 +251,11 @@ if __name__ == "__main__":
                 if file[:1] == "F": # 2nd and 0th moment map is not to be smoothed or Turbulence isolated 
                     smooth_data = smoothing(data)
                     all_sigmas_before.append((file , np.std(data)))
+                    
                     # Turbulence isolation of the smoothed data
                     isolated_data_othin = data - smooth_data
                     all_sigmas.append((file , np.std(isolated_data_othin)))
+
                     if get_LOS(file) == 1:
                         #producing the smoothed maps
                         cfp.plot_map(smooth_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=["",None], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
@@ -282,10 +295,15 @@ if __name__ == "__main__":
                         PDF_obj_bins.append(K.bin_edges)
                         PDF_obj_pdf.append(K.pdf)
                         sigma.append(np.std(data))
+                        skewness.append(skewness_kurtosis(data, 's'))
+                        kurtosis.append(skewness_kurtosis(data, 'k'))
+
                         K = cfp.get_pdf(isolated_data_othin, range=(-0.1,+0.1)) # with isolation
                         PDF_obj_bins_isolated.append(K.bin_edges)
                         PDF_obj_pdf_isolated.append(K.pdf)
                         sigma_isolated.append(np.std(isolated_data_othin))
+                        skewness_isolated.append(skewness_kurtosis(isolated_data_othin, 's'))
+                        kurtosis_isolated.append(skewness_kurtosis(isolated_data_othin, 'k'))
 
             # Generating graphs for For SimEnd time 
             files = ["FMM_45.0_SE.npy", "SMM_45.0_SE.npy", "ZMM_45.0_SE.npy"]
@@ -354,6 +372,8 @@ if __name__ == "__main__":
                         PDF_obj_bins_SE.append(K.bin_edges)
                         PDF_obj_pdf_SE.append(K.pdf)
                         sigma_SE.append(np.std(isolated_data_othin))
+                        skewness_SE.append(skewness_kurtosis(isolated_data_othin, 's'))
+                        kurtosis_SE.append(skewness_kurtosis(isolated_data_othin, 'k'))
 
         # Plotting the zeroth moment maps with flashplotlib directly from the FLASH data , used only in Fig. 1 so we need a colorbar
         '''
@@ -480,11 +500,15 @@ if __name__ == "__main__":
                     PDF_obj_bins.append(K.bin_edges)
                     PDF_obj_pdf.append(K.pdf)
                     sigma.append(np.std(moms[1]))
+                    skewness.append(skewness_kurtosis(moms[1], 's'))
+                    kurtosis.append(skewness_kurtosis(moms[1], 'k'))
 
                     K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1)) # for after turbulence isolation
                     PDF_obj_bins_isolated.append(K.bin_edges)
                     PDF_obj_pdf_isolated.append(K.pdf)
                     sigma_isolated.append(np.std(isolated_data))
+                    skewness_isolated.append(skewness_kurtosis(isolated_data, 's'))
+                    kurtosis_isolated.append(skewness_kurtosis(isolated_data, 'k'))
             
             # Doing the same as above for Data_SimEnd
             files = ["PPV_45.0.npy"] 
@@ -559,6 +583,8 @@ if __name__ == "__main__":
                     PDF_obj_bins_SE.append(K.bin_edges)
                     PDF_obj_pdf_SE.append(K.pdf)
                     sigma_SE.append(np.std(isolated_data))
+                    skewness_SE.append(skewness_kurtosis(isolated_data, 's'))
+                    kurtosis_SE.append(skewness_kurtosis(isolated_data, 'k'))
             
         # PPV cubes for CO (2-1) lines - 0 moment map and consequently first moment map; smoothing and also turbulence isolation
         if action == choices[3]:
@@ -673,11 +699,15 @@ if __name__ == "__main__":
                     PDF_obj_bins.append(K.bin_edges)
                     PDF_obj_pdf.append(K.pdf)
                     sigma.append(np.std(moms[1]))
+                    skewness.append(skewness_kurtosis(moms[1], 's'))
+                    kurtosis.append(skewness_kurtosis(moms[1], 'k'))
 
                     K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1)) # after turbulence isolation
                     PDF_obj_bins_isolated.append(K.bin_edges)
                     PDF_obj_pdf_isolated.append(K.pdf)
                     sigma_isolated.append(np.std(isolated_data))
+                    skewness_isolated.append(skewness_kurtosis(isolated_data, 's'))
+                    kurtosis_isolated.append(skewness_kurtosis(isolated_data, 'k'))
             
             # Doing the same as above for Data_SimEnd
             files = ["PPV_45.0_J21_SE.npy"] 
@@ -751,6 +781,8 @@ if __name__ == "__main__":
                 PDF_obj_bins_SE.append(K.bin_edges)
                 PDF_obj_pdf_SE.append(K.pdf)
                 sigma_SE.append(np.std(isolated_data))
+                skewness_SE.append(skewness_kurtosis(isolated_data, 's'))
+                kurtosis_SE.append(skewness_kurtosis(isolated_data, 'k'))
 
     # Plotting the FTs - before isolation, 1tff
     for i in range(len(FTdata_raw)):
@@ -841,6 +873,12 @@ if __name__ == "__main__":
     print(deg_0)
     print(deg_45)
     print(deg_90)
+    print("skewness: ", skewness)
+    print("kurtosis: ", kurtosis)
+    print("skewness_iso: ", skewness_isolated)
+    print("kurtosis_iso: ", kurtosis_isolated)
+    print("skewness_SE: ", skewness_SE)
+    print("kurtosis_SE: ", kurtosis_SE)
 
         
 
