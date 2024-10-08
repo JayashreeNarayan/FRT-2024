@@ -82,7 +82,7 @@ def resize_45(data, choice):
 
 def PDF_img_names(i, sigma):
     sigma=cfp.round(sigma, 2, str_ret=True)
-    img_names = ["Idealized", "Synthetic CO (1-0)", "Synthetic CO (2-1)"]
+    img_names = ["Idealised", "Synthetic CO (1-0)", "Synthetic CO (2-1)"]
     return img_names[i]+r": $\sigma$ = "+sigma+r"$~\mathrm{km\,s^{-1}}$"
 
 def FT_slope_labels(err,n):
@@ -100,9 +100,9 @@ def func(x,a,n):
 if __name__ == "__main__":    
     parser = argparse.ArgumentParser(description='Plot files')
 
-    choices = ['othin', 'flash', 'ppv_10', 'ppv_21']
+    choices = ['ideal', 'flash', 'ppv_10', 'ppv_21']
     parser.add_argument('-a', '--action', metavar='action', nargs='*', default=choices, choices=choices,
-                        help='Choice: Between plotting the first moment maps with flashplotlib directly from the FLASH data (flash), plotting the optically thin first moment maps with cfpack (othin) and plotting the optically thick moment maps from PPV cubes (ppv)')
+                        help='Choice: Between plotting the first moment maps with flashplotlib directly from the FLASH data (flash), plotting the Idealised first moment maps with cfpack (Idealised) and plotting the optically thick moment maps from PPV cubes (ppv)')
 
     args = parser.parse_args()
 
@@ -183,14 +183,14 @@ if __name__ == "__main__":
     cmap_labels = [r"${I/\langle I \rangle}$", r"${{v_{\mathrm{LOS}}}~(\mathrm{km\,s^{-1}})}$", r"${\sigma_{v_{\mathrm{LOS}}}~(\mathrm{km\,s^{-1}})}$"]
     LOS_labels = [r"$\left(\begin{array}{c} 0 \\ 0 \\ 1 \end{array}\right) $", r"$\left(\begin{array}{c} 1 \\ 0 \\ 1 \end{array}\right) $", r"$\left(\begin{array}{c} 1 \\ 0 \\ 0 \end{array}\right) $"]
     xyzlabels = [r"$x$", r"$y$", r"$z$", r"$\sqrt{x^2 + z^2}$"]
-    img_names = ["Optically thin", "Synthetic CO (1-0)", "Synthetic CO (2-1)"]
+    img_names = ["Idealised", "Synthetic CO (1-0)", "Synthetic CO (2-1)"]
     img_types=['Before turbulence isolation', 'After turbulence isolation']
 
     # loop through chosen actions
     for action in args.action:
         print("=== Working on action '"+action+"' ===", color='green')
 
-        # Plotting the optically thin first moment maps with cfpack and also smoothing them out and then obtaining the Turbulence-isolated maps
+        # Plotting the Idealised first moment maps with cfpack and also smoothing them out and then obtaining the Turbulence-isolated maps
         if action == choices[0]: 
             files = ["FMM_00.0_0.0.npy", "FMM_45.0_0.0.npy", "FMM_90.0_0.0.npy", "SMM_00.0_0.0.npy", "SMM_45.0_0.0.npy", "SMM_90.0_0.0.npy", "ZMM_00.0_0.0.npy", "ZMM_45.0_0.0.npy", "ZMM_90.0_0.0.npy"]
             for file in files:
@@ -247,7 +247,7 @@ if __name__ == "__main__":
                         t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
                         cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
                     
-                # Smoothing of the optically thin moment maps - done only for moment 1 maps, skipping moment 2 data
+                # Smoothing of the Idealised moment maps - done only for moment 1 maps, skipping moment 2 data
                 if file[:1] == "F": # 2nd and 0th moment map is not to be smoothed or Turbulence isolated 
                     smooth_data = smoothing(data)
                     all_sigmas_before.append((file , np.std(data)))
@@ -283,7 +283,7 @@ if __name__ == "__main__":
                     if axis[1] == None: ylabel = ylabel
                     cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_FMM_sum.pdf")
 
-                    # Fourier Analysis Data for Optically thin maps
+                    # Fourier Analysis Data for Idealised maps
                     if get_LOS(file) == 1:
                         K_P = fourier_spectrum(isolated_data_othin) # for the turbulence isolated data
                         FTdata.append(K_P)
@@ -350,7 +350,7 @@ if __name__ == "__main__":
                     t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
                     cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
                     
-                # Smoothing of the optically thin moment maps - done only for moment 1 maps, skipping moment 2 data
+                # Smoothing of the Idealised moment maps - done only for moment 1 maps, skipping moment 2 data
                 if file[:1] == "F": # 2nd and 0th moment map is not to be smoothed or Turbulence isolated 
                     smooth_data = smoothing(data)
                     all_sigmas_before.append(('SE', file , np.std(data)))
@@ -362,7 +362,7 @@ if __name__ == "__main__":
                     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
                     cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_isolated.pdf")
 
-                    # Fourier Analysis Data for Optically thin maps
+                    # Fourier Analysis Data for Idealised maps
                     K_P = fourier_spectrum(isolated_data_othin)
                     FTdata_SE.append(K_P)
                     
@@ -414,7 +414,7 @@ if __name__ == "__main__":
                     # compute moment maps
                     print("Computing moment "+str(imom)+" map...")
                     if imom==0: mom = zero_moment(PPV, Vrange); mom = rescale_data(mom)  # need to rescale the 0th moment map alone
-                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the optically thin images
+                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the Idealised images
                     if imom==2: mom = second_moment(PPV, Vrange)
                     moms.append(mom) # append to bigger list of moment maps
 
@@ -527,7 +527,7 @@ if __name__ == "__main__":
                     # compute moment maps
                     print("Computing moment "+str(imom)+" map...")
                     if imom==0: mom = zero_moment(PPV, Vrange); mom = rescale_data(mom)  # need to rescale the 0th moment map alone
-                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the optically thin images
+                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the Idealised images
                     if imom==2: mom = second_moment(PPV, Vrange)
                     moms.append(mom) # append to bigger list of moment maps
 
@@ -616,7 +616,7 @@ if __name__ == "__main__":
                     # compute moment maps
                     print("Computing moment "+str(imom)+" map...")
                     if imom==0: mom = zero_moment(PPV, Vrange); mom = rescale_data(mom)  # need to rescale the 0th moment map alone
-                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the optically thin images
+                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the Idealised images
                     if imom==2: mom = second_moment(PPV, Vrange)
                     moms.append(mom) # append to bigger list of moment maps
 
@@ -726,7 +726,7 @@ if __name__ == "__main__":
                     # compute moment maps
                     print("Computing moment "+str(imom)+" map...")
                     if imom==0: mom = zero_moment(PPV, Vrange); mom = rescale_data(mom)  # need to rescale the 0th moment map alone
-                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the optically thin images
+                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the Idealised images
                     if imom==2: mom = second_moment(PPV, Vrange)
                     moms.append(mom) # append to bigger list of moment maps
 
