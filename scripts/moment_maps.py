@@ -96,6 +96,9 @@ def skewness_kurtosis(data, type):
 def func(x,a,n):
     return np.log(a*(x**n))
 
+def func_gaussian(x,a,n):
+    return np.log(a*(x**n))
+
 # ===== the following applies in case we are running this in script mode =====
 if __name__ == "__main__":    
     parser = argparse.ArgumentParser(description='Plot files')
@@ -295,15 +298,15 @@ if __name__ == "__main__":
                         PDF_obj_bins.append(K.bin_edges)
                         PDF_obj_pdf.append(K.pdf)
                         sigma.append(np.std(data))
-                        skewness.append(skewness_kurtosis(data, 's'))
-                        kurtosis.append(skewness_kurtosis(data, 'k'))
+                        skewness.append(skewness_kurtosis(PDF_obj_pdf, 's'))
+                        kurtosis.append(skewness_kurtosis(PDF_obj_pdf, 'k'))
 
                         K = cfp.get_pdf(isolated_data_othin, range=(-0.1,+0.1)) # with isolation
                         PDF_obj_bins_isolated.append(K.bin_edges)
                         PDF_obj_pdf_isolated.append(K.pdf)
                         sigma_isolated.append(np.std(isolated_data_othin))
-                        skewness_isolated.append(skewness_kurtosis(isolated_data_othin, 's'))
-                        kurtosis_isolated.append(skewness_kurtosis(isolated_data_othin, 'k'))
+                        skewness_isolated.append(skewness_kurtosis(PDF_obj_pdf_isolated, 's'))
+                        kurtosis_isolated.append(skewness_kurtosis(PDF_obj_pdf_isolated, 'k'))
 
             # Generating graphs for For SimEnd time 
             files = ["FMM_45.0_SE.npy", "SMM_45.0_SE.npy", "ZMM_45.0_SE.npy"]
@@ -372,8 +375,8 @@ if __name__ == "__main__":
                         PDF_obj_bins_SE.append(K.bin_edges)
                         PDF_obj_pdf_SE.append(K.pdf)
                         sigma_SE.append(np.std(isolated_data_othin))
-                        skewness_SE.append(skewness_kurtosis(isolated_data_othin, 's'))
-                        kurtosis_SE.append(skewness_kurtosis(isolated_data_othin, 'k'))
+                        skewness_SE.append(skewness_kurtosis(PDF_obj_pdf_SE, 's'))
+                        kurtosis_SE.append(skewness_kurtosis(PDF_obj_pdf_SE, 'k'))
 
         # Plotting the zeroth moment maps with flashplotlib directly from the FLASH data , used only in Fig. 1 so we need a colorbar
         '''
@@ -500,15 +503,15 @@ if __name__ == "__main__":
                     PDF_obj_bins.append(K.bin_edges)
                     PDF_obj_pdf.append(K.pdf)
                     sigma.append(np.std(moms[1]))
-                    skewness.append(skewness_kurtosis(moms[1], 's'))
-                    kurtosis.append(skewness_kurtosis(moms[1], 'k'))
+                    skewness.append(skewness_kurtosis(PDF_obj_pdf, 's'))
+                    kurtosis.append(skewness_kurtosis(PDF_obj_pdf, 'k'))
 
                     K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1)) # for after turbulence isolation
                     PDF_obj_bins_isolated.append(K.bin_edges)
                     PDF_obj_pdf_isolated.append(K.pdf)
                     sigma_isolated.append(np.std(isolated_data))
-                    skewness_isolated.append(skewness_kurtosis(isolated_data, 's'))
-                    kurtosis_isolated.append(skewness_kurtosis(isolated_data, 'k'))
+                    skewness_isolated.append(skewness_kurtosis(PDF_obj_pdf_isolated, 's'))
+                    kurtosis_isolated.append(skewness_kurtosis(PDF_obj_pdf_isolated, 'k'))
             
             # Doing the same as above for Data_SimEnd
             files = ["PPV_45.0.npy"] 
@@ -583,8 +586,8 @@ if __name__ == "__main__":
                     PDF_obj_bins_SE.append(K.bin_edges)
                     PDF_obj_pdf_SE.append(K.pdf)
                     sigma_SE.append(np.std(isolated_data))
-                    skewness_SE.append(skewness_kurtosis(isolated_data, 's'))
-                    kurtosis_SE.append(skewness_kurtosis(isolated_data, 'k'))
+                    skewness_SE.append(skewness_kurtosis(PDF_obj_pdf_SE, 's'))
+                    kurtosis_SE.append(skewness_kurtosis(PDF_obj_pdf_SE, 'k'))
             
         # PPV cubes for CO (2-1) lines - 0 moment map and consequently first moment map; smoothing and also turbulence isolation
         if action == choices[3]:
@@ -699,15 +702,15 @@ if __name__ == "__main__":
                     PDF_obj_bins.append(K.bin_edges)
                     PDF_obj_pdf.append(K.pdf)
                     sigma.append(np.std(moms[1]))
-                    skewness.append(skewness_kurtosis(moms[1], 's'))
-                    kurtosis.append(skewness_kurtosis(moms[1], 'k'))
+                    skewness.append(skewness_kurtosis(PDF_obj_pdf, 's'))
+                    kurtosis.append(skewness_kurtosis(PDF_obj_pdf, 'k'))
 
                     K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1)) # after turbulence isolation
                     PDF_obj_bins_isolated.append(K.bin_edges)
                     PDF_obj_pdf_isolated.append(K.pdf)
                     sigma_isolated.append(np.std(isolated_data))
-                    skewness_isolated.append(skewness_kurtosis(isolated_data, 's'))
-                    kurtosis_isolated.append(skewness_kurtosis(isolated_data, 'k'))
+                    skewness_isolated.append(skewness_kurtosis(PDF_obj_pdf_isolated, 's'))
+                    kurtosis_isolated.append(skewness_kurtosis(PDF_obj_pdf_isolated, 'k'))
             
             # Doing the same as above for Data_SimEnd
             files = ["PPV_45.0_J21_SE.npy"] 
@@ -781,8 +784,8 @@ if __name__ == "__main__":
                 PDF_obj_bins_SE.append(K.bin_edges)
                 PDF_obj_pdf_SE.append(K.pdf)
                 sigma_SE.append(np.std(isolated_data))
-                skewness_SE.append(skewness_kurtosis(isolated_data, 's'))
-                kurtosis_SE.append(skewness_kurtosis(isolated_data, 'k'))
+                skewness_SE.append(skewness_kurtosis(PDF_obj_pdf_SE, 's'))
+                kurtosis_SE.append(skewness_kurtosis(PDF_obj_pdf_SE, 'k'))
 
     # Plotting the FTs - before isolation, 1tff
     for i in range(len(FTdata_raw)):
