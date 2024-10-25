@@ -79,6 +79,12 @@ def resize_45(data, choice):
         rescaled_data = np.delete(data, A, 0)
         rescaled_data = np.delete(rescaled_data, B, 0)
         return rescaled_data
+    else:
+        A = list(range(0,26))
+        B = list(range(127,153))
+        rescaled_data = np.delete(data, A, 0)
+        rescaled_data = np.delete(rescaled_data, B, 0)
+        return rescaled_data
 
 def PDF_img_names(i, sigma):
     sigma=cfp.round(sigma, 2, str_ret=True)
@@ -115,6 +121,30 @@ if __name__ == "__main__":
     if not os.path.isdir(outpath):
         cfp.run_shell_command('mkdir '+outpath)
 
+    # For the correction factor maps, all after isolation
+    ideal_1tff=[]
+    ideal_SE=[]
+    CO_10_1tff=[]
+    CO_10_SE=[]
+    CO_21_1tff=[]
+    CO_21_SE=[]
+
+    # vmin and vmax for correction factors
+    vmin_correc = -6000
+    vmax_correc = 1700
+
+    # For the correction factor PDFs, all after isolation
+    PDF_correction_bins=[]
+    PDF_correction_values=[]
+    correction_sigmas=[]
+    correction_labels=[r"CO (1-0) at $1_{tff}$", r"CO (1-0) at $1.2_{tff}$", r"CO (2-1) at $1_{tff}$", r"CO (2-1) at $1.2_{tff}$"]
+    correction_xlabel = "Correction factors"
+
+    def PDF_img_names_correc(i, sigma):
+        sigma=cfp.round(sigma, 2, str_ret=True)
+        img_names = correction_labels
+        return img_names[i]+r": $\sigma$ = "+sigma
+
     # For the PDFs
     xmin=-0.45
     xmax=+0.45
@@ -136,7 +166,7 @@ if __name__ == "__main__":
 
     # image title positions
     img_names_xpos = 0.05
-    img_names_ypos = 0.9
+    img_names_ypos = 0.05
     img_PDF_names_xpos = 0.02
     img_PDF_names_ypos = 0.85
 
@@ -182,8 +212,8 @@ if __name__ == "__main__":
     line_colours=['black', 'magenta', 'blue']
 
     moment_maps = ["mom0", "mom1", "mom2"] # Data for all moment maps
-    cmaps = ['plasma', 'seismic', 'viridis']
-    cmap_labels = [r"${I/\langle I \rangle}$", r"${{v_{\mathrm{LOS}}}~(\mathrm{km\,s^{-1}})}$", r"${\sigma_{v_{\mathrm{LOS}}}~(\mathrm{km\,s^{-1}})}$"]
+    cmaps = ['plasma', 'seismic', 'viridis', 'gray']
+    cmap_labels = [r"${I/\langle I \rangle}$", r"${{v_{\mathrm{LOS}}}~(\mathrm{km\,s^{-1}})}$", r"${\sigma_{v_{\mathrm{LOS}}}~(\mathrm{km\,s^{-1}})}$", "Correction factor values"]
     LOS_labels = [r"$\left(\begin{array}{c} 0 \\ 0 \\ 1 \end{array}\right) $", r"$\left(\begin{array}{c} 1 \\ 0 \\ 1 \end{array}\right) $", r"$\left(\begin{array}{c} 1 \\ 0 \\ 0 \end{array}\right) $"]
     xyzlabels = [r"$x$", r"$y$", r"$z$", r"$\sqrt{x^2 + z^2}$"]
     img_names = ["Idealised", "Synthetic CO (1-0)", "Synthetic CO (2-1)"]
@@ -259,6 +289,9 @@ if __name__ == "__main__":
                     isolated_data_othin = data - smooth_data
                     all_sigmas.append((file , np.std(isolated_data_othin)))
 
+                    # for the correction factors map
+                    ideal_1tff.append(isolated_data_othin)
+
                     if get_LOS(file) == 1:
                         #producing the smoothed maps
                         cfp.plot_map(smooth_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=["",None], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
@@ -298,15 +331,15 @@ if __name__ == "__main__":
                         PDF_obj_bins.append(K.bin_edges)
                         PDF_obj_pdf.append(K.pdf)
                         sigma.append(np.std(data))
-                        skewness.append(skewness_kurtosis(PDF_obj_pdf, 's'))
-                        kurtosis.append(skewness_kurtosis(PDF_obj_pdf, 'k'))
+                        skewness.append(skewness_kurtosis(data.flatten(), 's'))
+                        kurtosis.append(skewness_kurtosis(data.flatten(), 'k'))
 
                         K = cfp.get_pdf(isolated_data_othin, range=(-0.1,+0.1)) # with isolation
                         PDF_obj_bins_isolated.append(K.bin_edges)
                         PDF_obj_pdf_isolated.append(K.pdf)
                         sigma_isolated.append(np.std(isolated_data_othin))
-                        skewness_isolated.append(skewness_kurtosis(PDF_obj_pdf_isolated, 's'))
-                        kurtosis_isolated.append(skewness_kurtosis(PDF_obj_pdf_isolated, 'k'))
+                        skewness_isolated.append(skewness_kurtosis(isolated_data_othin.flatten(), 's'))
+                        kurtosis_isolated.append(skewness_kurtosis(isolated_data_othin.flatten(), 'k'))
 
             # Generating graphs for For SimEnd time 
             files = ["FMM_45.0_SE.npy", "SMM_45.0_SE.npy", "ZMM_45.0_SE.npy"]
@@ -318,7 +351,7 @@ if __name__ == "__main__":
 
                 if file[:1] == "S": # Since the 2nd moment map needs different plot variables
                     cfp.plot_map(data, cmap=cmaps[2], vmin=vmin_2, vmax=vmax_2_SE, colorbar = False, cmap_label=cmap_labels[2], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # colorbar needed since this is for Fig.1
-                    t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes) # for img_name
+                    t = plt.text(img_names_xpos, img_names_ypos, img_names[0], transform=plt.gca().transAxes) # for img_name
                     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
                     cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+".pdf")
 
@@ -359,6 +392,10 @@ if __name__ == "__main__":
                     all_sigmas_before.append(('SE', file , np.std(data)))
                     # Turbulence isolation of the smoothed data
                     isolated_data_othin = data - smooth_data
+
+                    # for the correction factors map
+                    ideal_SE.append(isolated_data_othin)
+
                     all_sigmas.append(('SE', file , np.std(isolated_data_othin)))
                     cfp.plot_map(isolated_data_othin, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=[None,None], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
                     t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes) 
@@ -375,8 +412,8 @@ if __name__ == "__main__":
                         PDF_obj_bins_SE.append(K.bin_edges)
                         PDF_obj_pdf_SE.append(K.pdf)
                         sigma_SE.append(np.std(isolated_data_othin))
-                        skewness_SE.append(skewness_kurtosis(PDF_obj_pdf_SE, 's'))
-                        kurtosis_SE.append(skewness_kurtosis(PDF_obj_pdf_SE, 'k'))
+                        skewness_SE.append(skewness_kurtosis(isolated_data_othin.flatten(), 's'))
+                        kurtosis_SE.append(skewness_kurtosis(isolated_data_othin.flatten(), 'k'))
 
         # Plotting the zeroth moment maps with flashplotlib directly from the FLASH data , used only in Fig. 1 so we need a colorbar
         '''
@@ -453,6 +490,7 @@ if __name__ == "__main__":
                         cfp.plot_colorbar(cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, label=cmap_labels[1], save=outpath+cmaps[1]+"_colorbar_p1.pdf", panels=1) 
                         cfp.plot_colorbar(cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, label=cmap_labels[1], save=outpath+cmaps[1]+"_colorbar_p2.pdf", panels=2)
                         cfp.plot_colorbar(cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, label=cmap_labels[1], save=outpath+cmaps[1]+"_colorbar_p3.pdf", panels=3)
+                        cfp.plot_colorbar(cmap=cmaps[3], vmin=vmin_correc, vmax=vmax_correc, label=cmap_labels[3], save=outpath+cmaps[3]+"_colorbar_p2.pdf", panels=2)
             
                 # Smoothing (turbulence isolation) of moment 1
                 print("Now doing turbulence isolation on moment 1")
@@ -462,6 +500,10 @@ if __name__ == "__main__":
                 # Generating isolated map and then plotting it
                 print("Now subtracting turbulence isolated moment 1")
                 isolated_data = moms[1] - smooth_mom1 # subtraction
+
+                # for the correction factors map
+                CO_10_1tff.append(isolated_data)
+                
                 all_sigmas.append((file, np.std(isolated_data)))
 
                 if get_LOS(file) == 1:
@@ -503,15 +545,15 @@ if __name__ == "__main__":
                     PDF_obj_bins.append(K.bin_edges)
                     PDF_obj_pdf.append(K.pdf)
                     sigma.append(np.std(moms[1]))
-                    skewness.append(skewness_kurtosis(PDF_obj_pdf, 's'))
-                    kurtosis.append(skewness_kurtosis(PDF_obj_pdf, 'k'))
+                    skewness.append(skewness_kurtosis(moms[1].flatten(), 's'))
+                    kurtosis.append(skewness_kurtosis(moms[1].flatten(), 'k'))
 
                     K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1)) # for after turbulence isolation
                     PDF_obj_bins_isolated.append(K.bin_edges)
                     PDF_obj_pdf_isolated.append(K.pdf)
                     sigma_isolated.append(np.std(isolated_data))
-                    skewness_isolated.append(skewness_kurtosis(PDF_obj_pdf_isolated, 's'))
-                    kurtosis_isolated.append(skewness_kurtosis(PDF_obj_pdf_isolated, 'k'))
+                    skewness_isolated.append(skewness_kurtosis(isolated_data.flatten(), 's'))
+                    kurtosis_isolated.append(skewness_kurtosis(isolated_data.flatten(), 'k'))
             
             # Doing the same as above for Data_SimEnd
             files = ["PPV_45.0.npy"] 
@@ -569,6 +611,10 @@ if __name__ == "__main__":
                 # Generating isolated map and then plotting it
                 print("Now subtracting turbulence isolated moment 1")
                 isolated_data = moms[1] - smooth_mom1 # subtraction
+
+                # for the correction factors map
+                CO_10_SE.append(isolated_data)
+
                 all_sigmas.append(('SE', file, np.std(isolated_data)))
 
                 cfp.plot_map(isolated_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig. 
@@ -586,8 +632,8 @@ if __name__ == "__main__":
                     PDF_obj_bins_SE.append(K.bin_edges)
                     PDF_obj_pdf_SE.append(K.pdf)
                     sigma_SE.append(np.std(isolated_data))
-                    skewness_SE.append(skewness_kurtosis(PDF_obj_pdf_SE, 's'))
-                    kurtosis_SE.append(skewness_kurtosis(PDF_obj_pdf_SE, 'k'))
+                    skewness_SE.append(skewness_kurtosis(isolated_data.flatten(), 's'))
+                    kurtosis_SE.append(skewness_kurtosis(isolated_data.flatten(), 'k'))
             
         # PPV cubes for CO (2-1) lines - 0 moment map and consequently first moment map; smoothing and also turbulence isolation
         if action == choices[3]:
@@ -606,7 +652,7 @@ if __name__ == "__main__":
 
                 # for the files with 45 degrees -  we have to resize the data
                 if get_LOS(file) == 1: # this means that theta is 45 degrees
-                    PPV = resize_45(PPV, "3D")
+                    PPV = resize_45(PPV, "J21")
                     xlabel = xyzlabels[1] # y-axis on the bottom 
                     ylabel = xyzlabels[3] # combination of x and z on the vertical
 
@@ -662,6 +708,10 @@ if __name__ == "__main__":
                 # Generating isolated map and then plotting it
                 print("Now subtracting turbulence isolated moment 1")
                 isolated_data = moms[1] - smooth_mom1 # subtraction
+
+                # for the correction factors map
+                CO_21_1tff.append(isolated_data)
+
                 all_sigmas.append((file, np.std(isolated_data)))
                 if get_LOS(file) == 1:
                     # getting the smoothed maps
@@ -702,15 +752,15 @@ if __name__ == "__main__":
                     PDF_obj_bins.append(K.bin_edges)
                     PDF_obj_pdf.append(K.pdf)
                     sigma.append(np.std(moms[1]))
-                    skewness.append(skewness_kurtosis(PDF_obj_pdf, 's'))
-                    kurtosis.append(skewness_kurtosis(PDF_obj_pdf, 'k'))
+                    skewness.append(skewness_kurtosis(moms[1].flatten(), 's'))
+                    kurtosis.append(skewness_kurtosis(moms[1].flatten(), 'k'))
 
                     K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1)) # after turbulence isolation
                     PDF_obj_bins_isolated.append(K.bin_edges)
                     PDF_obj_pdf_isolated.append(K.pdf)
                     sigma_isolated.append(np.std(isolated_data))
-                    skewness_isolated.append(skewness_kurtosis(PDF_obj_pdf_isolated, 's'))
-                    kurtosis_isolated.append(skewness_kurtosis(PDF_obj_pdf_isolated, 'k'))
+                    skewness_isolated.append(skewness_kurtosis(isolated_data.flatten(), 's'))
+                    kurtosis_isolated.append(skewness_kurtosis(isolated_data.flatten(), 'k'))
             
             # Doing the same as above for Data_SimEnd
             files = ["PPV_45.0_J21_SE.npy"] 
@@ -720,7 +770,7 @@ if __name__ == "__main__":
                 # read PPV data and V axis
                 PPV = np.load(path+"/Data_SimEnd/"+file) # loading the data
                 Vrange = np.load(path+"/Data_SimEnd/"+"Vrange.npy")           
-                PPV = resize_45(PPV, "3D")
+                PPV = resize_45(PPV, "J21")
                 xlabel = xyzlabels[1] # y-axis on the bottom 
                 ylabel = xyzlabels[3] # combination of x and z on the vertical
 
@@ -768,6 +818,10 @@ if __name__ == "__main__":
                 # Generating isolated map and then plotting it
                 print("Now subtracting turbulence isolated moment 1")
                 isolated_data = moms[1] - smooth_mom1 # subtraction
+
+                # for the correction factors map
+                CO_21_SE.append(isolated_data)
+
                 all_sigmas.append(('SE', file, np.std(isolated_data)))
 
                 cfp.plot_map(isolated_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig. 
@@ -784,8 +838,57 @@ if __name__ == "__main__":
                 PDF_obj_bins_SE.append(K.bin_edges)
                 PDF_obj_pdf_SE.append(K.pdf)
                 sigma_SE.append(np.std(isolated_data))
-                skewness_SE.append(skewness_kurtosis(PDF_obj_pdf_SE, 's'))
-                kurtosis_SE.append(skewness_kurtosis(PDF_obj_pdf_SE, 'k'))
+                skewness_SE.append(skewness_kurtosis(isolated_data.flatten(), 's'))
+                kurtosis_SE.append(skewness_kurtosis(isolated_data.flatten(), 'k'))
+    
+    # Getting the correction factor maps and the PDFs
+    # Correction factor maps:
+    correction_CO_10_1tff = CO_10_1tff[0]/ideal_1tff[0] # 10 at 1tff
+    correction_CO_10_SE = CO_10_SE[0]/ideal_SE[0] # 10 at SE
+
+    correction_CO_21_1tff = CO_21_1tff[0]/ideal_1tff[0] # 21 at 1tff
+    correction_CO_21_SE = CO_21_SE[0]/ideal_SE[0] # 21 at SE
+
+    corrections = [correction_CO_10_1tff, correction_CO_10_SE, correction_CO_21_1tff, correction_CO_21_SE]
+
+    # Plotting the correction factor maps
+    cfp.plot_map(correction_CO_10_1tff, cmap=cmaps[3], colorbar=False, vmin=vmin_correc, vmax=vmax_correc, axes_format=["",None], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    t = plt.text(img_names_xpos, img_names_ypos, img_names[1]+r" at $1_{tff}$" , transform=plt.gca().transAxes)
+    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
+    cfp.plot(xlabel="", ylabel=xyzlabels[1], save=outpath+"correction_map_10_1tff.pdf")
+
+    cfp.plot_map(correction_CO_21_1tff, cmap=cmaps[3], colorbar=False ,vmin=vmin_correc, vmax=vmax_correc,  axes_format=["",""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    t = plt.text(img_names_xpos, img_names_ypos, img_names[2]+r" at $1_{tff}$" , transform=plt.gca().transAxes)
+    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
+    cfp.plot(xlabel="", ylabel="", save=outpath+"correction_map_21_1tff.pdf")
+
+    cfp.plot_map(correction_CO_10_SE, cmap=cmaps[3], colorbar=False , vmin=vmin_correc, vmax=vmax_correc, axes_format=[None,None], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    t = plt.text(img_names_xpos, img_names_ypos, img_names[1]+r" at $1.2_{tff}$" , transform=plt.gca().transAxes)
+    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
+    cfp.plot(xlabel=xyzlabels[0], ylabel=xyzlabels[1], save=outpath+"correction_map_10_SE.pdf")
+
+    cfp.plot_map(correction_CO_21_SE, cmap=cmaps[3], colorbar=False , vmin=vmin_correc, vmax=vmax_correc, axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    t = plt.text(img_names_xpos, img_names_ypos, img_names[2]+r" at $1.2_{tff}$" , transform=plt.gca().transAxes)
+    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
+    cfp.plot(xlabel=xyzlabels[0], ylabel="", save=outpath+"correction_map_21_SE.pdf")
+
+    # Obtaining correction PDFs
+    for i in range(len(corrections)):
+        K = cfp.get_pdf(corrections[i]) 
+        PDF_correction_bins.append(K.bin_edges)
+        PDF_correction_values.append(K.pdf)
+        correction_sigmas.append(np.std(corrections[i]))
+    
+    # Plotting correction PDFs
+    for i in range(len(PDF_correction_bins)):
+        if i==1 or i==3: line_type="dotted"
+        else: line_type="solid"
+
+        if i==0 or i==1: line_color=line_colours[1]
+        else: line_color=line_colours[2]
+
+        cfp.plot(x=PDF_correction_bins[i], y=PDF_correction_values[i], type='pdf', label=PDF_img_names_correc(i, correction_sigmas[i]), linestyle=line_type, color=line_color)
+    cfp.plot(xlabel=correction_xlabel, ylabel="PDF", fontsize='small', ylog=True, legend_loc='upper left', save=outpath+"correction_PDF.pdf")
 
     # Plotting the FTs - before isolation, 1tff
     for i in range(len(FTdata_raw)):
