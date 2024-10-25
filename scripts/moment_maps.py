@@ -96,8 +96,8 @@ def FT_slope_labels(err,n):
     return ";~slope="+n+r"$\pm$"+err_n
 
 def skewness_kurtosis(data, type):
-    if type=='s': return st.skew(data, axis=1)
-    elif type=='k': return st.kurtosis(data, axis=1)
+    if type=='s': return cfp.round(st.skew(data), 2, str_ret=True)
+    elif type=='k': return cfp.round(st.kurtosis(data), 2, str_ret=True)
 
 def func(x,a,n):
     return np.log(a*(x**n))
@@ -130,8 +130,8 @@ if __name__ == "__main__":
     CO_21_SE=[]
 
     # vmin and vmax for correction factors
-    vmin_correc = -6000
-    vmax_correc = 1700
+    vmin_correc = -1000
+    vmax_correc = 1000
 
     # For the correction factor PDFs, all after isolation
     PDF_correction_bins=[]
@@ -166,7 +166,11 @@ if __name__ == "__main__":
 
     # image title positions
     img_names_xpos = 0.05
-    img_names_ypos = 0.05
+    img_names_ypos = 0.85
+
+    img_names_xpos_cb = 0.01
+    img_names_ypos_cb = 0.85
+
     img_PDF_names_xpos = 0.02
     img_PDF_names_ypos = 0.85
 
@@ -251,7 +255,7 @@ if __name__ == "__main__":
 
                         # plotting the same with individual colorbars for Fig. 1 eqv.
                         cfp.plot_map(data, cmap=cmaps[2], vmin=vmin_2, vmax=vmax_2, colorbar = True, cmap_label=cmap_labels[2], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                        t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes)
+                        t = plt.text(img_names_xpos_cb, img_names_ypos_cb, img_names[0] , transform=plt.gca().transAxes)
                         t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
                         cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
 
@@ -264,7 +268,7 @@ if __name__ == "__main__":
 
                         # plotting the same with individual colorbars for Fig.1 eqv
                         cfp.plot_map(data, cmap=cmaps[0], vmin=vmin_0, vmax=vmax_0, colorbar = True, cmap_label=cmap_labels[0], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                        t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes)
+                        t = plt.text(img_names_xpos_cb, img_names_ypos_cb, img_names[0] , transform=plt.gca().transAxes)
                         t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
                         cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
 
@@ -276,7 +280,7 @@ if __name__ == "__main__":
 
                         # Also plotting the same with colorbars for Fig. 1
                         cfp.plot_map(data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar = True, cmap_label=cmap_labels[1], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                        t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes)
+                        t = plt.text(img_names_xpos_cb, img_names_ypos_cb, img_names[0] , transform=plt.gca().transAxes)
                         t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
                         cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
                     
@@ -357,7 +361,7 @@ if __name__ == "__main__":
 
                     # plotting the same with individual colorbars for Fig. 1 eqv.
                     cfp.plot_map(data, cmap=cmaps[2], vmin=vmin_2, vmax=vmax_2_SE, colorbar = True, cmap_label=cmap_labels[2], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                    t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes)
+                    t = plt.text(img_names_xpos_cb, img_names_ypos_cb, img_names[0] , transform=plt.gca().transAxes)
                     t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
                     cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
 
@@ -370,7 +374,7 @@ if __name__ == "__main__":
 
                     # plotting the same with individual colorbars for Fig.1 eqv
                     cfp.plot_map(data, cmap=cmaps[0], vmin=vmin_0, vmax=vmax_0_SE, colorbar = True, cmap_label=cmap_labels[0], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                    t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes)
+                    t = plt.text(img_names_xpos_cb, img_names_ypos_cb, img_names[0] , transform=plt.gca().transAxes)
                     t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
                     cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
 
@@ -382,7 +386,7 @@ if __name__ == "__main__":
 
                     # Also plotting the same with colorbars for Fig. 1
                     cfp.plot_map(data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar = True, cmap_label=cmap_labels[1], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                    t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes)
+                    t = plt.text(img_names_xpos_cb, img_names_ypos_cb, img_names[0] , transform=plt.gca().transAxes)
                     t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
                     cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
                     
@@ -482,7 +486,7 @@ if __name__ == "__main__":
 
                         # Set with individual colorbars (Fig. 1)
                         cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar = True, cmap_label=cmap_labels[imom], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                        t = plt.text(img_names_xpos, img_names_ypos, img_names[1] , transform=plt.gca().transAxes)
+                        t = plt.text(img_names_xpos_cb, img_names_ypos_cb, img_names[1] , transform=plt.gca().transAxes)
                         t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
                         cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_"+moment_map+"_cb.pdf")
 
@@ -599,7 +603,7 @@ if __name__ == "__main__":
 
                     # Set with individual colorbars (Fig. 1)
                     cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar = True, cmap_label=cmap_labels[imom], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                    t = plt.text(img_names_xpos, img_names_ypos, img_names[1] , transform=plt.gca().transAxes)
+                    t = plt.text(img_names_xpos_cb, img_names_ypos_cb, img_names[1] , transform=plt.gca().transAxes)
                     t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
                     cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_"+moment_map+"_cb_SE.pdf")
         
@@ -693,7 +697,7 @@ if __name__ == "__main__":
 
                         # Set with individual colorbars (Fig. 1)
                         cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar = True, cmap_label=cmap_labels[imom], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                        t = plt.text(img_names_xpos, img_names_ypos, img_names[2] , transform=plt.gca().transAxes)
+                        t = plt.text(img_names_xpos_cb, img_names_ypos_cb, img_names[2] , transform=plt.gca().transAxes)
                         t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
                         cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_"+moment_map+"_cb.pdf")
 
@@ -806,7 +810,7 @@ if __name__ == "__main__":
 
                     # Set with individual colorbars (Fig. 1)
                     cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar = True, cmap_label=cmap_labels[imom], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                    t = plt.text(img_names_xpos, img_names_ypos, img_names[2] , transform=plt.gca().transAxes)
+                    t = plt.text(img_names_xpos_cb, img_names_ypos_cb, img_names[2] , transform=plt.gca().transAxes)
                     t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
                     cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_"+moment_map+"_cb.pdf")
         
@@ -881,14 +885,12 @@ if __name__ == "__main__":
     
     # Plotting correction PDFs
     for i in range(len(PDF_correction_bins)):
-        if i==1 or i==3: line_type="dotted"
-        else: line_type="solid"
-
+        if i==1 or i==3: alpha=0.5
+        else: alpha=1
         if i==0 or i==1: line_color=line_colours[1]
         else: line_color=line_colours[2]
-
-        cfp.plot(x=PDF_correction_bins[i], y=PDF_correction_values[i], type='pdf', label=PDF_img_names_correc(i, correction_sigmas[i]), linestyle=line_type, color=line_color)
-    cfp.plot(xlabel=correction_xlabel, ylabel="PDF", fontsize='small', ylog=True, legend_loc='upper left', save=outpath+"correction_PDF.pdf")
+        cfp.plot(x=PDF_correction_bins[i], y=PDF_correction_values[i], alpha=alpha, type='pdf', label=PDF_img_names_correc(i, correction_sigmas[i]), color=line_color)
+    cfp.plot(xlabel=correction_xlabel, ylabel="PDF", fontsize='small', ylog=True, xlim=[vmin_correc, vmax_correc], ylim=[1.e-6, 3], legend_loc='upper left', save=outpath+"correction_PDF.pdf")
 
     # Plotting the FTs - before isolation, 1tff
     for i in range(len(FTdata_raw)):
