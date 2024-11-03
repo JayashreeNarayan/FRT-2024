@@ -170,7 +170,7 @@ if __name__ == "__main__":
     img_names_xpos = 0.05
     img_names_ypos = 0.85
 
-    img_names_xpos_cb = 0.01
+    img_names_xpos_cb = -19.2
     img_names_ypos_cb = 0.85
 
     img_PDF_names_xpos = 0.02
