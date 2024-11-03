@@ -130,14 +130,16 @@ if __name__ == "__main__":
     CO_21_SE=[]
 
     # vmin and vmax for correction factors
-    vmin_correc = -1000
-    vmax_correc = 1000
+    vmin_correc = -100
+    vmax_correc = 100
+    ylim_min = 1.e-6
+    ylim_max = 100
 
     # For the correction factor PDFs, all after isolation
     PDF_correction_bins=[]
     PDF_correction_values=[]
     correction_sigmas=[]
-    correction_labels=[r"CO (1-0) at $1_{tff}$", r"CO (1-0) at $1.2_{tff}$", r"CO (2-1) at $1_{tff}$", r"CO (2-1) at $1.2_{tff}$"]
+    correction_labels=[r"CO (1-0) at $1~t_\mathrm{ff}$", r"CO (1-0) at $1.2~t_\mathrm{ff}$", r"CO (2-1) at $1~t_\mathrm{ff}$", r"CO (2-1) at $1.2~t_\mathrm{ff}$"]
     correction_xlabel = "Correction factors"
 
     def PDF_img_names_correc(i, sigma):
@@ -847,32 +849,32 @@ if __name__ == "__main__":
     
     # Getting the correction factor maps and the PDFs
     # Correction factor maps:
-    correction_CO_10_1tff = CO_10_1tff[0]/ideal_1tff[0] # 10 at 1tff
-    correction_CO_10_SE = CO_10_SE[0]/ideal_SE[0] # 10 at SE
+    correction_CO_10_1tff = (CO_10_1tff[0]-ideal_1tff[0])/ideal_1tff[0] # 10 at 1tff
+    correction_CO_10_SE = (CO_10_SE[0]-ideal_SE[0])/ideal_SE[0] # 10 at SE
 
-    correction_CO_21_1tff = CO_21_1tff[0]/ideal_1tff[0] # 21 at 1tff
-    correction_CO_21_SE = CO_21_SE[0]/ideal_SE[0] # 21 at SE
+    correction_CO_21_1tff = (CO_21_1tff[0]-ideal_1tff[0])/ideal_1tff[0] # 21 at 1tff
+    correction_CO_21_SE = (CO_21_SE[0]-ideal_SE[0])/ideal_SE[0] # 21 at SE
 
     corrections = [correction_CO_10_1tff, correction_CO_10_SE, correction_CO_21_1tff, correction_CO_21_SE]
 
     # Plotting the correction factor maps
     cfp.plot_map(correction_CO_10_1tff, cmap=cmaps[3], colorbar=False, vmin=vmin_correc, vmax=vmax_correc, axes_format=["",None], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
-    t = plt.text(img_names_xpos, img_names_ypos, img_names[1]+r" at $1_{tff}$" , transform=plt.gca().transAxes)
+    t = plt.text(img_names_xpos, img_names_ypos, correction_labels[0] , transform=plt.gca().transAxes)
     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
     cfp.plot(xlabel="", ylabel=xyzlabels[1], save=outpath+"correction_map_10_1tff.pdf")
 
     cfp.plot_map(correction_CO_21_1tff, cmap=cmaps[3], colorbar=False ,vmin=vmin_correc, vmax=vmax_correc,  axes_format=["",""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
-    t = plt.text(img_names_xpos, img_names_ypos, img_names[2]+r" at $1_{tff}$" , transform=plt.gca().transAxes)
+    t = plt.text(img_names_xpos, img_names_ypos, correction_labels[1] , transform=plt.gca().transAxes)
     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
     cfp.plot(xlabel="", ylabel="", save=outpath+"correction_map_21_1tff.pdf")
 
     cfp.plot_map(correction_CO_10_SE, cmap=cmaps[3], colorbar=False , vmin=vmin_correc, vmax=vmax_correc, axes_format=[None,None], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
-    t = plt.text(img_names_xpos, img_names_ypos, img_names[1]+r" at $1.2_{tff}$" , transform=plt.gca().transAxes)
+    t = plt.text(img_names_xpos, img_names_ypos, correction_labels[2] , transform=plt.gca().transAxes)
     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
     cfp.plot(xlabel=xyzlabels[0], ylabel=xyzlabels[1], save=outpath+"correction_map_10_SE.pdf")
 
     cfp.plot_map(correction_CO_21_SE, cmap=cmaps[3], colorbar=False , vmin=vmin_correc, vmax=vmax_correc, axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
-    t = plt.text(img_names_xpos, img_names_ypos, img_names[2]+r" at $1.2_{tff}$" , transform=plt.gca().transAxes)
+    t = plt.text(img_names_xpos, img_names_ypos, correction_labels[3] , transform=plt.gca().transAxes)
     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
     cfp.plot(xlabel=xyzlabels[0], ylabel="", save=outpath+"correction_map_21_SE.pdf")
 
@@ -890,7 +892,7 @@ if __name__ == "__main__":
         if i==0 or i==1: line_color=line_colours[1]
         else: line_color=line_colours[2]
         cfp.plot(x=PDF_correction_bins[i], y=PDF_correction_values[i], alpha=alpha, type='pdf', label=PDF_img_names_correc(i, correction_sigmas[i]), color=line_color)
-    cfp.plot(xlabel=correction_xlabel, ylabel="PDF", fontsize='small', ylog=True, xlim=[vmin_correc, vmax_correc], ylim=[1.e-6, 3], legend_loc='upper left', save=outpath+"correction_PDF.pdf")
+    cfp.plot(xlabel=correction_xlabel, ylabel="PDF", fontsize='small', ylog=True, xlim=[vmin_correc, vmax_correc], ylim=[ylim_min, ylim_max], legend_loc='upper left', save=outpath+"correction_PDF.pdf")
 
     # Plotting the FTs - before isolation, 1tff
     for i in range(len(FTdata_raw)):
