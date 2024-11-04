@@ -91,6 +91,10 @@ def PDF_img_names(i, sigma):
     img_names = ["Idealised", "Synthetic CO (1-0)", "Synthetic CO (2-1)"]
     return img_names[i]+r": $\sigma$ = "+sigma+r"$~\mathrm{km\,s^{-1}}$"
 
+def gauss_func(x, mean, sigma):
+    gauss = 1.0/np.sqrt(2.0*np.pi*sigma**2) * np.exp(-0.5*(x-mean)**2/sigma**2)
+    return np.log(gauss)
+
 def FT_slope_labels(err,n):
     err_n="0.1"
     return ";~slope="+n+r"$\pm$"+err_n
@@ -130,8 +134,8 @@ if __name__ == "__main__":
     CO_21_SE=[]
 
     # vmin and vmax for correction factors
-    vmin_correc = -100
-    vmax_correc = 100
+    vmin_correc = -10
+    vmax_correc = 10
     ylim_min = 1.e-6
     ylim_max = 100
 
@@ -195,25 +199,21 @@ if __name__ == "__main__":
 
     # PDF objects and sigmas
     PDF_obj = []
-    PDF_obj_bins = [] # for before isolation
-    PDF_obj_pdf = []
     sigma = []
     skewness = []
     kurtosis = []
 
     PDF_obj_isolated = []
-    PDF_obj_bins_isolated = [] # for after isolation
-    PDF_obj_pdf_isolated = []
     sigma_isolated = []
     skewness_isolated = []
     kurtosis_isolated = []
 
     PDF_obj_SE = []
-    PDF_obj_bins_SE = [] # for SE case
-    PDF_obj_pdf_SE = []
     sigma_SE = []
-    skewness_SE = []
-    kurtosis_SE = []
+    skewness_SE_before = []
+    kurtosis_SE_before = []
+    skewness_SE_after = []
+    kurtosis_SE_after = []
 
     all_sigmas = []
     all_sigmas_before = []
@@ -339,16 +339,12 @@ if __name__ == "__main__":
                         # for the PDFs
                         K = cfp.get_pdf(data, range=(-0.1, 0.1)) # without isolation
                         PDF_obj.append(K)
-                        PDF_obj_bins.append(K.bin_edges)
-                        PDF_obj_pdf.append(K.pdf)
                         sigma.append(np.std(data))
                         skewness.append(skewness_kurtosis(data.flatten(), 's'))
                         kurtosis.append(skewness_kurtosis(data.flatten(), 'k'))
 
                         K = cfp.get_pdf(isolated_data_othin, range=(-0.1,+0.1)) # with isolation
                         PDF_obj_isolated.append(K)
-                        PDF_obj_bins_isolated.append(K.bin_edges)
-                        PDF_obj_pdf_isolated.append(K.pdf)
                         sigma_isolated.append(np.std(isolated_data_othin))
                         skewness_isolated.append(skewness_kurtosis(isolated_data_othin.flatten(), 's'))
                         kurtosis_isolated.append(skewness_kurtosis(isolated_data_othin.flatten(), 'k'))
@@ -422,11 +418,11 @@ if __name__ == "__main__":
                     if get_LOS(file) == 1:
                         K = cfp.get_pdf(isolated_data_othin, range=(-0.1,+0.1))
                         PDF_obj_SE.append(K)
-                        PDF_obj_bins_SE.append(K.bin_edges)
-                        PDF_obj_pdf_SE.append(K.pdf)
                         sigma_SE.append(np.std(isolated_data_othin))
-                        skewness_SE.append(skewness_kurtosis(isolated_data_othin.flatten(), 's'))
-                        kurtosis_SE.append(skewness_kurtosis(isolated_data_othin.flatten(), 'k'))
+                        skewness_SE_before.append(skewness_kurtosis(data.flatten(), 's')) # before isolation for SE
+                        kurtosis_SE_before.append(skewness_kurtosis(data.flatten(), 'k')) # after isolation for SE
+                        skewness_SE_after.append(skewness_kurtosis(isolated_data_othin.flatten(), 's'))
+                        kurtosis_SE_after.append(skewness_kurtosis(isolated_data_othin.flatten(), 'k'))
 
         # Plotting the zeroth moment maps with flashplotlib directly from the FLASH data , used only in Fig. 1 so we need a colorbar
         '''
@@ -556,16 +552,12 @@ if __name__ == "__main__":
                     # Make PDF of turbulence isolated moment 1 and also plot it;  only for the 45 degrees case
                     K = cfp.get_pdf(moms[1], range=(-0.1,+0.1)) # for before turbulence isolation
                     PDF_obj.append(K)
-                    PDF_obj_bins.append(K.bin_edges)
-                    PDF_obj_pdf.append(K.pdf)
                     sigma.append(np.std(moms[1]))
                     skewness.append(skewness_kurtosis(moms[1].flatten(), 's'))
                     kurtosis.append(skewness_kurtosis(moms[1].flatten(), 'k'))
 
                     K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1)) # for after turbulence isolation
                     PDF_obj_isolated.append(K)
-                    PDF_obj_bins_isolated.append(K.bin_edges)
-                    PDF_obj_pdf_isolated.append(K.pdf)
                     sigma_isolated.append(np.std(isolated_data))
                     skewness_isolated.append(skewness_kurtosis(isolated_data.flatten(), 's'))
                     kurtosis_isolated.append(skewness_kurtosis(isolated_data.flatten(), 'k'))
@@ -645,11 +637,11 @@ if __name__ == "__main__":
                 if get_LOS(file) == 1:
                     K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1))
                     PDF_obj_SE.append(K)
-                    PDF_obj_bins_SE.append(K.bin_edges)
-                    PDF_obj_pdf_SE.append(K.pdf)
                     sigma_SE.append(np.std(isolated_data))
-                    skewness_SE.append(skewness_kurtosis(isolated_data.flatten(), 's'))
-                    kurtosis_SE.append(skewness_kurtosis(isolated_data.flatten(), 'k'))
+                    skewness_SE_before.append(skewness_kurtosis(moms[1].flatten(), 's'))
+                    kurtosis_SE_before.append(skewness_kurtosis(moms[1].flatten(), 'k'))
+                    skewness_SE_after.append(skewness_kurtosis(isolated_data.flatten(), 's'))
+                    kurtosis_SE_after.append(skewness_kurtosis(isolated_data.flatten(), 'k'))
 
         # PPV cubes for CO (2-1) lines - 0 moment map and consequently first moment map; smoothing and also turbulence isolation
         if action == choices[3]:
@@ -766,16 +758,12 @@ if __name__ == "__main__":
                     # Make PDF of turbulence isolated moment 1 and also plot it
                     K = cfp.get_pdf(moms[1], range=(-0.1,+0.1)) # before turbulence isolation
                     PDF_obj.append(K)
-                    PDF_obj_bins.append(K.bin_edges)
-                    PDF_obj_pdf.append(K.pdf)
                     sigma.append(np.std(moms[1]))
                     skewness.append(skewness_kurtosis(moms[1].flatten(), 's'))
                     kurtosis.append(skewness_kurtosis(moms[1].flatten(), 'k'))
 
                     K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1)) # after turbulence isolation
                     PDF_obj_isolated.append(K)
-                    PDF_obj_bins_isolated.append(K.bin_edges)
-                    PDF_obj_pdf_isolated.append(K.pdf)
                     sigma_isolated.append(np.std(isolated_data))
                     skewness_isolated.append(skewness_kurtosis(isolated_data.flatten(), 's'))
                     kurtosis_isolated.append(skewness_kurtosis(isolated_data.flatten(), 'k'))
@@ -854,11 +842,11 @@ if __name__ == "__main__":
                 # Getting the PDF for SimEnd - CO (2-1) - SimEnd
                 K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1)) # only after turbulence isolation
                 PDF_obj_SE.append(K)
-                PDF_obj_bins_SE.append(K.bin_edges)
-                PDF_obj_pdf_SE.append(K.pdf)
                 sigma_SE.append(np.std(isolated_data))
-                skewness_SE.append(skewness_kurtosis(isolated_data.flatten(), 's'))
-                kurtosis_SE.append(skewness_kurtosis(isolated_data.flatten(), 'k'))
+                skewness_SE_before.append(skewness_kurtosis(moms[1].flatten(), 's'))
+                kurtosis_SE_before.append(skewness_kurtosis(moms[1].flatten(), 'k'))
+                skewness_SE_after.append(skewness_kurtosis(isolated_data.flatten(), 's'))
+                kurtosis_SE_after.append(skewness_kurtosis(isolated_data.flatten(), 'k'))
 
     # Getting the correction factor maps and the PDFs
     # Correction factor maps:
@@ -949,34 +937,30 @@ if __name__ == "__main__":
     cfp.plot(x=img_PDF_names_xpos+0.003, y=img_PDF_names_ypos-0.55, text=img_types[1], backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(legend_loc='lower left', xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], fontsize='small', ylog=True,  xlog=True, save=outpath+"FT_after_SE.pdf")
 
-    def gauss_func(x, mean, sigma):
-        gauss = 1.0/np.sqrt(2.0*np.pi*sigma**2) * np.exp(-0.5*(x-mean)**2/sigma**2)
-        return np.log(gauss)
-
     # Plotting the PDFs for before isolation
-    for i in range(len(PDF_obj_bins)):
+    for i in range(len(PDF_obj)):
         cfp.plot(x=PDF_obj[i].bin_edges, y=PDF_obj[i].pdf, type='pdf', label=PDF_img_names(i, sigma[i]), color=line_colours[i])
         good_ind = PDF_obj[i].pdf > 0
         fitobj = cfp.fit(gauss_func, PDF_obj[i].bin_center[good_ind], np.log(PDF_obj[i].pdf[good_ind]))
-        cfp.plot(x=xfit, y=np.exp(gauss_func(xfit, *fitobj.popt)), color=line_colours[i], linestyle='dashed')
+        cfp.plot(x=xfit, y=np.exp(gauss_func(xfit, *fitobj.popt)), alpha=0.5, color=line_colours[i], linestyle='dashed')
     cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.2, text=img_types[0], backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[ymin,ymax], legend_loc='upper left', save=outpath+"before_isolation_PDF.pdf")
 
     # Plotting the PDFs for after isolation
-    for i in range(len(PDF_obj_bins_isolated)):
-        cfp.plot(x=PDF_obj_bins_isolated[i], y=PDF_obj_pdf_isolated[i], type='pdf', label=PDF_img_names(i, sigma_isolated[i]), color=line_colours[i])
+    for i in range(len(PDF_obj_isolated)):
+        cfp.plot(x=PDF_obj_isolated[i].bin_edges, y=PDF_obj_isolated[i].pdf, type='pdf', label=PDF_img_names(i, sigma_isolated[i]), color=line_colours[i])
         good_ind = PDF_obj_isolated[i].pdf > 0
         fitobj = cfp.fit(gauss_func, PDF_obj_isolated[i].bin_center[good_ind], np.log(PDF_obj_isolated[i].pdf[good_ind]))
-        cfp.plot(x=xfit, y=np.exp(gauss_func(xfit, *fitobj.popt)), color=line_colours[i], linestyle='dashed')
+        cfp.plot(x=xfit, y=np.exp(gauss_func(xfit, *fitobj.popt)), alpha=0.5, color=line_colours[i], linestyle='dashed')
     cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.2, text=img_types[1], backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[ymin,ymax], legend_loc='upper left', save=outpath+"after_isolation_PDF.pdf")
 
     # Plotting the PDFs for after isolation - FOR SIMEND
-    for i in range(len(PDF_obj_bins_SE)):
-        cfp.plot(x=PDF_obj_bins_SE[i], y=PDF_obj_pdf_isolated[i], type='pdf', label=PDF_img_names(i, sigma_SE[i]), color=line_colours[i])
+    for i in range(len(PDF_obj_SE)):
+        cfp.plot(x=PDF_obj_SE[i].bin_edges, y=PDF_obj_isolated[i].pdf, type='pdf', label=PDF_img_names(i, sigma_SE[i]), color=line_colours[i])
         good_ind = PDF_obj_SE[i].pdf > 0
         fitobj = cfp.fit(gauss_func, PDF_obj_SE[i].bin_center[good_ind], np.log(PDF_obj_SE[i].pdf[good_ind]))
-        cfp.plot(x=xfit, y=np.exp(gauss_func(xfit, *fitobj.popt)), color=line_colours[i], linestyle='dashed')
+        cfp.plot(x=xfit, y=np.exp(gauss_func(xfit, *fitobj.popt)), alpha=0.5, color=line_colours[i], linestyle='dashed')
     cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos-0.2, text=img_types[1], backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[xmin, xmax], ylim=[ymin,ymax], legend_loc='upper left', save=outpath+"after_isolation_SE_PDF.pdf")
 
@@ -1009,9 +993,10 @@ if __name__ == "__main__":
     print(deg_0)
     print(deg_45)
     print(deg_90)
-    print("skewness: ", skewness)
+    #print("skewness: ", skewness)
     print("kurtosis: ", kurtosis)
-    print("skewness_iso: ", skewness_isolated)
+    #print("skewness_iso: ", skewness_isolated)
     print("kurtosis_iso: ", kurtosis_isolated)
-    print("skewness_SE: ", skewness_SE)
-    print("kurtosis_SE: ", kurtosis_SE)
+    #print("skewness_SE_before: ", skewness_SE_before)
+    print("kurtosis_SE_before: ", kurtosis_SE_before)
+    print("kurtosis_SE_after: ", kurtosis_SE_after)
