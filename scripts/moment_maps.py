@@ -109,6 +109,12 @@ def func(x,a,n):
 def func_gaussian(x,a,n):
     return np.log(a*(x**n))
 
+def correction_bins(vmax_correc): # creates bins for the correction PDFs
+    pos = list(np.logspace(0.1, vmax_correc, 51))
+    neg = [ -x for x in list(reversed(pos))]
+    tot = neg+pos
+    return tot
+
 # ===== the following applies in case we are running this in script mode =====
 if __name__ == "__main__":    
     parser = argparse.ArgumentParser(description='Plot files')
@@ -126,30 +132,29 @@ if __name__ == "__main__":
         cfp.run_shell_command('mkdir '+outpath)
 
     # For the correction factor maps, all after isolation
-    ideal_1tff=[]
-    ideal_SE=[]
-    CO_10_1tff=[]
-    CO_10_SE=[]
-    CO_21_1tff=[]
-    CO_21_SE=[]
+    ideal_1tff = []
+    ideal_SE = []
+    CO_10_1tff = []
+    CO_10_SE = []
+    CO_21_1tff = []
+    CO_21_SE = []
 
     # vmin and vmax for correction factors
-    vmin_correc = -10
-    vmax_correc = 10
+    vmin_correc = -100
+    vmax_correc = 100
     ylim_min = 1.e-6
     ylim_max = 100
 
     # For the correction factor PDFs, all after isolation
-    PDF_correction_bins=[]
-    PDF_correction_values=[]
-    correction_sigmas=[]
-    correction_labels=[r"CO (1-0) at $1~t_\mathrm{ff}$", r"CO (1-0) at $1.2~t_\mathrm{ff}$", r"CO (2-1) at $1~t_\mathrm{ff}$", r"CO (2-1) at $1.2~t_\mathrm{ff}$"]
+    PDF_correction_obj = []
+    correction_sigmas = []
+    correction_labels = [r"CO (1-0) at $1~t_\mathrm{ff}$", r"CO (1-0) at $1.2~t_\mathrm{ff}$", r"CO (2-1) at $1~t_\mathrm{ff}$", r"CO (2-1) at $1.2~t_\mathrm{ff}$"]
     correction_xlabel = "Correction factors"
 
     def PDF_img_names_correc(i, sigma):
         sigma=cfp.round(sigma, 2, str_ret=True)
-        img_names = correction_labels
-        return img_names[i]+r": $\sigma$ = "+sigma
+        correction_labels = [r"CO (1-0) at $1~t_\mathrm{ff}$", r"CO (1-0) at $1.2~t_\mathrm{ff}$", r"CO (2-1) at $1~t_\mathrm{ff}$", r"CO (2-1) at $1.2~t_\mathrm{ff}$"]
+        return correction_labels[i]+r": $\sigma$ = "+sigma
 
     # For the PDFs
     xmin=-0.45
@@ -499,7 +504,7 @@ if __name__ == "__main__":
                         cfp.plot_colorbar(cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, label=cmap_labels[1], save=outpath+cmaps[1]+"_colorbar_p1.pdf", panels=1) 
                         cfp.plot_colorbar(cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, label=cmap_labels[1], save=outpath+cmaps[1]+"_colorbar_p2.pdf", panels=2)
                         cfp.plot_colorbar(cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, label=cmap_labels[1], save=outpath+cmaps[1]+"_colorbar_p3.pdf", panels=3)
-                        cfp.plot_colorbar(cmap=cmaps[3], vmin=vmin_correc, vmax=vmax_correc, label=cmap_labels[3], save=outpath+cmaps[3]+"_colorbar_p2.pdf", panels=2)
+                        cfp.plot_colorbar(cmap=cmaps[3], vmin=vmin_correc, vmax=vmax_correc, label=cmap_labels[3], save=outpath+cmaps[3]+"_colorbar_p2.pdf", panels=2) # grey color panel
             
                 # Smoothing (turbulence isolation) of moment 1
                 print("Now doing turbulence isolation on moment 1")
@@ -859,40 +864,39 @@ if __name__ == "__main__":
     corrections = [correction_CO_10_1tff, correction_CO_10_SE, correction_CO_21_1tff, correction_CO_21_SE]
 
     # Plotting the correction factor maps
-    cfp.plot_map(correction_CO_10_1tff, cmap=cmaps[3], colorbar=False, vmin=vmin_correc, vmax=vmax_correc, axes_format=["",None], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot_map(correction_CO_10_1tff, cmap=cmaps[3], colorbar=True, vmin=vmin_correc, vmax=vmax_correc, axes_format=["",None], symlog=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
     t = plt.text(img_names_xpos, img_names_ypos, correction_labels[0] , transform=plt.gca().transAxes)
     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
     cfp.plot(xlabel="", ylabel=xyzlabels[1], save=outpath+"correction_map_10_1tff.pdf")
 
-    cfp.plot_map(correction_CO_21_1tff, cmap=cmaps[3], colorbar=False ,vmin=vmin_correc, vmax=vmax_correc,  axes_format=["",""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot_map(correction_CO_21_1tff, cmap=cmaps[3], colorbar=True ,vmin=vmin_correc, vmax=vmax_correc,  axes_format=["",""], symlog=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
     t = plt.text(img_names_xpos, img_names_ypos, correction_labels[1] , transform=plt.gca().transAxes)
     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
     cfp.plot(xlabel="", ylabel="", save=outpath+"correction_map_21_1tff.pdf")
 
-    cfp.plot_map(correction_CO_10_SE, cmap=cmaps[3], colorbar=False , vmin=vmin_correc, vmax=vmax_correc, axes_format=[None,None], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot_map(correction_CO_10_SE, cmap=cmaps[3], colorbar=True , vmin=vmin_correc, vmax=vmax_correc, axes_format=[None,None], symlog=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
     t = plt.text(img_names_xpos, img_names_ypos, correction_labels[2] , transform=plt.gca().transAxes)
     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
     cfp.plot(xlabel=xyzlabels[0], ylabel=xyzlabels[1], save=outpath+"correction_map_10_SE.pdf")
 
-    cfp.plot_map(correction_CO_21_SE, cmap=cmaps[3], colorbar=False , vmin=vmin_correc, vmax=vmax_correc, axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot_map(correction_CO_21_SE, cmap=cmaps[3], colorbar=True , vmin=vmin_correc, vmax=vmax_correc, axes_format=[None,""], symlog=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
     t = plt.text(img_names_xpos, img_names_ypos, correction_labels[3] , transform=plt.gca().transAxes)
     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
     cfp.plot(xlabel=xyzlabels[0], ylabel="", save=outpath+"correction_map_21_SE.pdf")
 
     # Obtaining correction PDFs
     for i in range(len(corrections)):
-        K = cfp.get_pdf(corrections[i]) 
-        PDF_correction_bins.append(K.bin_edges)
-        PDF_correction_values.append(K.pdf)
+        K = cfp.get_pdf(corrections[i], bins=correction_bins(vmax_correc)) 
+        PDF_correction_obj.append(K)
         correction_sigmas.append(np.std(corrections[i]))
     
     # Plotting correction PDFs
-    for i in range(len(PDF_correction_bins)):
+    for i in range(len(PDF_correction_obj)):
         if i==1 or i==3: alpha=0.5
         else: alpha=1
-        if i==0 or i==1: line_color=line_colours[1]
+        if i==0 or i==2: line_color=line_colours[1]
         else: line_color=line_colours[2]
-        cfp.plot(x=PDF_correction_bins[i], y=PDF_correction_values[i], alpha=alpha, type='pdf', label=PDF_img_names_correc(i, correction_sigmas[i]), color=line_color)
+        cfp.plot(x=PDF_correction_obj[i].bin_edges, y=PDF_correction_obj[i].pdf, alpha=alpha, type='pdf', label=PDF_img_names_correc(i, correction_sigmas[i]), color=line_color)
     cfp.plot(xlabel=correction_xlabel, ylabel="PDF", fontsize='small', ylog=True, xlim=[vmin_correc, vmax_correc], ylim=[ylim_min, ylim_max], legend_loc='upper left', save=outpath+"correction_PDF.pdf")
 
     # Plotting the FTs - before isolation, 1tff
@@ -902,7 +906,7 @@ if __name__ == "__main__":
         fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]), perr_method='systematic', params=params)
         a=cfp.round(fit_values.popt[0], 2, str_ret=True); n=cfp.round(fit_values.popt[1], 2, str_ret=True)
         cfp.plot(x=x, y=y, label=img_names[i]+FT_slope_labels(fit_values.perr,n), color=line_colours[i])
-        cfp.plot(x=x[kmin:], y=np.exp(func(x[kmin:], *fit_values.popt)), alpha=0.5, color=line_colours[i], linestyle=linestyle[0])
+        cfp.plot(x=x[kmin:], y=np.exp(func(x[kmin:], *fit_values.popt)), alpha=0.5, color=line_colours[i], linestyle='dotted')
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
     secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
     secax1.tick_params(axis='x', direction='in', length=0, which = 'minor', top=False, bottom=True)
@@ -916,7 +920,7 @@ if __name__ == "__main__":
         fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]), perr_method='systematic', params=params)
         a=cfp.round(fit_values.popt[0], 2, str_ret=True); n=cfp.round(fit_values.popt[1], 2, str_ret=True)
         cfp.plot(x=x, y=y, label=img_names[i]+FT_slope_labels(fit_values.perr,n), color=line_colours[i])
-        cfp.plot(x=x[kmin:], y=np.exp(func(x[kmin:], *fit_values.popt)), alpha=0.5, color=line_colours[i], linestyle=linestyle[0])
+        cfp.plot(x=x[kmin:], y=np.exp(func(x[kmin:], *fit_values.popt)), alpha=0.5, color=line_colours[i], linestyle='dotted')
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
     secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
     secax1.tick_params(axis='x', direction='in', length=0, which = 'minor', top=False, bottom=True)
@@ -930,7 +934,7 @@ if __name__ == "__main__":
         fit_values = cfp.fit(func, xdat=x[kmin:], ydat=np.log(y[kmin:]), perr_method='systematic', params=params)
         a=cfp.round(fit_values.popt[0], 2, str_ret=True); n=cfp.round(fit_values.popt[1], 2, str_ret=True)
         cfp.plot(x=x, y=y, label=img_names[i]+FT_slope_labels(fit_values.perr,n), color=line_colours[i])
-        cfp.plot(x=x[kmin:], y=np.exp(func(x[kmin:], *fit_values.popt)), alpha=0.5, color=line_colours[i], linestyle=linestyle[0])
+        cfp.plot(x=x[kmin:], y=np.exp(func(x[kmin:], *fit_values.popt)), alpha=0.5, color=line_colours[i], linestyle='dotted')
     secax1 = plt.gca().secondary_xaxis('top', functions=(secax_forward, secax_backward))
     secax1.set_xlabel(r"$\ell\,/\,\mathrm{pc}$")
     secax1.tick_params(axis='x', direction='in', length=0, which = 'minor', top=False, bottom=True)
