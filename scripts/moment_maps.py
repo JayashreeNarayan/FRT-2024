@@ -109,8 +109,9 @@ def func(x,a,n):
 def func_gaussian(x,a,n):
     return np.log(a*(x**n))
 
+correction_bins_values = [-1000, -900, -800, -700, -600, -500, -400, -300, -200, -100 ,0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
 def correction_bins(vmax_correc): # creates bins for the correction PDFs
-    pos = list(np.logspace(0.1, vmax_correc, 51))
+    pos = list(np.logspace(0.1, vmax_correc, (vmax_correc/2)+1))
     neg = [ -x for x in list(reversed(pos))]
     tot = neg+pos
     return tot
@@ -140,8 +141,8 @@ if __name__ == "__main__":
     CO_21_SE = []
 
     # vmin and vmax for correction factors
-    vmin_correc = -100
-    vmax_correc = 100
+    vmin_correc = -1000
+    vmax_correc = 1000
     ylim_min = 1.e-6
     ylim_max = 100
 
@@ -504,7 +505,7 @@ if __name__ == "__main__":
                         cfp.plot_colorbar(cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, label=cmap_labels[1], save=outpath+cmaps[1]+"_colorbar_p1.pdf", panels=1) 
                         cfp.plot_colorbar(cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, label=cmap_labels[1], save=outpath+cmaps[1]+"_colorbar_p2.pdf", panels=2)
                         cfp.plot_colorbar(cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, label=cmap_labels[1], save=outpath+cmaps[1]+"_colorbar_p3.pdf", panels=3)
-                        cfp.plot_colorbar(cmap=cmaps[3], vmin=vmin_correc, vmax=vmax_correc, label=cmap_labels[3], save=outpath+cmaps[3]+"_colorbar_p2.pdf", panels=2) # grey color panel
+                        cfp.plot_colorbar(cmap=cmaps[3], vmin=vmin_correc, vmax=vmax_correc, symlog=True, label=cmap_labels[3], save=outpath+cmaps[3]+"_colorbar_p2.pdf", panels=2) # grey color panel
             
                 # Smoothing (turbulence isolation) of moment 1
                 print("Now doing turbulence isolation on moment 1")
@@ -864,29 +865,29 @@ if __name__ == "__main__":
     corrections = [correction_CO_10_1tff, correction_CO_10_SE, correction_CO_21_1tff, correction_CO_21_SE]
 
     # Plotting the correction factor maps
-    cfp.plot_map(correction_CO_10_1tff, cmap=cmaps[3], colorbar=True, vmin=vmin_correc, vmax=vmax_correc, axes_format=["",None], symlog=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot_map(correction_CO_10_1tff, cmap=cmaps[3], colorbar=False, vmin=vmin_correc, vmax=vmax_correc, axes_format=["",None], symlog=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
     t = plt.text(img_names_xpos, img_names_ypos, correction_labels[0] , transform=plt.gca().transAxes)
     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
     cfp.plot(xlabel="", ylabel=xyzlabels[1], save=outpath+"correction_map_10_1tff.pdf")
 
-    cfp.plot_map(correction_CO_21_1tff, cmap=cmaps[3], colorbar=True ,vmin=vmin_correc, vmax=vmax_correc,  axes_format=["",""], symlog=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot_map(correction_CO_21_1tff, cmap=cmaps[3], colorbar=False ,vmin=vmin_correc, vmax=vmax_correc,  axes_format=["",""], symlog=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
     t = plt.text(img_names_xpos, img_names_ypos, correction_labels[1] , transform=plt.gca().transAxes)
     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
     cfp.plot(xlabel="", ylabel="", save=outpath+"correction_map_21_1tff.pdf")
 
-    cfp.plot_map(correction_CO_10_SE, cmap=cmaps[3], colorbar=True , vmin=vmin_correc, vmax=vmax_correc, axes_format=[None,None], symlog=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot_map(correction_CO_10_SE, cmap=cmaps[3], colorbar=False , vmin=vmin_correc, vmax=vmax_correc, axes_format=[None,None], symlog=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
     t = plt.text(img_names_xpos, img_names_ypos, correction_labels[2] , transform=plt.gca().transAxes)
     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
     cfp.plot(xlabel=xyzlabels[0], ylabel=xyzlabels[1], save=outpath+"correction_map_10_SE.pdf")
 
-    cfp.plot_map(correction_CO_21_SE, cmap=cmaps[3], colorbar=True , vmin=vmin_correc, vmax=vmax_correc, axes_format=[None,""], symlog=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot_map(correction_CO_21_SE, cmap=cmaps[3], colorbar=False , vmin=vmin_correc, vmax=vmax_correc, axes_format=[None,""], symlog=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
     t = plt.text(img_names_xpos, img_names_ypos, correction_labels[3] , transform=plt.gca().transAxes)
     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
     cfp.plot(xlabel=xyzlabels[0], ylabel="", save=outpath+"correction_map_21_SE.pdf")
 
     # Obtaining correction PDFs
     for i in range(len(corrections)):
-        K = cfp.get_pdf(corrections[i], bins=correction_bins(vmax_correc)) 
+        K = cfp.get_pdf(corrections[i], bins=correction_bins_values) 
         PDF_correction_obj.append(K)
         correction_sigmas.append(np.std(corrections[i]))
     
