@@ -8,6 +8,11 @@ import argparse
 import os
 from scipy import stats as st
 from astropy import constants as c
+from universal_variables import *
+
+def find_plots():
+    if not os.path.isdir(outpath):
+        cfp.run_shell_command('mkdir '+outpath)
 
 # Functions for FT
 def secax_forward(x):
