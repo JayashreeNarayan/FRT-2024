@@ -836,10 +836,10 @@ if __name__ == "__main__":
     corrections_0 = [correction_CO_10_1tff_mom0, correction_CO_10_SE_mom0, correction_CO_21_1tff_mom0, correction_CO_21_SE_mom0]
 
     # Plotting the correction factor maps
-    cfp.plot_map(correction_CO_10_1tff_mom0, cmap=cmaps[3], colorbar=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot_map(correction_CO_10_1tff_mom0, cmap='seismic',colorbar=True, cmap_label='Correction factor values', log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", vmin=0.1, vmax=10, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
     t = plt.text(img_names_xpos_cb, img_names_ypos_cb, correction_labels[0] , transform=plt.gca().transAxes)
     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-    cfp.plot(xlabel=xyzlabels[1], ylabel=xyzlabels[3], save=outpath+"correction_map_10_1tff_mom0.pdf")
+    cfp.plot(save=outpath+"correction_map_10_1tff_mom0.pdf")
 
     cfp.plot_map(correction_CO_21_1tff_mom0, cmap=cmaps[3], colorbar=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
     t = plt.text(img_names_xpos_cb, img_names_ypos_cb, correction_labels[1] , transform=plt.gca().transAxes)
