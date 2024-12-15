@@ -374,8 +374,8 @@ if __name__ == "__main__":
                     if imom == 2: # 2nd moment
                         vmin = vmin_2
                         vmax = vmax_2
-                        CO_10_1tff_mom2.append(moms[2])
                         if get_LOS(file) == 1: moms[imom] = moms[imom].T # transpose for only the 45.0
+                        CO_10_1tff_mom2.append(moms[2])
                     
                     if get_LOS(file) == 1:
                         # For Appen. Fig.
