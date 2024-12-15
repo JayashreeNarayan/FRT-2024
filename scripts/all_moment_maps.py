@@ -26,6 +26,16 @@ if __name__ == "__main__":
     if not os.path.isdir(outpath):
         cfp.run_shell_command('mkdir '+outpath)
 
+    # For the correction factor maps, all BEFORE isolation
+    ideal_1tff_before = []
+    ideal_SE_before = []
+    CO_10_1tff_before = []
+    CO_10_SE_before = []
+    CO_21_1tff_before = []
+    CO_21_SE_before = []
+    PDF_correction_obj_1_before = []
+    correction_sigmas_1_before = []
+
     # For the correction factor maps, all after isolation
     ideal_1tff = []
     ideal_SE = []
@@ -33,6 +43,8 @@ if __name__ == "__main__":
     CO_10_SE = []
     CO_21_1tff = []
     CO_21_SE = []
+    PDF_correction_obj_1_after = []
+    correction_sigmas_1_after = []
 
     #   MOMENT 0 CORRECTION #
     ideal_1tff_mom0 = []
@@ -47,6 +59,7 @@ if __name__ == "__main__":
     #   MOMENT 2 CORRECTION #
     ideal_SE_mom2 = []
     CO_10_SE_mom2 = []
+    CO_10_1tff_mom2=[]
     CO_21_1tff_mom2 = []
     CO_21_SE_mom2 = []
     PDF_correction_obj_2 = []
@@ -59,9 +72,11 @@ if __name__ == "__main__":
     ylim_max = 100
 
     # For the correction factor PDFs, all after isolation
-    PDF_correction_obj = []
-    correction_sigmas = []
-    correction_labels = [r"CO (1-0) at $1~t_\mathrm{ff}$", r"CO (1-0) at $1.2~t_\mathrm{ff}$", r"CO (2-1) at $1~t_\mathrm{ff}$", r"CO (2-1) at $1.2~t_\mathrm{ff}$"]
+    correction_labels = [r"$\mathrm{CO}\,(1-0)$ at $1\,t_\mathrm{ff}$", r"$\mathrm{CO}\,(1-0)$ at $1.2\,t_\mathrm{ff}$", r"$\mathrm{CO}\,(2-1)$ at $1\,t_\mathrm{ff}$", r"$\mathrm{CO}\,(2-1)$ at $1.2\,t_\mathrm{ff}$"]
+    correction_cmap_lables =[
+    r'$I_{\mathrm{norm,}\,\mathrm{CO}\,(1-0) / I_{\mathrm{norm,}\, \mathrm{idealised}}}$', r'$I_{\mathrm{norm,}\,\mathrm{CO}\,(2-1) / I_{\mathrm{norm,}\, \mathrm{idealised}}}$',
+    r"${\sigma_{v_{\mathrm{LOS,\ CO}\,(1-0)}}}/ {\sigma_{v_{\mathrm{LOS,\ idealised}}}}$", r"${\sigma_{v_{\mathrm{LOS,\ CO}\,(2-1)}}} / {\sigma_{v_{\mathrm{LOS,\ idealised}}}}$", 
+    r"${{v_{\mathrm{LOS,\ CO}\,(1-0)}}} - {{v_{\mathrm{LOS,\ idealised}}}}$", r"${{v_{\mathrm{LOS,\ CO}\,(2-1)}}} - {{v_{\mathrm{LOS,\ idealised}}}}$" ]
     correction_xlabel = "Correction factors"
 
     correction_bins_values = [-1000, -900, -800, -700, -600, -500, -400, -300, -200, -100 ,0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
@@ -88,10 +103,7 @@ if __name__ == "__main__":
 
     # image title positions
     img_names_xpos = 0.05
-    img_names_ypos = 0.85
-
-    img_names_xpos_cb = -19.2
-    img_names_ypos_cb = 0.85
+    img_names_ypos = 0.9
 
     img_PDF_names_xpos = 0.02
     img_PDF_names_ypos = 0.85
@@ -137,11 +149,11 @@ if __name__ == "__main__":
     line_colours = ['black', 'magenta', 'blue']
 
     moment_maps = ["mom0", "mom1", "mom2"] # Data for all moment maps
-    cmaps = ['plasma', 'seismic', 'viridis', 'gray']
+    cmaps = ['plasma', 'seismic', 'viridis', 'gray', 'PuOr']
     cmap_labels = [r"${I/\langle I \rangle}$", r"${{v_{\mathrm{LOS}}}~(\mathrm{km\,s^{-1}})}$", r"${\sigma_{v_{\mathrm{LOS}}}~(\mathrm{km\,s^{-1}})}$", "Correction factor values"]
     LOS_labels = [r"$\left(\begin{array}{c} 0 \\ 0 \\ 1 \end{array}\right) $", r"$\left(\begin{array}{c} 1 \\ 0 \\ 1 \end{array}\right) $", r"$\left(\begin{array}{c} 1 \\ 0 \\ 0 \end{array}\right) $"]
     xyzlabels = [r"$x$", r"$y$", r"$z$", r"$\sqrt{x^2 + z^2}$"]
-    img_names = ["Idealised", "Synthetic CO (1-0)", "Synthetic CO (2-1)"]
+    img_names = ["Idealised", r"Synthetic CO$\,(1-0)$", r"Synthetic CO$\,(2-1)$"]
     img_types=['Before turbulence isolation', 'After turbulence isolation']
 
     # loop through chosen actions
@@ -169,48 +181,25 @@ if __name__ == "__main__":
                     ylabel = xyzlabels[3] # combination of x and z on the vertical
 
                     if file[:1] == "S": # Since the 2nd moment map needs different plot variables
-                        cfp.plot_map(data, cmap=cmaps[2], vmin=vmin_2, vmax=vmax_2, colorbar = False, cmap_label=cmap_labels[2], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # colorbar needed since this is for Fig.1
-                        t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes) # for img_name
-                        t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-                        cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-3]+"pdf")
-
-                        ideal_1tff_mom2 = data
+                        ideal_1tff_mom2 = data # for the correction factors
 
                         # plotting the same with individual colorbars for Fig. 1 eqv.
-                        cfp.plot_map(data, cmap=cmaps[2], vmin=vmin_2, vmax=vmax_2, colorbar = True, cmap_label=cmap_labels[2], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                        t = plt.text(img_names_xpos_cb, img_names_ypos_cb, img_names[0] , transform=plt.gca().transAxes)
-                        t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
-                        cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
+                        ret = cfp.plot_map(data, cmap=cmaps[2], vmin=vmin_2, vmax=vmax_2, colorbar = True, cmap_label=cmap_labels[2], xlabel=xlabel, ylabel=ylabel, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                        cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[0], normalised_coords=True)
+                        cfp.show_or_save_plot(save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
 
-                    elif file[:1] == "Z": # zeroth moment map has separate plot variables, and is needed only for Fig. 1
+                    if file[:1] == "Z": # zeroth moment map has separate plot variables, and is needed only for Fig. 1
                         data = rescale_data(data)
-                        cfp.plot_map(data, cmap=cmaps[0], vmin=vmin_0, vmax=vmax_0, colorbar = False, cmap_label=cmap_labels[0], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # colorbar needed since this is for Fig.1
-                        t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes)
-                        t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-                        cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-3]+"pdf")
-
-                        ideal_1tff_mom0.append(data)
+                        ideal_1tff_mom0.append(data) # for correction maps
 
                         # plotting the same with individual colorbars for Fig.1 eqv
-                        cfp.plot_map(data, cmap=cmaps[0], vmin=vmin_0, vmax=vmax_0, colorbar = True, cmap_label=cmap_labels[0], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                        t = plt.text(img_names_xpos_cb, img_names_ypos_cb, img_names[0] , transform=plt.gca().transAxes)
-                        t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
-                        cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
-
-                    else: # all the first moment maps - for Appen. fig
-                        cfp.plot_map(data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=["",None], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # Done for the 1st moment maps separately, needed for Appen. Fig. 
-                        t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes)
-                        t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-                        cfp.plot(xlabel="", ylabel=ylabel, save=outpath+file[:-3]+"pdf")
-
-                        # Also plotting the same with colorbars for Fig. 1
-                        cfp.plot_map(data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar = True, cmap_label=cmap_labels[1], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                        t = plt.text(img_names_xpos_cb, img_names_ypos_cb, img_names[0] , transform=plt.gca().transAxes)
-                        t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
-                        cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
+                        ret = cfp.plot_map(data, cmap=cmaps[0], vmin=vmin_0, vmax=vmax_0, colorbar = True, cmap_label=cmap_labels[0], xlabel=xlabel, ylabel=ylabel, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                        cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[0], normalised_coords=True)
+                        cfp.show_or_save_plot(save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
                     
                 # Smoothing of the Idealised moment maps - done only for moment 1 maps, skipping moment 2 data
                 if file[:1] == "F": # 2nd and 0th moment map is not to be smoothed or Turbulence isolated 
+                    ideal_1tff_before.append(data)
                     smooth_data = smoothing(data)
                     all_sigmas_before.append((file , np.std(data)))
                     
@@ -223,15 +212,13 @@ if __name__ == "__main__":
 
                     if get_LOS(file) == 1:
                         #producing the smoothed maps
-                        cfp.plot_map(smooth_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=["",None], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                        t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes) 
-                        t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-                        cfp.plot(xlabel="", ylabel=ylabel, save=outpath+file[:-4]+"_smooth.pdf")
+                        ret = cfp.plot_map(smooth_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=["",None], xlabel="", ylabel=ylabel,  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                        cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[0], normalised_coords=True)
+                        cfp.show_or_save_plot(save=outpath+file[:-4]+"_smooth.pdf")
 
-                        cfp.plot_map(isolated_data_othin, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=[None,None], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                        t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes) 
-                        t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-                        cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_isolated.pdf")
+                        ret = cfp.plot_map(isolated_data_othin, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=[None,None], xlabel=xlabel, ylabel=ylabel, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                        cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[0], normalised_coords=True)
+                        cfp.show_or_save_plot(save=outpath+file[:-4]+"_isolated.pdf")
 
                     # For FMM summary plot
                     if get_LOS(file) == 0 : axis = ["",None]
@@ -277,48 +264,32 @@ if __name__ == "__main__":
                 ylabel = xyzlabels[3] # combination of x and z on the vertical
 
                 if file[:1] == "S": # Since the 2nd moment map needs different plot variables
-                    cfp.plot_map(data, cmap=cmaps[2], vmin=vmin_2, vmax=vmax_2_SE, colorbar = False, cmap_label=cmap_labels[2], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # colorbar needed since this is for Fig.1
-                    t = plt.text(img_names_xpos, img_names_ypos, img_names[0], transform=plt.gca().transAxes) # for img_name
-                    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-                    cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+".pdf")
 
-                    ideal_SE_mom2.append(data)
+                    ideal_SE_mom2.append(data) # for correction maps
 
                     # plotting the same with individual colorbars for Fig. 1 eqv.
-                    cfp.plot_map(data, cmap=cmaps[2], vmin=vmin_2, vmax=vmax_2_SE, colorbar = True, cmap_label=cmap_labels[2], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                    t = plt.text(img_names_xpos_cb, img_names_ypos_cb, img_names[0] , transform=plt.gca().transAxes)
-                    t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
-                    cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
+                    ret = cfp.plot_map(data, cmap=cmaps[2], vmin=vmin_2, vmax=vmax_2_SE, colorbar = True, cmap_label=cmap_labels[2], xlabel=xlabel, ylabel=ylabel,xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[0], normalised_coords=True)
+                    cfp.show_or_save_plot(save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
 
                 elif file[:1] == "Z": # zeroth moment map has separate plot variables, and is needed only for Fig. 1
                     data = rescale_data(data)
-                    cfp.plot_map(data, cmap=cmaps[0], vmin=vmin_0, vmax=vmax_0_SE, colorbar = False, cmap_label=cmap_labels[0], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # colorbar needed since this is for Fig.1
-                    t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes)
-                    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-                    cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+".pdf")
-
-                    ideal_SE_mom0.append(data)
+                    ideal_SE_mom0.append(data) # for correction maps
 
                     # plotting the same with individual colorbars for Fig.1 eqv
-                    cfp.plot_map(data, cmap=cmaps[0], vmin=vmin_0, vmax=vmax_0_SE, colorbar = True, cmap_label=cmap_labels[0], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                    t = plt.text(img_names_xpos_cb, img_names_ypos_cb, img_names[0] , transform=plt.gca().transAxes)
-                    t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
-                    cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
+                    ret = cfp.plot_map(data, cmap=cmaps[0], vmin=vmin_0, vmax=vmax_0_SE, colorbar = True, cmap_label=cmap_labels[0], xlabel=xlabel, ylabel=ylabel, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[0], normalised_coords=True)
+                    cfp.show_or_save_plot(save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
 
                 else: # all the first moment maps - for Appen. fig
-                    cfp.plot_map(data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=["",None], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # Done for the 1st moment maps separately, needed for Appen. Fig. 
-                    t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes)
-                    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-                    cfp.plot(xlabel="", ylabel=ylabel, save=outpath+file[:-4]+".pdf")
-
                     # Also plotting the same with colorbars for Fig. 1
-                    cfp.plot_map(data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar = True, cmap_label=cmap_labels[1], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                    t = plt.text(img_names_xpos_cb, img_names_ypos_cb, img_names[0] , transform=plt.gca().transAxes)
-                    t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
-                    cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
+                    ret = cfp.plot_map(data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar = True, cmap_label=cmap_labels[1], xlabel=xlabel, ylabel=ylabel, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[0], normalised_coords=True)
+                    cfp.show_or_save_plot(save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
                     
                 # Smoothing of the Idealised moment maps - done only for moment 1 maps, skipping moment 2 data
                 if file[:1] == "F": # 2nd and 0th moment map is not to be smoothed or Turbulence isolated 
+                    ideal_SE_before.append(data)
                     smooth_data = smoothing(data)
                     all_sigmas_before.append(('SE', file , np.std(data)))
                     # Turbulence isolation of the smoothed data
@@ -326,12 +297,11 @@ if __name__ == "__main__":
 
                     # for the correction factors map
                     ideal_SE.append(isolated_data_othin)
-
                     all_sigmas.append(('SE', file , np.std(isolated_data_othin)))
-                    cfp.plot_map(isolated_data_othin, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=[None,None], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                    t = plt.text(img_names_xpos, img_names_ypos, img_names[0] , transform=plt.gca().transAxes) 
-                    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-                    cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_isolated.pdf")
+
+                    ret = cfp.plot_map(isolated_data_othin, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=[None,None],xlabel=xlabel, ylabel=ylabel,  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[0], normalised_coords=True)
+                    cfp.plot(save=outpath+file[:-4]+"_isolated.pdf")
 
                     # Fourier Analysis Data for Idealised maps
                     K_P = fourier_spectrum(isolated_data_othin)
@@ -404,21 +374,19 @@ if __name__ == "__main__":
                     if imom == 2: # 2nd moment
                         vmin = vmin_2
                         vmax = vmax_2
-                        CO_10_1tff_mom2 = moms[imom]
+                        CO_10_1tff_mom2.append(moms[2])
                         if get_LOS(file) == 1: moms[imom] = moms[imom].T # transpose for only the 45.0
                     
                     if get_LOS(file) == 1:
                         # For Appen. Fig.
-                        cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar=False, axes_format=["", ""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                        t = plt.text(img_names_xpos, img_names_ypos, img_names[1] , transform=plt.gca().transAxes)
-                        t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))                      
-                        cfp.plot(xlabel="", ylabel="", save=outpath+file[:-4]+"_"+moment_map+".pdf")
+                        ret = cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar=False, axes_format=["", ""],xlabel="", ylabel="",  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                        cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[1], normalised_coords=True)                                            
+                        cfp.show_or_save_plot(save=outpath+file[:-4]+"_"+moment_map+".pdf")
 
                         # Set with individual colorbars (Fig. 1)
-                        cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar = True, cmap_label=cmap_labels[imom], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                        t = plt.text(img_names_xpos_cb, img_names_ypos_cb, img_names[1] , transform=plt.gca().transAxes)
-                        t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
-                        cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_"+moment_map+"_cb.pdf")
+                        ret = cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar = True, cmap_label=cmap_labels[imom], xlabel=xlabel, ylabel=ylabel, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                        cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[1], normalised_coords=True) 
+                        cfp.plot(save=outpath+file[:-4]+"_"+moment_map+"_cb.pdf")
 
                         # plotting a common colorbar, only for seismic, universal vmin and vmax
                         cfp.plot_colorbar(cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, label=cmap_labels[1], save=outpath+cmaps[1]+"_colorbar_p1.pdf", panels=1) 
@@ -428,6 +396,7 @@ if __name__ == "__main__":
             
                 # Smoothing (turbulence isolation) of moment 1
                 print("Now doing turbulence isolation on moment 1")
+                CO_10_1tff_before.append(moms[1])
                 smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
                 all_sigmas_before.append((file , np.std(moms[1])))
 
@@ -442,15 +411,13 @@ if __name__ == "__main__":
 
                 if get_LOS(file) == 1:
                     # getting the smoothed maps
-                    cfp.plot_map(smooth_mom1, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=["",""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
-                    t = plt.text(img_names_xpos, img_names_ypos, img_names[1] , transform=plt.gca().transAxes)
-                    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-                    cfp.plot(xlabel="", ylabel="", save=outpath+file[:-4]+"_"+moment_maps[1]+"_smooth.pdf")
+                    ret = cfp.plot_map(smooth_mom1, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=["",""], xlabel="", ylabel="", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+                    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[1], normalised_coords=True)    
+                    cfp.show_or_save_plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_smooth.pdf")
 
-                    cfp.plot_map(isolated_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')  
-                    t = plt.text(img_names_xpos, img_names_ypos, img_names[1] , transform=plt.gca().transAxes)
-                    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-                    cfp.plot(xlabel=xlabel, ylabel="", save=outpath+file[:-4]+"_"+moment_maps[1]+"_isolated.pdf")
+                    ret = cfp.plot_map(isolated_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""],xlabel=xlabel, ylabel="", xlim=[-1,1], ylim=[-1,1], aspect_data='equal')  
+                    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[1], normalised_coords=True)   
+                    cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_isolated.pdf")
 
                 # For A1 - FMM summary plot
                 if get_LOS(file) == 0 : axis = ["",""]
@@ -522,23 +489,22 @@ if __name__ == "__main__":
                     if imom == 2: # 2nd moment
                         vmin = vmin_2
                         vmax = vmax_2_SE
-                        CO_10_SE_mom0.append(moms[2])
+                        CO_10_SE_mom2.append(moms[2])
                         moms[imom] = moms[imom].T # transpose for only the 45.0
 
                     # For Appen. Fig.
-                    cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar=False, axes_format=["", ""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                    t = plt.text(img_names_xpos, img_names_ypos, img_names[1] , transform=plt.gca().transAxes)
-                    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))                      
-                    cfp.plot(xlabel="", ylabel="", save=outpath+file[:-4]+"_"+moment_map+"_SE.pdf")
+                    ret = cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar=False, axes_format=["", ""], xlabel="", ylabel="", xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[1], normalised_coords=True)                      
+                    cfp.show_or_save_plot(save=outpath+file[:-4]+"_"+moment_map+"_SE.pdf")
 
                     # Set with individual colorbars (Fig. 1)
-                    cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar = True, cmap_label=cmap_labels[imom], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                    t = plt.text(img_names_xpos_cb, img_names_ypos_cb, img_names[1] , transform=plt.gca().transAxes)
-                    t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
-                    cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_"+moment_map+"_cb_SE.pdf")
+                    ret = cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar = True, cmap_label=cmap_labels[imom],xlabel=xlabel, ylabel=ylabel,  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[1], normalised_coords=True)          
+                    cfp.show_or_save_plot(save=outpath+file[:-4]+"_"+moment_map+"_cb_SE.pdf")
 
                 # Smoothing (turbulence isolation) of moment 1
                 print("Now doing turbulence isolation on moment 1")
+                CO_10_SE_before.append(moms[1])
                 smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
                 all_sigmas_before.append(('SE', file , np.std(moms[1])))
 
@@ -551,10 +517,9 @@ if __name__ == "__main__":
 
                 all_sigmas.append(('SE', file, np.std(isolated_data)))
 
-                cfp.plot_map(isolated_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig.
-                t = plt.text(img_names_xpos, img_names_ypos, img_names[1] , transform=plt.gca().transAxes)
-                t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-                cfp.plot(xlabel=xlabel, ylabel="", save=outpath+file[:-4]+"_"+moment_maps[1]+"_isolated_SE.pdf")
+                ret = cfp.plot_map(isolated_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""],xlabel=xlabel, ylabel="",  xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig.
+                cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[1], normalised_coords=True)    
+                cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_isolated_SE.pdf")
 
                 # Fourier Analysis Data for Synthetic CO - SimEnd
                 K_P = fourier_spectrum(isolated_data)
@@ -623,22 +588,21 @@ if __name__ == "__main__":
                     
                     if get_LOS(file) == 1:
                         # For Appen. Fig.
-                        cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar=False, axes_format=["", ""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                        t = plt.text(img_names_xpos, img_names_ypos, img_names[2] , transform=plt.gca().transAxes)
-                        t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-                        cfp.plot(xlabel="", ylabel="", save=outpath+file[:-4]+"_"+moment_map+".pdf")
+                        ret = cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar=False, axes_format=["", ""], xlabel="", ylabel="",  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                        cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[2], normalised_coords=True)  
+                        cfp.show_or_save_plot(save=outpath+file[:-4]+"_"+moment_map+".pdf")
 
                         # Set with individual colorbars (Fig. 1)
-                        cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar = True, cmap_label=cmap_labels[imom], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                        t = plt.text(img_names_xpos_cb, img_names_ypos_cb, img_names[2] , transform=plt.gca().transAxes)
-                        t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
-                        cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_"+moment_map+"_cb.pdf")
+                        ret = cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar = True, cmap_label=cmap_labels[imom],xlabel=xlabel, ylabel=ylabel,  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                        cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[2], normalised_coords=True)  
+                        cfp.show_or_save_plot(save=outpath+file[:-4]+"_"+moment_map+"_cb.pdf")
 
                         # plotting a common colorbar, only for seismic, universal vmin and vmax
                         cfp.plot_colorbar(cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, label=cmap_labels[1], save=outpath+cmaps[1]+"_colorbar.pdf", panels=2)
         
                 # Smoothing (turbulence isolation) of moment 1
                 print("Now doing turbulence isolation on moment 1")
+                CO_21_1tff_before.append(moms[1])
                 smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
                 all_sigmas_before.append((file , np.std(moms[1])))
 
@@ -652,15 +616,13 @@ if __name__ == "__main__":
                 all_sigmas.append((file, np.std(isolated_data)))
                 if get_LOS(file) == 1:
                     # getting the smoothed maps
-                    cfp.plot_map(smooth_mom1, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=["",""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
-                    t = plt.text(img_names_xpos, img_names_ypos, img_names[2] , transform=plt.gca().transAxes)
-                    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-                    cfp.plot(xlabel="", ylabel="", save=outpath+file[:-4]+"_"+moment_maps[1]+"_smooth.pdf")
+                    ret = cfp.plot_map(smooth_mom1, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=["",""], xlabel="", ylabel="",  xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+                    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[2], normalised_coords=True)  
+                    cfp.show_or_save_plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_smooth.pdf")
 
-                    cfp.plot_map(isolated_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
-                    t = plt.text(img_names_xpos, img_names_ypos, img_names[2] , transform=plt.gca().transAxes)
-                    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-                    cfp.plot(xlabel=xlabel, ylabel="", save=outpath+file[:-4]+"_"+moment_maps[1]+"_isolated.pdf")
+                    ret = cfp.plot_map(isolated_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlabel=xlabel, ylabel="", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+                    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[2], normalised_coords=True)  
+                    cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_isolated.pdf")
 
                 # For Appendix Fig. - FMM summary plot
                 if get_LOS(file) == 0 : axis = ["",""]
@@ -736,19 +698,18 @@ if __name__ == "__main__":
                         CO_21_SE_mom2.append(moms[2])
                 
                     # For Appen. Fig.
-                    cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar=False, axes_format=["", ""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                    t = plt.text(img_names_xpos, img_names_ypos, img_names[2] , transform=plt.gca().transAxes)
-                    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-                    cfp.plot(xlabel="", ylabel="", save=outpath+file[:-4]+"_"+moment_map+".pdf")
+                    ret = cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar=False, axes_format=["", ""],xlabel="", ylabel="",  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[2], normalised_coords=True)  
+                    cfp.show_or_save_plot(save=outpath+file[:-4]+"_"+moment_map+".pdf")
 
                     # Set with individual colorbars (Fig. 1)
-                    cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar = True, cmap_label=cmap_labels[imom], xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-                    t = plt.text(img_names_xpos_cb, img_names_ypos_cb, img_names[2] , transform=plt.gca().transAxes)
-                    t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
-                    cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_"+moment_map+"_cb.pdf")
+                    ret = cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar = True, cmap_label=cmap_labels[imom], xlabel=xlabel, ylabel=ylabel, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[2], normalised_coords=True)  
+                    cfp.show_or_save_plot(save=outpath+file[:-4]+"_"+moment_map+"_cb.pdf")
         
                 # Smoothing (turbulence isolation) of moment 1
                 print("Now doing turbulence isolation on moment 1")
+                CO_21_SE_before.append(moms[1])
                 smooth_mom1 = smoothing(moms[1]) # Gaussian smoothing for moment 1
                 all_sigmas_before.append(('SE', file , np.std(moms[1])))
 
@@ -761,10 +722,9 @@ if __name__ == "__main__":
 
                 all_sigmas.append(('SE', file, np.std(isolated_data)))
 
-                cfp.plot_map(isolated_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig. 
-                t = plt.text(img_names_xpos, img_names_ypos, img_names[2] , transform=plt.gca().transAxes)
-                t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-                cfp.plot(xlabel=xlabel, ylabel="", save=outpath+file[:-4]+"_"+moment_maps[1]+"_isolated.pdf")
+                ret = cfp.plot_map(isolated_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlabel=xlabel, ylabel="", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig. 
+                cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[2], normalised_coords=True)  
+                cfp.show_or_save_plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_isolated.pdf")
 
                 # Fourier Analysis Data for Synthetic CO (2-1) - SimEnd
                 K_P = fourier_spectrum(isolated_data)
@@ -780,50 +740,87 @@ if __name__ == "__main__":
                 kurtosis_SE_after.append(skewness_kurtosis(isolated_data.flatten(), 'k'))
 
     # Getting the correction factor maps and the PDFs
-    ##################### Correction factor maps - first moment#######################
-    correction_CO_10_1tff = (CO_10_1tff[0]-ideal_1tff[0])/ideal_1tff[0] # 10 at 1tff
-    correction_CO_10_SE = (CO_10_SE[0]-ideal_SE[0])/ideal_SE[0] # 10 at SE
+    ##################### Correction factor maps - MOMENT 1, BEFORE #######################
+    correction_CO_10_1tff_before = (CO_10_1tff_before[0]-ideal_1tff_before[0]) # 10 at 1tff
+    correction_CO_10_SE_before = (CO_10_SE_before[0]-ideal_SE_before[0]) # 10 at SE
 
-    correction_CO_21_1tff = (CO_21_1tff[0]-ideal_1tff[0])/ideal_1tff[0] # 21 at 1tff
-    correction_CO_21_SE = (CO_21_SE[0]-ideal_SE[0])/ideal_SE[0] # 21 at SE
+    correction_CO_21_1tff_before = (CO_21_1tff_before[0]-ideal_1tff_before[0]) # 21 at 1tff
+    correction_CO_21_SE_before = (CO_21_SE_before[0]-ideal_SE_before[0]) # 21 at SE
 
-    corrections = [correction_CO_10_1tff, correction_CO_10_SE, correction_CO_21_1tff, correction_CO_21_SE]
+    corrections_before = [correction_CO_10_1tff_before, correction_CO_10_SE_before, correction_CO_21_1tff_before, correction_CO_21_SE_before]
 
     # Plotting the correction factor maps
-    cfp.plot_map(correction_CO_10_1tff, cmap=cmaps[3], colorbar=False, vmin=vmin_correc, vmax=vmax_correc, axes_format=["",None], symlog=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
-    t = plt.text(img_names_xpos, img_names_ypos, correction_labels[0] , transform=plt.gca().transAxes)
-    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-    cfp.plot(xlabel="", ylabel=xyzlabels[1], save=outpath+"correction_map_10_1tff.pdf")
+    ret = cfp.plot_map(correction_CO_10_1tff_before, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[4], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[0], normalised_coords=True)
+    cfp.show_or_save_plot(save=outpath+"correction_map_10_1tff_mom1_before.pdf")
 
-    cfp.plot_map(correction_CO_21_1tff, cmap=cmaps[3], colorbar=False ,vmin=vmin_correc, vmax=vmax_correc,  axes_format=["",""], symlog=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
-    t = plt.text(img_names_xpos, img_names_ypos, correction_labels[1] , transform=plt.gca().transAxes)
-    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-    cfp.plot(xlabel="", ylabel="", save=outpath+"correction_map_21_1tff.pdf")
+    ret = cfp.plot_map(correction_CO_21_1tff_before, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[5], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$",xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[2], normalised_coords=True)
+    cfp.show_or_save_plot(save=outpath+"correction_map_21_1tff_mom1_before.pdf")
 
-    cfp.plot_map(correction_CO_10_SE, cmap=cmaps[3], colorbar=False , vmin=vmin_correc, vmax=vmax_correc, axes_format=[None,None], symlog=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
-    t = plt.text(img_names_xpos, img_names_ypos, correction_labels[2] , transform=plt.gca().transAxes)
-    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-    cfp.plot(xlabel=xyzlabels[0], ylabel=xyzlabels[1], save=outpath+"correction_map_10_SE.pdf")
+    ret = cfp.plot_map(correction_CO_10_SE_before, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[4], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[1], normalised_coords=True)
+    cfp.show_or_save_plot(save=outpath+"correction_map_10_SE_mom1_before.pdf")
 
-    cfp.plot_map(correction_CO_21_SE, cmap=cmaps[3], colorbar=False , vmin=vmin_correc, vmax=vmax_correc, axes_format=[None,""], symlog=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
-    t = plt.text(img_names_xpos, img_names_ypos, correction_labels[3] , transform=plt.gca().transAxes)
-    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-    cfp.plot(xlabel=xyzlabels[0], ylabel="", save=outpath+"correction_map_21_SE.pdf")
+    ret = cfp.plot_map(correction_CO_21_SE_before, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[5], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[3], normalised_coords=True)
+    cfp.show_or_save_plot(save=outpath+"correction_map_21_SE_mom1_before.pdf")
 
     # Obtaining correction PDFs
-    for i in range(len(corrections)):
-        K = cfp.get_pdf(corrections[i], bins=correction_bins_values) 
-        PDF_correction_obj.append(K)
-        correction_sigmas.append(np.std(corrections[i]))
+    for i in range(len(corrections_before)):
+        K = cfp.get_pdf(corrections_before[i], bins=correction_bins_values) 
+        PDF_correction_obj_1_before.append(K)
+        correction_sigmas_1_before.append(np.std(corrections_before[i]))
     
     # Plotting correction PDFs
-    for i in range(len(PDF_correction_obj)):
+    for i in range(len(PDF_correction_obj_1_after)):
         if i==1 or i==3: alpha=0.5
         else: alpha=1
         if i==0 or i==2: line_color=line_colours[1]
         else: line_color=line_colours[2]
-        cfp.plot(x=PDF_correction_obj[i].bin_edges, y=PDF_correction_obj[i].pdf, alpha=alpha, type='pdf', label=PDF_img_names_correc(i, correction_sigmas[i]), color=line_color)
-    cfp.plot(xlabel=correction_xlabel, ylabel="PDF", fontsize='small', ylog=True, xlim=[vmin_correc, vmax_correc], ylim=[ylim_min, ylim_max], legend_loc='upper left', save=outpath+"correction_PDF.pdf")
+        cfp.plot(x=PDF_correction_obj_1_after[i].bin_edges, y=PDF_correction_obj_1_after[i].pdf, alpha=alpha, type='pdf', label=PDF_img_names_correc(i, correction_sigmas_1_before[i]), color=line_color)
+    cfp.plot(xlabel=correction_xlabel, ylabel="PDF", fontsize='small', ylog=True, legend_loc='upper left', save=outpath+"correction_PDF_mom1_before.pdf")
+
+    ##################### Correction factor maps - MOMENT 1, AFTER #######################
+    correction_CO_10_1tff = (CO_10_1tff[0]-ideal_1tff[0]) # 10 at 1tff
+    correction_CO_10_SE = (CO_10_SE[0]-ideal_SE[0]) # 10 at SE
+
+    correction_CO_21_1tff = (CO_21_1tff[0]-ideal_1tff[0]) # 21 at 1tff
+    correction_CO_21_SE = (CO_21_SE[0]-ideal_SE[0]) # 21 at SE
+
+    corrections = [correction_CO_10_1tff, correction_CO_10_SE, correction_CO_21_1tff, correction_CO_21_SE]
+
+    # Plotting the correction factor maps
+    ret = cfp.plot_map(correction_CO_10_1tff, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[4], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[0], normalised_coords=True)
+    cfp.show_or_save_plot(save=outpath+"correction_map_10_1tff_mom1_after.pdf")
+
+    ret = cfp.plot_map(correction_CO_21_1tff, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[5], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[2], normalised_coords=True)
+    cfp.show_or_save_plot(save=outpath+"correction_map_21_1tff_mom1_after.pdf")
+
+    ret = cfp.plot_map(correction_CO_10_SE, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[4], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[1], normalised_coords=True)
+    cfp.show_or_save_plot(save=outpath+"correction_map_10_SE_mom1_after.pdf")
+
+    ret = cfp.plot_map(correction_CO_21_SE, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[5], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[3], normalised_coords=True)
+    cfp.show_or_save_plot(save=outpath+"correction_map_21_SE_mom1_after.pdf")
+
+    # Obtaining correction PDFs
+    for i in range(len(corrections)):
+        K = cfp.get_pdf(corrections[i], bins=correction_bins_values) 
+        PDF_correction_obj_1_after.append(K)
+        correction_sigmas_1_after.append(np.std(corrections[i]))
+    
+    # Plotting correction PDFs
+    for i in range(len(PDF_correction_obj_1_after)):
+        if i==1 or i==3: alpha=0.5
+        else: alpha=1
+        if i==0 or i==2: line_color=line_colours[1]
+        else: line_color=line_colours[2]
+        cfp.plot(x=PDF_correction_obj_1_after[i].bin_edges, y=PDF_correction_obj_1_after[i].pdf, alpha=alpha, type='pdf', label=PDF_img_names_correc(i, correction_sigmas_1_after[i]), color=line_color)
+    cfp.plot(xlabel=correction_xlabel, ylabel="PDF", fontsize='small', ylog=True, legend_loc='upper left', save=outpath+"correction_PDF_mom1_after.pdf")
 
     ###########CORRECTION FACTOR MAPS MOMENT ZERO#######################
     # Getting the correction factor maps and the PDFs
@@ -836,25 +833,21 @@ if __name__ == "__main__":
     corrections_0 = [correction_CO_10_1tff_mom0, correction_CO_10_SE_mom0, correction_CO_21_1tff_mom0, correction_CO_21_SE_mom0]
 
     # Plotting the correction factor maps
-    cfp.plot_map(correction_CO_10_1tff_mom0, cmap='seismic',colorbar=True, cmap_label='Correction factor values', log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", vmin=0.1, vmax=10, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
-    t = plt.text(img_names_xpos_cb, img_names_ypos_cb, correction_labels[0] , transform=plt.gca().transAxes)
-    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-    cfp.plot(save=outpath+"correction_map_10_1tff_mom0.pdf")
+    ret = cfp.plot_map(correction_CO_10_1tff_mom0, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[0], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", vmin=0.1, vmax=10, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[0], normalised_coords=True)
+    cfp.show_or_save_plot(save=outpath+"correction_map_10_1tff_mom0.pdf")
 
-    cfp.plot_map(correction_CO_21_1tff_mom0, cmap=cmaps[3], colorbar=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
-    t = plt.text(img_names_xpos_cb, img_names_ypos_cb, correction_labels[1] , transform=plt.gca().transAxes)
-    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-    cfp.plot(xlabel=xyzlabels[1], ylabel=xyzlabels[3], save=outpath+"correction_map_21_1tff_mom0.pdf")
+    ret = cfp.plot_map(correction_CO_21_1tff_mom0, cmap=cmaps[4], colorbar=True, cmap_label=correction_cmap_lables[1], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[2], normalised_coords=True)
+    cfp.show_or_save_plot(save=outpath+"correction_map_21_1tff_mom0.pdf")
 
-    cfp.plot_map(correction_CO_10_SE_mom0, cmap=cmaps[3], colorbar=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
-    t = plt.text(img_names_xpos_cb, img_names_ypos_cb, correction_labels[2] , transform=plt.gca().transAxes)
-    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-    cfp.plot(xlabel=xyzlabels[1], ylabel=xyzlabels[3], save=outpath+"correction_map_10_SE_mom0.pdf")
+    ret = cfp.plot_map(correction_CO_10_SE_mom0, cmap=cmaps[4], colorbar=True, cmap_label=correction_cmap_lables[0], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[1], normalised_coords=True)
+    cfp.show_or_save_plot(save=outpath+"correction_map_10_SE_mom0.pdf")
 
-    cfp.plot_map(correction_CO_21_SE_mom0, cmap=cmaps[3], colorbar=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
-    t = plt.text(img_names_xpos_cb, img_names_ypos_cb, correction_labels[3] , transform=plt.gca().transAxes)
-    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-    cfp.plot(xlabel=xyzlabels[1], ylabel=xyzlabels[3], save=outpath+"correction_map_21_SE_mom0.pdf")
+    ret = cfp.plot_map(correction_CO_21_SE_mom0, cmap=cmaps[4], colorbar=True, cmap_label=correction_cmap_lables[1], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[3], normalised_coords=True)
+    cfp.show_or_save_plot(save=outpath+"correction_map_21_SE_mom0.pdf")
 
     # Obtaining correction PDFs
     for i in range(len(corrections_0)):
@@ -868,14 +861,12 @@ if __name__ == "__main__":
         else: alpha=1
         if i==0 or i==2: line_color=line_colours[1]
         else: line_color=line_colours[2]
-        cfp.plot(x=PDF_correction_obj_0[i].bin_edges, y=PDF_correction_obj_0[i].pdf, alpha=alpha, type='pdf', label=PDF_img_names_correc(i, correction_sigmas[i]), color=line_color)
+        cfp.plot(x=PDF_correction_obj_0[i].bin_edges, y=PDF_correction_obj_0[i].pdf, alpha=alpha, type='pdf', label=PDF_img_names_correc(i, correction_sigmas_0[i]), color=line_color)
     cfp.plot(xlabel=correction_xlabel, ylabel="PDF", fontsize='small', ylog=True, legend_loc='upper left', save=outpath+"correction_PDF_mom0.pdf")
 
-    ###################CORRECTION FACTOR MAPS - MOMENT 2######################
+    ###################CORRECTION FACTOR MAPS - MOMENT 2 ######################
     # Getting the correction factor maps and the PDFs
-    # Correction factor maps - first moment:
-    print((CO_10_1tff_mom2), len(ideal_1tff_mom2))
-    correction_CO_10_1tff_2 = (CO_10_1tff_mom2)/ideal_1tff_mom2 # 10 at 1tff
+    correction_CO_10_1tff_2 = (CO_10_1tff_mom2[0])/ideal_1tff_mom2[0] # 10 at 1tff
     correction_CO_10_SE_2 = (CO_10_SE_mom2[0])/ideal_SE_mom2[0] # 10 at SE
 
     correction_CO_21_1tff_2 = (CO_21_1tff_mom2[0])/ideal_1tff_mom2 # 21 at 1tff
@@ -884,25 +875,22 @@ if __name__ == "__main__":
     corrections_2 = [correction_CO_10_1tff_2, correction_CO_10_SE_2, correction_CO_21_1tff_2, correction_CO_21_SE_2]
 
     # Plotting the correction factor maps
-    cfp.plot_map(correction_CO_10_1tff_2, cmap=cmaps[2], colorbar=False, axes_format=["",None], symlog=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
-    t = plt.text(img_names_xpos, img_names_ypos, correction_labels[0] , transform=plt.gca().transAxes)
-    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-    cfp.plot(xlabel="", ylabel=xyzlabels[1], save=outpath+"correction_map_10_1tff_mom2.pdf")
+    ret = cfp.plot_map(correction_CO_10_1tff_2, cmap=cmaps[4], colorbar=True, cmap_label=correction_cmap_lables[2], xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", log=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[0], normalised_coords=True)
+    cfp.show_or_save_plot(save=outpath+"correction_map_10_1tff_mom2.pdf")
 
-    cfp.plot_map(correction_CO_21_1tff_2, cmap=cmaps[2], colorbar=False , axes_format=["",""], symlog=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
-    t = plt.text(img_names_xpos, img_names_ypos, correction_labels[1] , transform=plt.gca().transAxes)
-    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-    cfp.plot(xlabel="", ylabel="", save=outpath+"correction_map_21_1tff_mom2.pdf")
+    ret = cfp.plot_map(correction_CO_21_1tff_2, cmap=cmaps[4], colorbar=True, cmap_label=correction_cmap_lables[3], xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", log=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[2], normalised_coords=True)
+    cfp.show_or_save_plot(save=outpath+"correction_map_21_1tff_mom2.pdf")
 
-    cfp.plot_map(correction_CO_10_SE_2, cmap=cmaps[2], colorbar=False ,  axes_format=[None,None], symlog=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
-    t = plt.text(img_names_xpos, img_names_ypos, correction_labels[2] , transform=plt.gca().transAxes)
-    t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-    cfp.plot(xlabel=xyzlabels[0], ylabel=xyzlabels[1], save=outpath+"correction_map_10_SE_mom2.pdf")
+    ret = cfp.plot_map(correction_CO_10_SE_2, cmap=cmaps[4], colorbar=True, cmap_label=correction_cmap_lables[2], xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", log=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[1], normalised_coords=True)
+    cfp.show_or_save_plot(save=outpath+"correction_map_10_SE_mom2.pdf")
 
-    cfp.plot_map(correction_CO_21_SE_2, cmap=cmaps[2], colorbar=False , axes_format=[None,""], symlog=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
-    t = plt.text(img_names_xpos, img_names_ypos, correction_labels[3] , transform=plt.gca().transAxes)
+    ret = cfp.plot_map(correction_CO_21_SE_2, cmap=cmaps[4], colorbar=True, cmap_label=correction_cmap_lables[3], xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", log=True, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[3], normalised_coords=True)
     t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
-    cfp.plot(xlabel=xyzlabels[0], ylabel="", save=outpath+"correction_map_21_SE_mom2.pdf")
+    cfp.show_or_save_plot(save=outpath+"correction_map_21_SE_mom2.pdf")
 
     # Obtaining correction PDFs
     for i in range(len(corrections_2)):
@@ -916,8 +904,8 @@ if __name__ == "__main__":
         else: alpha=1
         if i==0 or i==2: line_color=line_colours[1]
         else: line_color=line_colours[2]
-        cfp.plot(x=PDF_correction_obj_2[i].bin_edges, y=PDF_correction_obj_2[i].pdf, alpha=alpha, type='pdf', label=PDF_img_names_correc(i, correction_sigmas[i]), color=line_color)
-    cfp.plot(xlabel=correction_xlabel, ylabel="PDF", fontsize='small', ylog=True, xlim=[vmin_correc, vmax_correc], ylim=[ylim_min, ylim_max], legend_loc='upper left', save=outpath+"correction_PDF_mom2.pdf")
+        cfp.plot(x=PDF_correction_obj_2[i].bin_edges, y=PDF_correction_obj_2[i].pdf, alpha=alpha, type='pdf', label=PDF_img_names_correc(i, correction_sigmas_2[i]), color=line_color)
+    cfp.plot(xlabel=correction_xlabel, ylabel="PDF", fontsize='small', ylog=True, legend_loc='upper left', save=outpath+"correction_PDF_mom2.pdf")
 
     ############POWER SPECTRA#############
     # Plotting the FTs - before isolation, 1tff
@@ -982,7 +970,7 @@ if __name__ == "__main__":
 
     # Plotting the PDFs for after isolation - FOR SIMEND
     for i in range(len(PDF_obj_SE)):
-        cfp.plot(x=PDF_obj_SE[i].bin_edges, y=PDF_obj_isolated[i].pdf, type='pdf', label=PDF_img_names(i, sigma_SE[i]), color=line_colours[i])
+        cfp.plot(x=PDF_obj_SE[i].bin_edges, y=PDF_obj_SE[i].pdf, type='pdf', label=PDF_img_names(i, sigma_SE[i]), color=line_colours[i])
         good_ind = PDF_obj_SE[i].pdf > 0
         fitobj = cfp.fit(gauss_func, PDF_obj_SE[i].bin_center[good_ind], np.log(PDF_obj_SE[i].pdf[good_ind]))
         cfp.plot(x=xfit, y=np.exp(gauss_func(xfit, *fitobj.popt)), alpha=0.5, color=line_colours[i], linestyle='dashed')
