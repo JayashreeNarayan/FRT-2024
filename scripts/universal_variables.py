@@ -3,14 +3,17 @@ outpath = "../plots/"
 
 files_ideal_npy = ["FMM_00.0_0.0.npy", "FMM_45.0_0.0.npy", "FMM_90.0_0.0.npy", # 1tff
                     "SMM_00.0_0.0.npy", "SMM_45.0_0.0.npy", "SMM_90.0_0.0.npy", # 1tff
-                    "ZMM_00.0_0.0.npy", "ZMM_45.0_0.0.npy", "ZMM_90.0_0.0.npy", # 1tff
-                    "FMM_45.0_SE.npy", "SMM_45.0_SE.npy", "ZMM_45.0_SE.npy"] # SE
+                    "ZMM_00.0_0.0.npy", "ZMM_45.0_0.0.npy", "ZMM_90.0_0.0.npy"] # 1tff
 
-file_co10_npy = ["PPV_00.0_0.npy", "PPV_45.0_0.npy", "PPV_90.0_0.npy", # 1tff
-                    "PPV_45.0.npy"] # SE
+files_ideal_SE_npy = ["FMM_45.0_SE.npy", "SMM_45.0_SE.npy", "ZMM_45.0_SE.npy"] # SE
 
-file_co21_npy = ["PPV_00.0_0_J21.npy", "PPV_45.0_0_J21.npy", "PPV_90.0_0_J21.npy", # 1tff
-                    "PPV_45.0_J21_SE.npy"] # SE
+file_co10_npy = ["PPV_00.0_0.npy", "PPV_45.0_0.npy", "PPV_90.0_0.npy"] # 1tff
+
+file_co10_SE_npy = ["PPV_45.0.npy"] # SE
+
+file_co21_npy = ["PPV_00.0_0_J21.npy", "PPV_45.0_0_J21.npy", "PPV_90.0_0_J21.npy"] # 1tff
+
+file_co21_SE_npy = ["PPV_45.0_J21_SE.npy"] # SE
 
 # defining the min and max of the maps universally so that all of them can be compared
 vmin_0 = 0. # zeroth moment map
