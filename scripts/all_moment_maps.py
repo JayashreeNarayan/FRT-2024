@@ -750,19 +750,19 @@ if __name__ == "__main__":
     corrections_before = [correction_CO_10_1tff_before, correction_CO_10_SE_before, correction_CO_21_1tff_before, correction_CO_21_SE_before]
 
     # Plotting the correction factor maps
-    ret = cfp.plot_map(correction_CO_10_1tff_before, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[4], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    ret = cfp.plot_map(correction_CO_10_1tff_before, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[4],vmin=-0.3, vmax=0.3, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[0], normalised_coords=True)
     cfp.show_or_save_plot(save=outpath+"correction_map_10_1tff_mom1_before.pdf")
 
-    ret = cfp.plot_map(correction_CO_21_1tff_before, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[5], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$",xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    ret = cfp.plot_map(correction_CO_21_1tff_before, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[5], vmin=-0.3, vmax=0.3, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$",xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[2], normalised_coords=True)
     cfp.show_or_save_plot(save=outpath+"correction_map_21_1tff_mom1_before.pdf")
 
-    ret = cfp.plot_map(correction_CO_10_SE_before, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[4], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    ret = cfp.plot_map(correction_CO_10_SE_before, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[4],vmin=-0.3, vmax=0.3, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[1], normalised_coords=True)
     cfp.show_or_save_plot(save=outpath+"correction_map_10_SE_mom1_before.pdf")
 
-    ret = cfp.plot_map(correction_CO_21_SE_before, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[5], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    ret = cfp.plot_map(correction_CO_21_SE_before, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[5], vmin=-0.3, vmax=0.3,xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[3], normalised_coords=True)
     cfp.show_or_save_plot(save=outpath+"correction_map_21_SE_mom1_before.pdf")
 
@@ -791,19 +791,19 @@ if __name__ == "__main__":
     corrections = [correction_CO_10_1tff, correction_CO_10_SE, correction_CO_21_1tff, correction_CO_21_SE]
 
     # Plotting the correction factor maps
-    ret = cfp.plot_map(correction_CO_10_1tff, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[4], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    ret = cfp.plot_map(correction_CO_10_1tff, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[4], xlabel=r'$y$', vmin=-0.3, vmax=0.3,ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[0], normalised_coords=True)
     cfp.show_or_save_plot(save=outpath+"correction_map_10_1tff_mom1_after.pdf")
 
-    ret = cfp.plot_map(correction_CO_21_1tff, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[5], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    ret = cfp.plot_map(correction_CO_21_1tff, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[5], xlabel=r'$y$', vmin=-0.3, vmax=0.3,ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[2], normalised_coords=True)
     cfp.show_or_save_plot(save=outpath+"correction_map_21_1tff_mom1_after.pdf")
 
-    ret = cfp.plot_map(correction_CO_10_SE, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[4], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    ret = cfp.plot_map(correction_CO_10_SE, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[4], xlabel=r'$y$', vmin=-0.3, vmax=0.3,ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[1], normalised_coords=True)
     cfp.show_or_save_plot(save=outpath+"correction_map_10_SE_mom1_after.pdf")
 
-    ret = cfp.plot_map(correction_CO_21_SE, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[5], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    ret = cfp.plot_map(correction_CO_21_SE, cmap=cmaps[4],colorbar=True, cmap_label=correction_cmap_lables[5], xlabel=r'$y$',vmin=-0.3, vmax=0.3, ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[3], normalised_coords=True)
     cfp.show_or_save_plot(save=outpath+"correction_map_21_SE_mom1_after.pdf")
 
@@ -837,15 +837,15 @@ if __name__ == "__main__":
     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[0], normalised_coords=True)
     cfp.show_or_save_plot(save=outpath+"correction_map_10_1tff_mom0.pdf")
 
-    ret = cfp.plot_map(correction_CO_21_1tff_mom0, cmap=cmaps[4], colorbar=True, cmap_label=correction_cmap_lables[1], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    ret = cfp.plot_map(correction_CO_21_1tff_mom0, cmap=cmaps[4], colorbar=True, cmap_label=correction_cmap_lables[1], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$",vmin=0.1, vmax=10,  xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[2], normalised_coords=True)
     cfp.show_or_save_plot(save=outpath+"correction_map_21_1tff_mom0.pdf")
 
-    ret = cfp.plot_map(correction_CO_10_SE_mom0, cmap=cmaps[4], colorbar=True, cmap_label=correction_cmap_lables[0], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    ret = cfp.plot_map(correction_CO_10_SE_mom0, cmap=cmaps[4], colorbar=True, cmap_label=correction_cmap_lables[0], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", vmin=0.1, vmax=10, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[1], normalised_coords=True)
     cfp.show_or_save_plot(save=outpath+"correction_map_10_SE_mom0.pdf")
 
-    ret = cfp.plot_map(correction_CO_21_SE_mom0, cmap=cmaps[4], colorbar=True, cmap_label=correction_cmap_lables[1], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+    ret = cfp.plot_map(correction_CO_21_SE_mom0, cmap=cmaps[4], colorbar=True, cmap_label=correction_cmap_lables[1], log=True, xlabel=r'$y$', ylabel=r"$\sqrt{x^2 + z^2}$", vmin=0.1, vmax=10, xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=correction_labels[3], normalised_coords=True)
     cfp.show_or_save_plot(save=outpath+"correction_map_21_SE_mom0.pdf")
 
