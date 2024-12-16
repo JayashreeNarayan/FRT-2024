@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# This file is used to make all the moments - should take no time to run -- contains no plotting, only calculating
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,87 +11,24 @@ from scipy import stats as st
 from astropy import constants as c
 from all_functions import *
 
-# ===== the following applies in case we are running this in script mode =====
-if __name__ == "__main__":    
-    class moment_map():
-        def __init__(self):
-            self.all_sigmas_before=[]
-            self.all_sigmas=[]
-            self.ideal_1tff=[]
+def ideal_case():
+    files = ["FMM_00.0_0.0.npy", "FMM_45.0_0.0.npy", "FMM_90.0_0.0.npy", "SMM_00.0_0.0.npy", "SMM_45.0_0.0.npy", "SMM_90.0_0.0.npy", "ZMM_00.0_0.0.npy", "ZMM_45.0_0.0.npy", "ZMM_90.0_0.0.npy"]
+    for file in files:
+        data = np.load(path+"/Data_1tff/Othin/"+file)
+        
+        if get_LOS(file) == 0: # theta is 0 degrees - along Z axis
+            xlabel = xyzlabels[1] # y-axis on the horizontal
+            ylabel = xyzlabels[0] # x-axis on the vertical
+        
+        if get_LOS(file) == 2: # theta is 90 degrees - along X axis 
+            xlabel = xyzlabels[1] # y-axis on the horizontal
+            ylabel = xyzlabels[2] # z-axis on the vertical 
 
+        # for the files with 45 degrees -  we have to resize the data
+        if get_LOS(file) == 1: # this means that theta is 45 degrees
+            data = resize_45(data, "2D")
+            xlabel = xyzlabels[1] # y-axis on the bottom 
+            ylabel = xyzlabels[3] # combination of x and z on the vertical
 
-    class correction_factors:
-        # For the correction factor maps, all after isolation
-        ideal_1tff = []
-        ideal_SE = []
-        CO_10_1tff = []
-        CO_10_SE = []
-        CO_21_1tff = []
-        CO_21_SE = []
-
-        # vmin and vmax for correction factors
-        vmin_correc = -1000
-        vmax_correc = 1000
-        ylim_min = 1.e-6
-        ylim_max = 100
-
-        # For the correction factor PDFs, all after isolation
-        PDF_correction_obj = []
-        correction_sigmas = []
-        correction_labels = [r"CO (1-0) at $1~t_\mathrm{ff}$", r"CO (1-0) at $1.2~t_\mathrm{ff}$", r"CO (2-1) at $1~t_\mathrm{ff}$", r"CO (2-1) at $1.2~t_\mathrm{ff}$"]
-        correction_xlabel = "Correction factors"
-
-        correction_bins_values = [-1000, -900, -800, -700, -600, -500, -400, -300, -200, -100 ,0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
-
-    class pdf:
-        # For the PDFs
-        xmin=-0.45
-        xmax=+0.45
-        ymin=1.e-2
-        ymax=5.e2
-        xfit = np.linspace(xmin, xmax, 500)
-
-        img_PDF_names_xpos = 0.02
-        img_PDF_names_ypos = 0.85
-
-        LOS_PDF_labels_xpos = 0.82
-        LOS_PDF_labels_ypos = 0.75
-
-        PDF_obj_isolated = []
-        PDF_obj_SE = []
-
-        # PDF objects and sigmas
-        PDF_obj = []
-
-    class simend:
-        vmax_0_SE = 6
-        vmax_2_SE = 0.6
-
-    class ft:        
-        # Fourier labels
-        FT_xy_labels = [r"$k$", r"$P_\mathrm{tot}$"]
-        angles = [0, 45, 90]
-        FTdata = []
-        FTdata_raw = []
-        FTdata_SE = []
-
-        # defining kmin and kmax for FT spectra graphs:
-        kmin = 3
-        kmax = 40
-
-    class skew_kurtosis:
-        skewness_isolated = []
-        kurtosis_isolated = []
-        skewness_SE_before = []
-        kurtosis_SE_before = []
-        skewness_SE_after = []
-        kurtosis_SE_after = []
-        skewness = []
-        kurtosis = []
-
-    class sigma:
-        all_sigmas = []
-        all_sigmas_before = []
-        sigma = []
-        sigma_SE = []
-        sigma_isolated = []
+            if file[:1] == "S": # Since the 2nd moment map needs different plot variables
+                ideal_1tff_mom2 = data # for the correction factors

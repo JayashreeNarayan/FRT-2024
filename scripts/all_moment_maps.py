@@ -74,9 +74,9 @@ if __name__ == "__main__":
     # For the correction factor PDFs, all after isolation
     correction_labels = [r"$\mathrm{CO}\,(1-0)$ at $1\,t_\mathrm{ff}$", r"$\mathrm{CO}\,(1-0)$ at $1.2\,t_\mathrm{ff}$", r"$\mathrm{CO}\,(2-1)$ at $1\,t_\mathrm{ff}$", r"$\mathrm{CO}\,(2-1)$ at $1.2\,t_\mathrm{ff}$"]
     correction_cmap_lables =[
-    r'$I_{\mathrm{norm,}\,\mathrm{CO}\,(1-0) / I_{\mathrm{norm,}\, \mathrm{idealised}}}$', r'$I_{\mathrm{norm,}\,\mathrm{CO}\,(2-1) / I_{\mathrm{norm,}\, \mathrm{idealised}}}$',
-    r"${\sigma_{v_{\mathrm{LOS,\ CO}\,(1-0)}}}/ {\sigma_{v_{\mathrm{LOS,\ idealised}}}}$", r"${\sigma_{v_{\mathrm{LOS,\ CO}\,(2-1)}}} / {\sigma_{v_{\mathrm{LOS,\ idealised}}}}$", 
-    r"${{v_{\mathrm{LOS,\ CO}\,(1-0)}}} - {{v_{\mathrm{LOS,\ idealised}}}}$", r"${{v_{\mathrm{LOS,\ CO}\,(2-1)}}} - {{v_{\mathrm{LOS,\ idealised}}}}$" ]
+    r"$\left( \frac{I}{\langle I \rangle} \right)_{\mathrm{CO}} / \left( \frac{I}{\langle I \rangle} \right)_{\mathrm{ideal}}$", r'$I_{\mathrm{norm,}\,\mathrm{CO}\,(2-1) / I_{\mathrm{norm,}\, \mathrm{ideal}}}$',
+    r"${\sigma_{v_{\mathrm{LOS,\ CO}\,(1-0)}}}/ {\sigma_{v_{\mathrm{LOS,\ ideal}}}}$", r"${\sigma_{v_{\mathrm{LOS,\ CO}\,(2-1)}}} / {\sigma_{v_{\mathrm{LOS,\ ideal}}}}$", 
+    r"${{v_{\mathrm{LOS,\ CO}\,(1-0)}}} - {{v_{\mathrm{LOS,\ ideal}}}}$", r"${{v_{\mathrm{LOS,\ CO}\,(2-1)}}} - {{v_{\mathrm{LOS,\ ideal}}}}$" ]
     correction_xlabel = "Correction factors"
 
     correction_bins_values = [-1000, -900, -800, -700, -600, -500, -400, -300, -200, -100 ,0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
@@ -153,7 +153,7 @@ if __name__ == "__main__":
     cmap_labels = [r"${I/\langle I \rangle}$", r"${{v_{\mathrm{LOS}}}~(\mathrm{km\,s^{-1}})}$", r"${\sigma_{v_{\mathrm{LOS}}}~(\mathrm{km\,s^{-1}})}$", "Correction factor values"]
     LOS_labels = [r"$\left(\begin{array}{c} 0 \\ 0 \\ 1 \end{array}\right) $", r"$\left(\begin{array}{c} 1 \\ 0 \\ 1 \end{array}\right) $", r"$\left(\begin{array}{c} 1 \\ 0 \\ 0 \end{array}\right) $"]
     xyzlabels = [r"$x$", r"$y$", r"$z$", r"$\sqrt{x^2 + z^2}$"]
-    img_names = ["Idealised", r"Synthetic CO$\,(1-0)$", r"Synthetic CO$\,(2-1)$"]
+    img_names = ["Ideal", r"Synthetic CO$\,(1-0)$", r"Synthetic CO$\,(2-1)$"]
     img_types=['Before turbulence isolation', 'After turbulence isolation']
 
     # loop through chosen actions
