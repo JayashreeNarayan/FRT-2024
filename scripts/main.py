@@ -30,8 +30,41 @@ class moments:
         self.second_mom_ideal=[]
         self.second_mom_co10=[]
         self.second_mom_co21=[]
-    
-    def first_moment_calc(self):
-        if files_ideal.key[:2]=='ZMM': self.zero_mom_ideal.append(files_ideal.value)
+
+        # for the ideal case
+        for key, value in files_ideal.items():
+            if key[:3]=='ZMM': self.zero_mom_ideal.append(rescale_data(value))
+            elif key[:3]=='FMM': self.first_mom_ideal.append(value)
+            elif key[:3]=='SMM': self.second_mom_ideal.append(value)
+        
+        # for the CO (1-0) case:
+        for key, value in files_co10.items():
+            if get_LOS(key) == 1:             
+                self.zero_mom_co10.append(rescale_data(resize_45(zero_moment(value, Vrange), '2D')))
+                self.first_mom_co10.append(resize_45(first_moment(value, Vrange), '2D'))
+                self.second_mom_co10.append(resize_45(second_moment(value, Vrange), '2D'))
+            else:    
+                self.zero_mom_co10.append(rescale_data(zero_moment(value, Vrange)))
+                self.first_mom_co10.append(first_moment(value, Vrange))
+                self.second_mom_co10.append(second_moment(value, Vrange))
+        
+        # for the CO (2-1) case:
+        for key, value in files_co21.items():
+            if get_LOS(key) == 1:             
+                self.zero_mom_co21.append(rescale_data(resize_45(zero_moment(value, Vrange), '2D')))
+                self.first_mom_co21.append(resize_45(first_moment(value, Vrange), '2D'))
+                self.second_mom_co21.append(resize_45(second_moment(value, Vrange), '2D'))
+            else:    
+                self.zero_mom_co21.append(rescale_data(zero_moment(value, Vrange)))
+                self.first_mom_co21.append(first_moment(value, Vrange))
+                self.second_mom_co21.append(second_moment(value, Vrange))
+        
+        
+        
+        
+
+
+
+        
 
 

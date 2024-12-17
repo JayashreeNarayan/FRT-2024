@@ -64,7 +64,7 @@ def second_moment(PPV, Vrange):
 
 # function that returns a Gaussian-smoothed version of the data - data being a 2D array
 def smoothing(data):
-    npix = data.shape[0]
+    npix = data.shape[1]
     return cfp.gauss_smooth(data, fwhm=npix/2, mode='nearest')
 
 def get_vmin_vmax_centred(data):
