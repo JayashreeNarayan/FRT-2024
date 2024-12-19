@@ -65,7 +65,7 @@ def second_moment(PPV, Vrange):
 # function that returns a Gaussian-smoothed version of the data - data being a 2D array
 def smoothing(data):
     npix = data.shape[1]
-    return cfp.gauss_smooth(data, fwhm=npix/2, mode='nearest')
+    return cfp.gauss_smooth(data, fwhm=npix/2, mode='nearest').tolist()
 
 def get_vmin_vmax_centred(data):
     minmax = np.max([-data.min(), data.max()])
@@ -77,7 +77,7 @@ def resize_45(data, choice):
         for i in range(0,128):
             K = data[:,i]
             rescaled_data[i] = K[25:153]
-        return rescaled_data
+        return np.array(rescaled_data)
     elif choice == '3D':
         A = list(range(0,25))
         B = list(range(128,153))
@@ -93,7 +93,7 @@ def resize_45(data, choice):
 
 def PDF_img_names(i, sigma):
     sigma=cfp.round(sigma, 2, str_ret=True)
-    img_names = ["Idealised", "Synthetic CO (1-0)", "Synthetic CO (2-1)"]
+    img_names = ["ideal", "Synthetic CO (1-0)", "Synthetic CO (2-1)"]
     return img_names[i]+r": $\sigma$ = "+sigma+r"$~\mathrm{km\,s^{-1}}$"
 
 def gauss_func(x, mean, sigma):
@@ -104,9 +104,8 @@ def FT_slope_labels(err,n):
     err_n="0.1"
     return ";~slope="+n+r"$\pm$"+err_n
 
-def skewness_kurtosis(data, type):
-    if type=='s': return cfp.round(st.skew(data), 2, str_ret=True)
-    elif type=='k': return cfp.round(st.kurtosis(data), 2, str_ret=True)
+def kurtosis(data):
+    return cfp.round(st.kurtosis(data), 2, str_ret=True)
 
 def func(x,a,n):
     return np.log(a*(x**n))
@@ -124,3 +123,37 @@ def PDF_img_names_correc(i, sigma):
         sigma=cfp.round(sigma, 2, str_ret=True)
         correction_labels = [r"CO (1-0) at $1~t_\mathrm{ff}$", r"CO (1-0) at $1.2~t_\mathrm{ff}$", r"CO (2-1) at $1~t_\mathrm{ff}$", r"CO (2-1) at $1.2~t_\mathrm{ff}$"]
         return correction_labels[i]+r": $\sigma$ = "+sigma
+
+def corrections(moment_map, ideal_moment_map, nth_moment):
+    if nth_moment == 1:
+        correction = moment_map - ideal_moment_map
+        PDF_obj = cfp.get_pdf(correction, range=(-0.3, 0.3))
+        sigma = np.std(correction)    
+    else:
+        correction = moment_map / ideal_moment_map
+        PDF_obj = cfp.get_pdf(correction, range=(0.1, 10))
+        sigma = np.std(correction)
+    
+    return correction, PDF_obj, sigma
+
+def axes_format(tot_panels, coords_of_fig, xlabel, ylabel):
+    coords_of_fig=str(coords_of_fig)
+    rows=cols=int(np.sqrt(tot_panels))
+    if coords_of_fig == '00' or '10': 
+        axes_format=[None, ""]
+        xlabel=None
+        ylabel=ylabel
+    elif coords_of_fig == '01' or '02' or '11' or '12':
+        axes_format=["", ""]
+        xlabel=None
+        ylabel=None
+    elif coords_of_fig == '21' or '22':
+        axes_format=[None, ""]
+        xlabel=xlabel
+        ylabel=None
+    else:
+        axes_format=[None, None]
+        xlabel=xlabel
+        ylabel=ylabel
+
+    return axes_format, xlabel, ylabel

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import numpy as np
+import matplotlib as mpl
+mpl.rcParams.update(mpl.rcParamsDefault)
 import matplotlib.pyplot as plt
 import cfpack as cfp
 from cfpack import print, stop, hdfio, matplotlibrc
@@ -16,7 +18,7 @@ if __name__ == "__main__":
 
     choices = ['ideal', 'flash', 'ppv_10', 'ppv_21']
     parser.add_argument('-a', '--action', metavar='action', nargs='*', default=choices, choices=choices,
-                        help='Choice: Between plotting the first moment maps with flashplotlib directly from the FLASH data (flash), plotting the Idealised first moment maps with cfpack (Idealised) and plotting the optically thick moment maps from PPV cubes (ppv)')
+                        help='Choice: Between plotting the first moment maps with flashplotlib directly from the FLASH data (flash), plotting the ideal first moment maps with cfpack (ideal) and plotting the optically thick moment maps from PPV cubes (ppv)')
 
     args = parser.parse_args()
 
@@ -160,7 +162,7 @@ if __name__ == "__main__":
     for action in args.action:
         print("=== Working on action '"+action+"' ===", color='green')
 
-        # Plotting the Idealised first moment maps with cfpack and also smoothing them out and then obtaining the Turbulence-isolated maps
+        # Plotting the ideal first moment maps with cfpack and also smoothing them out and then obtaining the Turbulence-isolated maps
         if action == choices[0]: 
             files = ["FMM_00.0_0.0.npy", "FMM_45.0_0.0.npy", "FMM_90.0_0.0.npy", "SMM_00.0_0.0.npy", "SMM_45.0_0.0.npy", "SMM_90.0_0.0.npy", "ZMM_00.0_0.0.npy", "ZMM_45.0_0.0.npy", "ZMM_90.0_0.0.npy"]
             for file in files:
@@ -197,7 +199,7 @@ if __name__ == "__main__":
                         cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[0], normalised_coords=True)
                         cfp.show_or_save_plot(save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
                     
-                # Smoothing of the Idealised moment maps - done only for moment 1 maps, skipping moment 2 data
+                # Smoothing of the ideal moment maps - done only for moment 1 maps, skipping moment 2 data
                 if file[:1] == "F": # 2nd and 0th moment map is not to be smoothed or Turbulence isolated 
                     ideal_1tff_before.append(data)
                     smooth_data = smoothing(data)
@@ -235,7 +237,7 @@ if __name__ == "__main__":
                     if axis[1] == None: ylabel = ylabel
                     cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_FMM_sum.pdf")
 
-                    # Fourier Analysis Data for Idealised maps
+                    # Fourier Analysis Data for ideal maps
                     if get_LOS(file) == 1:
                         K_P = fourier_spectrum(isolated_data_othin) # for the turbulence isolated data
                         FTdata.append(K_P)
@@ -246,14 +248,14 @@ if __name__ == "__main__":
                         K = cfp.get_pdf(data, range=(-0.1, 0.1)) # without isolation
                         PDF_obj.append(K)
                         sigma.append(np.std(data))
-                        skewness.append(skewness_kurtosis(data.flatten(), 's'))
-                        kurtosis.append(skewness_kurtosis(data.flatten(), 'k'))
+                        #skewness.append(kurtosis(data.flatten(), 's'))
+                        kurtosis.append(kurtosis(data.flatten()))
 
                         K = cfp.get_pdf(isolated_data_othin, range=(-0.1,+0.1)) # with isolation
                         PDF_obj_isolated.append(K)
                         sigma_isolated.append(np.std(isolated_data_othin))
-                        skewness_isolated.append(skewness_kurtosis(isolated_data_othin.flatten(), 's'))
-                        kurtosis_isolated.append(skewness_kurtosis(isolated_data_othin.flatten(), 'k'))
+                        #skewness_isolated.append(kurtosis(isolated_data_othin.flatten(), 's'))
+                        kurtosis_isolated.append(kurtosis(isolated_data_othin.flatten()))
 
             # Generating graphs for For SimEnd time 
             files = ["FMM_45.0_SE.npy", "SMM_45.0_SE.npy", "ZMM_45.0_SE.npy"]
@@ -287,7 +289,7 @@ if __name__ == "__main__":
                     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[0], normalised_coords=True)
                     cfp.show_or_save_plot(save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
                     
-                # Smoothing of the Idealised moment maps - done only for moment 1 maps, skipping moment 2 data
+                # Smoothing of the ideal moment maps - done only for moment 1 maps, skipping moment 2 data
                 if file[:1] == "F": # 2nd and 0th moment map is not to be smoothed or Turbulence isolated 
                     ideal_SE_before.append(data)
                     smooth_data = smoothing(data)
@@ -303,7 +305,7 @@ if __name__ == "__main__":
                     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[0], normalised_coords=True)
                     cfp.plot(save=outpath+file[:-4]+"_isolated.pdf")
 
-                    # Fourier Analysis Data for Idealised maps
+                    # Fourier Analysis Data for ideal maps
                     K_P = fourier_spectrum(isolated_data_othin)
                     FTdata_SE.append(K_P)
                     
@@ -312,10 +314,10 @@ if __name__ == "__main__":
                         K = cfp.get_pdf(isolated_data_othin, range=(-0.1,+0.1))
                         PDF_obj_SE.append(K)
                         sigma_SE.append(np.std(isolated_data_othin))
-                        skewness_SE_before.append(skewness_kurtosis(data.flatten(), 's')) # before isolation for SE
-                        kurtosis_SE_before.append(skewness_kurtosis(data.flatten(), 'k')) # after isolation for SE
-                        skewness_SE_after.append(skewness_kurtosis(isolated_data_othin.flatten(), 's'))
-                        kurtosis_SE_after.append(skewness_kurtosis(isolated_data_othin.flatten(), 'k'))
+                        #skewness_SE_before.append(kurtosis(data.flatten(), 's')) # before isolation for SE
+                        kurtosis_SE_before.append(kurtosis(data.flatten())) # after isolation for SE
+                        #skewness_SE_after.append(kurtosis(isolated_data_othin.flatten(), 's'))
+                        kurtosis_SE_after.append(kurtosis(isolated_data_othin.flatten()))
 
         # Plotting the zeroth moment maps with flashplotlib directly from the FLASH data , used only in Fig. 1 so we need a colorbar
         '''
@@ -356,7 +358,7 @@ if __name__ == "__main__":
                     # compute moment maps
                     print("Computing moment "+str(imom)+" map...")
                     if imom==0: mom = zero_moment(PPV, Vrange); mom = rescale_data(mom)  # need to rescale the 0th moment map alone
-                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the Idealised images
+                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the ideal images
                     if imom==2: mom = second_moment(PPV, Vrange)
                     moms.append(mom) # append to bigger list of moment maps
 
@@ -445,14 +447,14 @@ if __name__ == "__main__":
                     K = cfp.get_pdf(moms[1], range=(-0.1,+0.1)) # for before turbulence isolation
                     PDF_obj.append(K)
                     sigma.append(np.std(moms[1]))
-                    skewness.append(skewness_kurtosis(moms[1].flatten(), 's'))
-                    kurtosis.append(skewness_kurtosis(moms[1].flatten(), 'k'))
+                    #skewness.append(kurtosis(moms[1].flatten(), 's'))
+                    kurtosis.append(kurtosis(moms[1].flatten()))
 
                     K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1)) # for after turbulence isolation
                     PDF_obj_isolated.append(K)
                     sigma_isolated.append(np.std(isolated_data))
-                    skewness_isolated.append(skewness_kurtosis(isolated_data.flatten(), 's'))
-                    kurtosis_isolated.append(skewness_kurtosis(isolated_data.flatten(), 'k'))
+                    #skewness_isolated.append(kurtosis(isolated_data.flatten(), 's'))
+                    kurtosis_isolated.append(kurtosis(isolated_data.flatten()))
             
             # Doing the same as above for Data_SimEnd
             files = ["PPV_45.0.npy"] 
@@ -471,7 +473,7 @@ if __name__ == "__main__":
                     # compute moment maps
                     print("Computing moment "+str(imom)+" map...")
                     if imom==0: mom = zero_moment(PPV, Vrange); mom = rescale_data(mom)  # need to rescale the 0th moment map alone
-                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the Idealised images
+                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the ideal images
                     if imom==2: mom = second_moment(PPV, Vrange)
                     moms.append(mom) # append to bigger list of moment maps
 
@@ -530,10 +532,10 @@ if __name__ == "__main__":
                     K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1))
                     PDF_obj_SE.append(K)
                     sigma_SE.append(np.std(isolated_data))
-                    skewness_SE_before.append(skewness_kurtosis(moms[1].flatten(), 's'))
-                    kurtosis_SE_before.append(skewness_kurtosis(moms[1].flatten(), 'k'))
-                    skewness_SE_after.append(skewness_kurtosis(isolated_data.flatten(), 's'))
-                    kurtosis_SE_after.append(skewness_kurtosis(isolated_data.flatten(), 'k'))
+                    #skewness_SE_before.append(kurtosis(moms[1].flatten(), 's'))
+                    kurtosis_SE_before.append(kurtosis(moms[1].flatten()))
+                    #skewness_SE_after.append(kurtosis(isolated_data.flatten(), 's'))
+                    kurtosis_SE_after.append(kurtosis(isolated_data.flatten()))
 
         # PPV cubes for CO (2-1) lines - 0 moment map and consequently first moment map; smoothing and also turbulence isolation
         if action == choices[3]:
@@ -565,7 +567,7 @@ if __name__ == "__main__":
                     # compute moment maps
                     print("Computing moment "+str(imom)+" map...")
                     if imom==0: mom = zero_moment(PPV, Vrange); mom = rescale_data(mom)  # need to rescale the 0th moment map alone
-                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the Idealised images
+                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the ideal images
                     if imom==2: mom = second_moment(PPV, Vrange)
                     moms.append(mom) # append to bigger list of moment maps
 
@@ -650,14 +652,14 @@ if __name__ == "__main__":
                     K = cfp.get_pdf(moms[1], range=(-0.1,+0.1)) # before turbulence isolation
                     PDF_obj.append(K)
                     sigma.append(np.std(moms[1]))
-                    skewness.append(skewness_kurtosis(moms[1].flatten(), 's'))
-                    kurtosis.append(skewness_kurtosis(moms[1].flatten(), 'k'))
+                    #skewness.append(kurtosis(moms[1].flatten(), 's'))
+                    kurtosis.append(kurtosis(moms[1].flatten()))
 
                     K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1)) # after turbulence isolation
                     PDF_obj_isolated.append(K)
                     sigma_isolated.append(np.std(isolated_data))
-                    skewness_isolated.append(skewness_kurtosis(isolated_data.flatten(), 's'))
-                    kurtosis_isolated.append(skewness_kurtosis(isolated_data.flatten(), 'k'))
+                    #skewness_isolated.append(kurtosis(isolated_data.flatten(), 's'))
+                    kurtosis_isolated.append(kurtosis(isolated_data.flatten()))
             
             # Doing the same as above for Data_SimEnd
             files = ["PPV_45.0_J21_SE.npy"] 
@@ -676,7 +678,7 @@ if __name__ == "__main__":
                     # compute moment maps
                     print("Computing moment "+str(imom)+" map...")
                     if imom==0: mom = zero_moment(PPV, Vrange); mom = rescale_data(mom)  # need to rescale the 0th moment map alone
-                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the Idealised images
+                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the ideal images
                     if imom==2: mom = second_moment(PPV, Vrange)
                     moms.append(mom) # append to bigger list of moment maps
 
@@ -734,10 +736,10 @@ if __name__ == "__main__":
                 K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1)) # only after turbulence isolation
                 PDF_obj_SE.append(K)
                 sigma_SE.append(np.std(isolated_data))
-                skewness_SE_before.append(skewness_kurtosis(moms[1].flatten(), 's'))
-                kurtosis_SE_before.append(skewness_kurtosis(moms[1].flatten(), 'k'))
-                skewness_SE_after.append(skewness_kurtosis(isolated_data.flatten(), 's'))
-                kurtosis_SE_after.append(skewness_kurtosis(isolated_data.flatten(), 'k'))
+                #skewness_SE_before.append(kurtosis(moms[1].flatten(), 's'))
+                kurtosis_SE_before.append(kurtosis(moms[1].flatten()))
+                #skewness_SE_after.append(kurtosis(isolated_data.flatten(), 's'))
+                kurtosis_SE_after.append(kurtosis(isolated_data.flatten()))
 
     # Getting the correction factor maps and the PDFs
     ##################### Correction factor maps - MOMENT 1, BEFORE #######################
