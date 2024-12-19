@@ -1,7 +1,11 @@
 import numpy as np
+import os
+import cfpack as cfp
 
 path = "../Data/"
 outpath = "../plots/" 
+if not os.path.isdir(outpath):
+        cfp.run_shell_command('mkdir '+outpath)
 
 Vrange = np.load(path+'Data_1tff/Vrange.npy')
 files_ideal_npy = ["FMM_00.0_0.0.npy", "FMM_45.0_0.0.npy", "FMM_90.0_0.0.npy", # 1tff
