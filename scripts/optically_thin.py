@@ -65,7 +65,7 @@ def othin(correction='N', pdf_ft_tab1='N'):
                 t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
                 cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
             
-        # Smoothing of the ideal moment maps - done only for moment 1 maps, skipping moment 2 data
+        # Smoothing of the Ideal moment maps - done only for moment 1 maps, skipping moment 2 data
         if file[:1] == "F": # 2nd and 0th moment map is not to be smoothed or Turbulence isolated 
             smooth_data = smoothing(data)
             all_sigmas_before.append((file , np.std(data)))
@@ -104,7 +104,7 @@ def othin(correction='N', pdf_ft_tab1='N'):
             if axis[1] == None: ylabel = ylabel
             cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_FMM_sum.pdf")
 
-            # Fourier Analysis Data for ideal maps
+            # Fourier Analysis Data for Ideal maps
             if get_LOS(file) == 1:
                 K_P = fourier_spectrum(isolated_data_othin) # for the turbulence isolated data
                 FTdata.append(K_P)
@@ -169,7 +169,7 @@ def othin(correction='N', pdf_ft_tab1='N'):
             t.set_bbox(dict(facecolor='white', alpha=0.5, linewidth=0))
             cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
             
-        # Smoothing of the ideal moment maps - done only for moment 1 maps, skipping moment 2 data
+        # Smoothing of the Ideal moment maps - done only for moment 1 maps, skipping moment 2 data
         if file[:1] == "F": # 2nd and 0th moment map is not to be smoothed or Turbulence isolated 
             smooth_data = smoothing(data)
             all_sigmas_before.append(('SE', file , np.std(data)))
@@ -185,7 +185,7 @@ def othin(correction='N', pdf_ft_tab1='N'):
             t.set_bbox(dict(facecolor='white', alpha=0.3, linewidth=0))
             cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_isolated.pdf")
 
-            # Fourier Analysis Data for ideal maps
+            # Fourier Analysis Data for Ideal maps
             K_P = fourier_spectrum(isolated_data_othin)
             FTdata_SE.append(K_P)
             

@@ -28,7 +28,7 @@ class moments:
         self.second_mom_co10=[]
         self.second_mom_co21=[]
 
-        # for the ideal case
+        # for the Ideal case
         for key, value in files_ideal.items():
             if get_LOS(key) == 1: # have to resize the 45 degree maps   
                 if key[:31]=='Z': self.zero_mom_ideal.append(resize_45(rescale_data(value), '2D'))
@@ -230,16 +230,16 @@ class first_moment_plotter:
         self.ylabel=xyzlabels[3]
         self.cmap_label=cmap_labels[1]
     
-    def with_colorbar(self, data, text, save):
+    def with_colorbar(self, data, text, file):
         ret = cfp.plot_map(data, cmap=self.cmap, vmin=self.vmin, vmax=self.vmax, colorbar = True, cmap_label=self.cmap_label,xlabel=self.xlabel, ylabel=self.ylabel,  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-        cfp.plot(ax=ret.ax()[0], x=self.xlabel, y=self.ylabel, text=text, normalised_coords=True)          
-        cfp.show_or_save_plot(save=save+'_cb.pdf')
-        print("saved at "+save+'_cb.pdf')
+        cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=text, normalised_coords=True)          
+        cfp.show_or_save_plot(save=file+'_cb.pdf')
+        print("saved at "+file+'_cb.pdf')
 
     def without_colorbar(self, data, text, save, coords_of_fig, tot_panels):
         axes_format, xlabel, ylabel = axes_format(tot_panels, coords_of_fig, self.xlabel, self.ylabel)
         ret = cfp.plot_map(data, cmap=self.cmap, vmin=self.vmin, vmax=self.vmax, colorbar = False, cmap_label=self.cmap_label,xlabel=xlabel, ylabel=ylabel,  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-        cfp.plot(ax=ret.ax()[0], x=self.xlabel, y=self.ylabel, text=text, normalised_coords=True)          
+        cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=text, normalised_coords=True)          
         cfp.show_or_save_plot(save=save+'.pdf')
         print("img saved at "+save+'.pdf')
         cfp.plot_colorbar(cmap=self.cmap, vmin=self.vmin, vmax=self.vmax, label=self.cmap_label, save=outpath+self.cmap+"_colorbar.pdf", panels=tot_panels)
@@ -257,7 +257,7 @@ class zeroth_moment_plotter:
     
     def with_colorbar(self, data, text, save):
         ret = cfp.plot_map(data, cmap=self.cmap, vmin=self.vmin, vmax=self.vmax, colorbar = True, cmap_label=self.cmap_label,xlabel=self.xlabel, ylabel=self.ylabel,  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-        cfp.plot(ax=ret.ax()[0], x=self.xlabel, y=self.ylabel, text=text, normalised_coords=True)          
+        cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=text, normalised_coords=True)          
         cfp.show_or_save_plot(save=save+'_cb.pdf')
 
 # class to plot second moment maps
@@ -272,7 +272,7 @@ class second_moment_plotter:
     
     def with_colorbar(self, data, text, save):
         ret = cfp.plot_map(data, cmap=self.cmap, vmin=self.vmin, vmax=self.vmax, colorbar = True, cmap_label=self.cmap_label,xlabel=self.xlabel, ylabel=self.ylabel,  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-        cfp.plot(ax=ret.ax()[0], x=self.xlabel, y=self.ylabel, text=text, normalised_coords=True)          
+        cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=text, normalised_coords=True)          
         cfp.show_or_save_plot(save=save+'_cb.pdf')
 
 

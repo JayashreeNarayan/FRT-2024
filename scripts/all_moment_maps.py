@@ -16,9 +16,9 @@ from all_functions import *
 if __name__ == "__main__":    
     parser = argparse.ArgumentParser(description='Plot files')
 
-    choices = ['ideal', 'flash', 'ppv_10', 'ppv_21']
+    choices = ['Ideal', 'flash', 'ppv_10', 'ppv_21']
     parser.add_argument('-a', '--action', metavar='action', nargs='*', default=choices, choices=choices,
-                        help='Choice: Between plotting the first moment maps with flashplotlib directly from the FLASH data (flash), plotting the ideal first moment maps with cfpack (ideal) and plotting the optically thick moment maps from PPV cubes (ppv)')
+                        help='Choice: Between plotting the first moment maps with flashplotlib directly from the FLASH data (flash), plotting the Ideal first moment maps with cfpack (Ideal) and plotting the optically thick moment maps from PPV cubes (ppv)')
 
     args = parser.parse_args()
 
@@ -76,9 +76,9 @@ if __name__ == "__main__":
     # For the correction factor PDFs, all after isolation
     correction_labels = [r"$\mathrm{CO}\,(1-0)$ at $1\,t_\mathrm{ff}$", r"$\mathrm{CO}\,(1-0)$ at $1.2\,t_\mathrm{ff}$", r"$\mathrm{CO}\,(2-1)$ at $1\,t_\mathrm{ff}$", r"$\mathrm{CO}\,(2-1)$ at $1.2\,t_\mathrm{ff}$"]
     correction_cmap_lables =[
-    r"$\left( \frac{I}{\langle I \rangle} \right)_{\mathrm{CO}} / \left( \frac{I}{\langle I \rangle} \right)_{\mathrm{ideal}}$", r'$I_{\mathrm{norm,}\,\mathrm{CO}\,(2-1) / I_{\mathrm{norm,}\, \mathrm{ideal}}}$',
-    r"${\sigma_{v_{\mathrm{LOS,\ CO}\,(1-0)}}}/ {\sigma_{v_{\mathrm{LOS,\ ideal}}}}$", r"${\sigma_{v_{\mathrm{LOS,\ CO}\,(2-1)}}} / {\sigma_{v_{\mathrm{LOS,\ ideal}}}}$", 
-    r"${{v_{\mathrm{LOS,\ CO}\,(1-0)}}} - {{v_{\mathrm{LOS,\ ideal}}}}$", r"${{v_{\mathrm{LOS,\ CO}\,(2-1)}}} - {{v_{\mathrm{LOS,\ ideal}}}}$" ]
+    r"$\left( \frac{I}{\langle I \rangle} \right)_{\mathrm{CO}} / \left( \frac{I}{\langle I \rangle} \right)_{\mathrm{Ideal}}$", r'$I_{\mathrm{norm,}\,\mathrm{CO}\,(2-1) / I_{\mathrm{norm,}\, \mathrm{Ideal}}}$',
+    r"${\sigma_{v_{\mathrm{LOS,\ CO}\,(1-0)}}}/ {\sigma_{v_{\mathrm{LOS,\ Ideal}}}}$", r"${\sigma_{v_{\mathrm{LOS,\ CO}\,(2-1)}}} / {\sigma_{v_{\mathrm{LOS,\ Ideal}}}}$", 
+    r"${{v_{\mathrm{LOS,\ CO}\,(1-0)}}} - {{v_{\mathrm{LOS,\ Ideal}}}}$", r"${{v_{\mathrm{LOS,\ CO}\,(2-1)}}} - {{v_{\mathrm{LOS,\ Ideal}}}}$" ]
     correction_xlabel = "Correction factors"
 
     correction_bins_values = [-1000, -900, -800, -700, -600, -500, -400, -300, -200, -100 ,0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
@@ -162,7 +162,7 @@ if __name__ == "__main__":
     for action in args.action:
         print("=== Working on action '"+action+"' ===", color='green')
 
-        # Plotting the ideal first moment maps with cfpack and also smoothing them out and then obtaining the Turbulence-isolated maps
+        # Plotting the Ideal first moment maps with cfpack and also smoothing them out and then obtaining the Turbulence-isolated maps
         if action == choices[0]: 
             files = ["FMM_00.0_0.0.npy", "FMM_45.0_0.0.npy", "FMM_90.0_0.0.npy", "SMM_00.0_0.0.npy", "SMM_45.0_0.0.npy", "SMM_90.0_0.0.npy", "ZMM_00.0_0.0.npy", "ZMM_45.0_0.0.npy", "ZMM_90.0_0.0.npy"]
             for file in files:
@@ -199,7 +199,7 @@ if __name__ == "__main__":
                         cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[0], normalised_coords=True)
                         cfp.show_or_save_plot(save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
                     
-                # Smoothing of the ideal moment maps - done only for moment 1 maps, skipping moment 2 data
+                # Smoothing of the Ideal moment maps - done only for moment 1 maps, skipping moment 2 data
                 if file[:1] == "F": # 2nd and 0th moment map is not to be smoothed or Turbulence isolated 
                     ideal_1tff_before.append(data)
                     smooth_data = smoothing(data)
@@ -237,7 +237,7 @@ if __name__ == "__main__":
                     if axis[1] == None: ylabel = ylabel
                     cfp.plot(xlabel=xlabel, ylabel=ylabel, save=outpath+file[:-4]+"_FMM_sum.pdf")
 
-                    # Fourier Analysis Data for ideal maps
+                    # Fourier Analysis Data for Ideal maps
                     if get_LOS(file) == 1:
                         K_P = fourier_spectrum(isolated_data_othin) # for the turbulence isolated data
                         FTdata.append(K_P)
@@ -289,7 +289,7 @@ if __name__ == "__main__":
                     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[0], normalised_coords=True)
                     cfp.show_or_save_plot(save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
                     
-                # Smoothing of the ideal moment maps - done only for moment 1 maps, skipping moment 2 data
+                # Smoothing of the Ideal moment maps - done only for moment 1 maps, skipping moment 2 data
                 if file[:1] == "F": # 2nd and 0th moment map is not to be smoothed or Turbulence isolated 
                     ideal_SE_before.append(data)
                     smooth_data = smoothing(data)
@@ -305,7 +305,7 @@ if __name__ == "__main__":
                     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[0], normalised_coords=True)
                     cfp.plot(save=outpath+file[:-4]+"_isolated.pdf")
 
-                    # Fourier Analysis Data for ideal maps
+                    # Fourier Analysis Data for Ideal maps
                     K_P = fourier_spectrum(isolated_data_othin)
                     FTdata_SE.append(K_P)
                     
@@ -358,7 +358,7 @@ if __name__ == "__main__":
                     # compute moment maps
                     print("Computing moment "+str(imom)+" map...")
                     if imom==0: mom = zero_moment(PPV, Vrange); mom = rescale_data(mom)  # need to rescale the 0th moment map alone
-                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the ideal images
+                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the Ideal images
                     if imom==2: mom = second_moment(PPV, Vrange)
                     moms.append(mom) # append to bigger list of moment maps
 
@@ -473,7 +473,7 @@ if __name__ == "__main__":
                     # compute moment maps
                     print("Computing moment "+str(imom)+" map...")
                     if imom==0: mom = zero_moment(PPV, Vrange); mom = rescale_data(mom)  # need to rescale the 0th moment map alone
-                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the ideal images
+                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the Ideal images
                     if imom==2: mom = second_moment(PPV, Vrange)
                     moms.append(mom) # append to bigger list of moment maps
 
@@ -567,7 +567,7 @@ if __name__ == "__main__":
                     # compute moment maps
                     print("Computing moment "+str(imom)+" map...")
                     if imom==0: mom = zero_moment(PPV, Vrange); mom = rescale_data(mom)  # need to rescale the 0th moment map alone
-                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the ideal images
+                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the Ideal images
                     if imom==2: mom = second_moment(PPV, Vrange)
                     moms.append(mom) # append to bigger list of moment maps
 
@@ -678,7 +678,7 @@ if __name__ == "__main__":
                     # compute moment maps
                     print("Computing moment "+str(imom)+" map...")
                     if imom==0: mom = zero_moment(PPV, Vrange); mom = rescale_data(mom)  # need to rescale the 0th moment map alone
-                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the ideal images
+                    if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the Ideal images
                     if imom==2: mom = second_moment(PPV, Vrange)
                     moms.append(mom) # append to bigger list of moment maps
 

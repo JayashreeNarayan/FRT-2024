@@ -53,9 +53,9 @@ LOS_labels_ypos = 0.82
 
 # image title positions
 img_names_xpos = 0.05
-img_names_ypos = 0.85
+img_names_ypos = 0.9
 
-img_names_xpos_cb = -19.2
+img_names_xpos_cb = 0.05
 img_names_ypos_cb = 0.85
 
 linestyle = ['dotted', 'dashed', 'dashdot', 'loosely dotted']
@@ -65,5 +65,5 @@ cmaps = ['plasma', 'seismic', 'viridis', 'gray']
 cmap_labels = [r"${I/\langle I \rangle}$", r"${{v_{\mathrm{LOS}}}~(\mathrm{km\,s^{-1}})}$", r"${\sigma_{v_{\mathrm{LOS}}}~(\mathrm{km\,s^{-1}})}$", "Correction factor values"]
 LOS_labels = [r"$\left(\begin{array}{c} 0 \\ 0 \\ 1 \end{array}\right) $", r"$\left(\begin{array}{c} 1 \\ 0 \\ 1 \end{array}\right) $", r"$\left(\begin{array}{c} 1 \\ 0 \\ 0 \end{array}\right) $"]
 xyzlabels = [r"$x$", r"$y$", r"$z$", r"$\sqrt{x^2 + z^2}$"]
-img_names = ["ideal", "Synthetic CO (1-0)", "Synthetic CO (2-1)"]
+img_names = ["Ideal", "Synthetic CO (1-0)", "Synthetic CO (2-1)"]
 img_types=['Before turbulence isolation', 'After turbulence isolation']

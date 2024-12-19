@@ -36,7 +36,7 @@ def co21(correction='N', pdf_ft_tab1='N'):
             # compute moment maps
             print("Computing moment "+str(imom)+" map...")
             if imom==0: mom = zero_moment(PPV, Vrange); mom = rescale_data(mom)  # need to rescale the 0th moment map alone
-            if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the ideal images
+            if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the Ideal images
             if imom==2: mom = second_moment(PPV, Vrange)
             moms.append(mom) # append to bigger list of moment maps
 
@@ -148,7 +148,7 @@ def co21(correction='N', pdf_ft_tab1='N'):
             # compute moment maps
             print("Computing moment "+str(imom)+" map...")
             if imom==0: mom = zero_moment(PPV, Vrange); mom = rescale_data(mom)  # need to rescale the 0th moment map alone
-            if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the ideal images
+            if imom==1: mom = -first_moment(PPV, Vrange) # inverting the image to make it match with the Ideal images
             if imom==2: mom = second_moment(PPV, Vrange)
             moms.append(mom) # append to bigger list of moment maps
 

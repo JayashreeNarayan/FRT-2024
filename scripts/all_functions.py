@@ -93,7 +93,7 @@ def resize_45(data, choice):
 
 def PDF_img_names(i, sigma):
     sigma=cfp.round(sigma, 2, str_ret=True)
-    img_names = ["ideal", "Synthetic CO (1-0)", "Synthetic CO (2-1)"]
+    img_names = ["Ideal", "Synthetic CO (1-0)", "Synthetic CO (2-1)"]
     return img_names[i]+r": $\sigma$ = "+sigma+r"$~\mathrm{km\,s^{-1}}$"
 
 def gauss_func(x, mean, sigma):

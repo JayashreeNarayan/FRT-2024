@@ -14,10 +14,12 @@ from main import *
 from all_functions import *
 from universal_variables import *
 
-all_moments = moments_45()
+moments_45_ = moments_45()
 fmp = first_moment_plotter()
 
 def mom_map_sum_1tff(): # makes the moment map summary for 1tff and 1.2tff
-    fmp.with_colorbar(data=all_moments.first_mom_ideal, text=img_names[0], save=outpath+files_ideal_npy[0][:-4])
+    print(files_ideal_npy[1][:-4])
+    fmp.with_colorbar(data=moments_45_.first_mom_ideal, text=img_names[0], file=outpath+files_ideal_npy[1][:-4])
+    
 
 mom_map_sum_1tff()
