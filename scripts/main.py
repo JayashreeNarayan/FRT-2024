@@ -145,77 +145,77 @@ class moments_45:
         moments_ = moments() # make the class with all the variables required across all angles
         
         # the moment maps
-        self.zero_mom_ideal=moments_.zero_mom_ideal[1]
-        self.zero_mom_co10=moments_.zero_mom_co10[1]
-        self.zero_mom_co21=moments_.zero_mom_co21[1]
+        self.zero_mom_ideal=[moments_.zero_mom_ideal[1], moments_.zero_mom_ideal[4]]
+        self.zero_mom_co10=[moments_.zero_mom_co10[1], moments_.zero_mom_co10[4]]
+        self.zero_mom_co21=[moments_.zero_mom_co21[1],moments_.zero_mom_co21[4]]
 
-        self.first_mom_ideal=moments_.first_mom_ideal[1]
-        self.first_mom_co10=moments_.first_mom_co10[1]
-        self.first_mom_co21=moments_.first_mom_co21[1]
+        self.first_mom_ideal=[moments_.first_mom_ideal[1], moments_.first_mom_ideal[4]]
+        self.first_mom_co10=[moments_.first_mom_co10[1],moments_.first_mom_co10[4]]
+        self.first_mom_co21=[moments_.first_mom_co21[1], moments_.first_mom_co21[4]]
 
-        self.second_mom_ideal=moments_.second_mom_ideal[1]
-        self.second_mom_co10=moments_.first_mom_co10[1]
-        self.second_mom_co21=moments_.second_mom_co21[1]
+        self.second_mom_ideal=[moments_.second_mom_ideal[1], moments_.second_mom_ideal[4]]
+        self.second_mom_co10=[moments_.first_mom_co10[1],moments_.first_mom_co10[4]]
+        self.second_mom_co21=[moments_.second_mom_co21[1], moments_.second_mom_co21[4]]
 
         # the smoothed first moment maps
-        self.first_mom_smooth_ideal=moments_.first_mom_smooth_ideal[1]
-        self.first_mom_smooth_co10=moments_.first_mom_smooth_co10[1]
-        self.first_mom_smooth_co21=moments_.first_mom_smooth_co21[1]
+        self.first_mom_smooth_ideal=[moments_.first_mom_smooth_ideal[1], moments_.first_mom_smooth_ideal[4]]
+        self.first_mom_smooth_co10=[moments_.first_mom_smooth_co10[1], moments_.first_mom_smooth_co10[4]]
+        self.first_mom_smooth_co21=[moments_.first_mom_smooth_co21[1], moments_.first_mom_smooth_co21[4]]
 
         # the isolated first moment maps
-        self.first_mom_isolated_ideal=moments_.first_mom_isolated_ideal[1]
-        self.first_mom_isolated_co10=moments_.first_mom_isolated_co10[1]
-        self.first_mom_isolated_co21=moments_.first_mom_isolated_co21[1]
+        self.first_mom_isolated_ideal=[moments_.first_mom_isolated_ideal[1], moments_.first_mom_isolated_ideal[4]]
+        self.first_mom_isolated_co10=[moments_.first_mom_isolated_co10[1], moments_.first_mom_isolated_co10[4]]
+        self.first_mom_isolated_co21=[moments_.first_mom_isolated_co21[1], moments_.first_mom_isolated_co21[4]]
 
         # PDF objects and sigmas for the first moment
-        self.first_mom_ideal_PDF_obj=moments_.first_mom_ideal_PDF_obj[1]
-        self.first_mom_co10_PDF_obj=moments_.first_mom_co10_PDF_obj[1]
-        self.first_mom_co21_PDF_obj=moments_.first_mom_co21_PDF_obj[1]
-        self.first_mom_ideal_sigma=moments_.first_mom_ideal_sigma[1]
-        self.first_mom_co10_sigma=moments_.first_mom_co10_sigma[1]
-        self.first_mom_co21_sigma=moments_.first_mom_co21_sigma[1]
+        self.first_mom_ideal_PDF_obj=[moments_.first_mom_ideal_PDF_obj[1], moments_.first_mom_ideal_PDF_obj[4]]
+        self.first_mom_co10_PDF_obj=[moments_.first_mom_co10_PDF_obj[1], moments_.first_mom_co10_PDF_obj[4]]
+        self.first_mom_co21_PDF_obj=[moments_.first_mom_co21_PDF_obj[1], moments_.first_mom_co21_PDF_obj[4]]
+        self.first_mom_ideal_sigma=[moments_.first_mom_ideal_sigma[1], moments_.first_mom_ideal_sigma[4]]
+        self.first_mom_co10_sigma=[moments_.first_mom_co10_sigma[1], moments_.first_mom_co10_sigma[4]]
+        self.first_mom_co21_sigma=[moments_.first_mom_co21_sigma[1], moments_.first_mom_co21_sigma[4]]
 
         # PDF objects and sigmas for the first moment after isolation
-        self.first_mom_isolated_ideal_PDF_obj=moments_.first_mom_isolated_ideal_PDF_obj[1]
-        self.first_mom_isolated_co10_PDF_obj=moments_.first_mom_isolated_co10_PDF_obj[1]
-        self.first_mom_isolated_co21_PDF_obj=moments_.first_mom_isolated_co21_PDF_obj[1]
-        self.first_mom_isolated_ideal_sigma=moments_.first_mom_isolated_ideal_sigma[1]
-        self.first_mom_isolated_co10_sigma=moments_.first_mom_isolated_co10_sigma[1]
-        self.first_mom_isolated_co21_sigma=moments_.first_mom_isolated_co21_sigma[1]
+        self.first_mom_isolated_ideal_PDF_obj=[moments_.first_mom_isolated_ideal_PDF_obj[1], moments_.first_mom_isolated_ideal_PDF_obj[4]]
+        self.first_mom_isolated_co10_PDF_obj=[moments_.first_mom_isolated_co10_PDF_obj[1], moments_.first_mom_isolated_co10_PDF_obj[4]]
+        self.first_mom_isolated_co21_PDF_obj=[moments_.first_mom_isolated_co21_PDF_obj[1], moments_.first_mom_isolated_co21_PDF_obj[4]]
+        self.first_mom_isolated_ideal_sigma=[moments_.first_mom_isolated_ideal_sigma[1], moments_.first_mom_isolated_ideal_sigma[4]]
+        self.first_mom_isolated_co10_sigma=[moments_.first_mom_isolated_co10_sigma[1], moments_.first_mom_isolated_co10_sigma[4]]
+        self.first_mom_isolated_co21_sigma=[moments_.first_mom_isolated_co21_sigma[1], moments_.first_mom_isolated_co21_sigma[4]]
 
         # kurtosis for the PDFs
-        self.first_mom_ideal_kurt=moments_.first_mom_ideal_kurt[1]
-        self.first_mom_co10_kurt=moments_.first_mom_co10_kurt[1]
-        self.first_mom_co21_kurt=moments_.first_mom_co21_kurt[1]
+        self.first_mom_ideal_kurt=[moments_.first_mom_ideal_kurt[1], moments_.first_mom_ideal_kurt[4]]
+        self.first_mom_co10_kurt=[moments_.first_mom_co10_kurt[1], moments_.first_mom_co10_kurt[4]]
+        self.first_mom_co21_kurt=[moments_.first_mom_co21_kurt[1], moments_.first_mom_co21_kurt[4]]
 
         # kurtosis for the PDFS after isolation
-        self.first_mom_isolated_ideal_kurt=moments_.first_mom_isolated_ideal_kurt[1]
-        self.first_mom_isolated_co10_kurt=moments_.first_mom_isolated_co10_kurt[1]
-        self.first_mom_isolated_co21_kurt=moments_.first_mom_isolated_co21_kurt[1]
-
+        self.first_mom_isolated_ideal_kurt=[moments_.first_mom_isolated_ideal_kurt[1], moments_.first_mom_isolated_ideal_kurt[4]]
+        self.first_mom_isolated_co10_kurt=[moments_.first_mom_isolated_co10_kurt[1], moments_.first_mom_isolated_co10_kurt[4]]
+        self.first_mom_isolated_co21_kurt=[moments_.first_mom_isolated_co21_kurt[1], moments_.first_mom_isolated_co21_kurt[4]]
+        
         # FT objects 
-        self.first_mom_ideal_FT_obj=moments_.first_mom_ideal_FT_obj[1]
-        self.first_mom_co10_FT_obj=moments_.first_mom_co10_FT_obj[1]
-        self.first_mom_co21_FT_obj=moments_.first_mom_co21_FT_obj[1]
+        self.first_mom_ideal_FT_obj=[moments_.first_mom_ideal_FT_obj[1], moments_.first_mom_ideal_FT_obj[4]]
+        self.first_mom_co10_FT_obj=[moments_.first_mom_co10_FT_obj[1], moments_.first_mom_co10_FT_obj[4]]
+        self.first_mom_co21_FT_obj=[moments_.first_mom_co21_FT_obj[1], moments_.first_mom_co21_FT_obj[4]]
 
         # FT objects after isolation
-        self.first_mom_isolated_ideal_FT_obj=moments_.first_mom_isolated_ideal_FT_obj[1]
-        self.first_mom_isolated_co10_FT_obj=moments_.first_mom_isolated_co10_FT_obj[1]
-        self.first_mom_isolated_co21_FT_obj=moments_.first_mom_isolated_co21_FT_obj[1]
+        self.first_mom_isolated_ideal_FT_obj=[moments_.first_mom_isolated_ideal_FT_obj[1], moments_.first_mom_isolated_ideal_FT_obj[4]]
+        self.first_mom_isolated_co10_FT_obj=[moments_.first_mom_isolated_co10_FT_obj[1], moments_.first_mom_isolated_co10_FT_obj[4]]
+        self.first_mom_isolated_co21_FT_obj=[moments_.first_mom_isolated_co21_FT_obj[1], moments_.first_mom_isolated_co21_FT_obj[4]]
 
         # correction objects
-        self.zero_mom_co10_correction_obj=moments_.zero_mom_co10_correction_obj[1]
-        self.zero_mom_co21_correction_obj=moments_.zero_mom_co21_correction_obj[1]
+        self.zero_mom_co10_correction_obj=[moments_.zero_mom_co10_correction_obj[1], moments_.zero_mom_co10_correction_obj[4]]
+        self.zero_mom_co21_correction_obj=[moments_.zero_mom_co21_correction_obj[1], moments_.zero_mom_co21_correction_obj[4]]
 
-        self.first_mom_co10_correction_obj=moments_.first_mom_co10_correction_obj[1]
-        self.first_mom_co21_correction_obj=moments_.first_mom_co21_correction_obj[1]
+        self.first_mom_co10_correction_obj=[moments_.first_mom_co10_correction_obj[1], moments_.first_mom_co10_correction_obj[4]]
+        self.first_mom_co21_correction_obj=[moments_.first_mom_co21_correction_obj[1], moments_.first_mom_co21_correction_obj[4]]
 
-        self.second_mom_co10_correction_obj=moments_.second_mom_co10_correction_obj[1]
-        self.second_mom_co21_correction_obj=moments_.second_mom_co21_correction_obj[1]
+        self.second_mom_co10_correction_obj=[moments_.second_mom_co10_correction_obj[1], moments_.second_mom_co10_correction_obj[4]]
+        self.second_mom_co21_correction_obj=[moments_.second_mom_co21_correction_obj[1], moments_.second_mom_co21_correction_obj[4]]
 
         # correction obj for first mom after isolation
-        self.first_mom_isolated_co10_correction_obj=moments_.first_mom_isolated_co10_correction_obj[1]
-        self.first_mom_isolated_co21_correction_obj=moments_.first_mom_isolated_co21_correction_obj[1]
+        self.first_mom_isolated_co10_correction_obj=[moments_.first_mom_isolated_co10_correction_obj[1], moments_.first_mom_isolated_co10_correction_obj[4]]
+        self.first_mom_isolated_co21_correction_obj=[moments_.first_mom_isolated_co21_correction_obj[1], moments_.first_mom_isolated_co21_correction_obj[4]]
         print(r"Picking out the one for LOS = 45$^circ$")
 
 #moment_45 = moments_45()
