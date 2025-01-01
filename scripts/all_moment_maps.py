@@ -24,7 +24,7 @@ if __name__ == "__main__":
 
     # set paths and create plot directory
     path = "../Data/"
-    outpath = "../plots/"
+    outpath = "../plots_old/"
     if not os.path.isdir(outpath):
         cfp.run_shell_command('mkdir '+outpath)
 
@@ -186,7 +186,7 @@ if __name__ == "__main__":
                         ideal_1tff_mom2 = data # for the correction factors
 
                         # plotting the same with individual colorbars for Fig. 1 eqv.
-                        ret = cfp.plot_map(data, cmap=cmaps[2], vmin=vmin_2, vmax=vmax_2, colorbar = True, cmap_label=cmap_labels[2], xlabel=xlabel, ylabel=ylabel, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                        ret = cfp.plot_map(np.asarray(data), cmap=cmaps[2], vmin=vmin_2, vmax=vmax_2, colorbar = True, cmap_label=cmap_labels[2], xlabel=xlabel, ylabel=ylabel, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
                         cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[0], normalised_coords=True)
                         cfp.show_or_save_plot(save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
 
@@ -195,7 +195,7 @@ if __name__ == "__main__":
                         ideal_1tff_mom0.append(data) # for correction maps
 
                         # plotting the same with individual colorbars for Fig.1 eqv
-                        ret = cfp.plot_map(data, cmap=cmaps[0], vmin=vmin_0, vmax=vmax_0, colorbar = True, cmap_label=cmap_labels[0], xlabel=xlabel, ylabel=ylabel, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                        ret = cfp.plot_map(np.asarray(data), cmap=cmaps[0], vmin=vmin_0, vmax=vmax_0, colorbar = True, cmap_label=cmap_labels[0], xlabel=xlabel, ylabel=ylabel, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
                         cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[0], normalised_coords=True)
                         cfp.show_or_save_plot(save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
                     
@@ -214,11 +214,11 @@ if __name__ == "__main__":
 
                     if get_LOS(file) == 1:
                         #producing the smoothed maps
-                        ret = cfp.plot_map(smooth_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=["",None], xlabel="", ylabel=ylabel,  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                        ret = cfp.plot_map(np.asarray(smooth_data), cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=["",None], xlabel="", ylabel=ylabel,  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
                         cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[0], normalised_coords=True)
                         cfp.show_or_save_plot(save=outpath+file[:-4]+"_smooth.pdf")
 
-                        ret = cfp.plot_map(isolated_data_othin, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=[None,None], xlabel=xlabel, ylabel=ylabel, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                        ret = cfp.plot_map(np.asarray(isolated_data_othin), cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=[None,None], xlabel=xlabel, ylabel=ylabel, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
                         cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[0], normalised_coords=True)
                         cfp.show_or_save_plot(save=outpath+file[:-4]+"_isolated.pdf")
 
@@ -249,13 +249,13 @@ if __name__ == "__main__":
                         PDF_obj.append(K)
                         sigma.append(np.std(data))
                         #skewness.append(kurtosis(data.flatten(), 's'))
-                        kurtosis.append(kurtosis(data.flatten()))
+                        kurtosis.append(kurtosis_own(np.asarray(data).flatten()))
 
                         K = cfp.get_pdf(isolated_data_othin, range=(-0.1,+0.1)) # with isolation
                         PDF_obj_isolated.append(K)
                         sigma_isolated.append(np.std(isolated_data_othin))
                         #skewness_isolated.append(kurtosis(isolated_data_othin.flatten(), 's'))
-                        kurtosis_isolated.append(kurtosis(isolated_data_othin.flatten()))
+                        kurtosis_isolated.append(kurtosis_own(np.asarray(isolated_data_othin).flatten()))
 
             # Generating graphs for For SimEnd time 
             files = ["FMM_45.0_SE.npy", "SMM_45.0_SE.npy", "ZMM_45.0_SE.npy"]
@@ -285,7 +285,7 @@ if __name__ == "__main__":
 
                 else: # all the first moment maps - for Appen. fig
                     # Also plotting the same with colorbars for Fig. 1
-                    ret = cfp.plot_map(data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar = True, cmap_label=cmap_labels[1], xlabel=xlabel, ylabel=ylabel, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                    ret = cfp.plot_map(np.asarray(data), cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar = True, cmap_label=cmap_labels[1], xlabel=xlabel, ylabel=ylabel, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
                     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[0], normalised_coords=True)
                     cfp.show_or_save_plot(save=outpath+file[:-4]+"_cb.pdf") # cb = 'colorbar'
                     
@@ -301,7 +301,7 @@ if __name__ == "__main__":
                     ideal_SE.append(isolated_data_othin)
                     all_sigmas.append(('SE', file , np.std(isolated_data_othin)))
 
-                    ret = cfp.plot_map(isolated_data_othin, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=[None,None],xlabel=xlabel, ylabel=ylabel,  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                    ret = cfp.plot_map(np.asarray(isolated_data_othin), cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False, axes_format=[None,None],xlabel=xlabel, ylabel=ylabel,  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
                     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[0], normalised_coords=True)
                     cfp.plot(save=outpath+file[:-4]+"_isolated.pdf")
 
@@ -315,9 +315,9 @@ if __name__ == "__main__":
                         PDF_obj_SE.append(K)
                         sigma_SE.append(np.std(isolated_data_othin))
                         #skewness_SE_before.append(kurtosis(data.flatten(), 's')) # before isolation for SE
-                        kurtosis_SE_before.append(kurtosis(data.flatten())) # after isolation for SE
+                        kurtosis_SE_before.append(kurtosis_own(np.asarray(data).flatten())) # after isolation for SE
                         #skewness_SE_after.append(kurtosis(isolated_data_othin.flatten(), 's'))
-                        kurtosis_SE_after.append(kurtosis(isolated_data_othin.flatten()))
+                        kurtosis_SE_after.append(kurtosis_own(np.asarray(isolated_data_othin).flatten()))
 
         # Plotting the zeroth moment maps with flashplotlib directly from the FLASH data , used only in Fig. 1 so we need a colorbar
         '''
@@ -381,12 +381,12 @@ if __name__ == "__main__":
                     
                     if get_LOS(file) == 1:
                         # For Appen. Fig.
-                        ret = cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar=False, axes_format=["", ""],xlabel="", ylabel="",  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                        ret = cfp.plot_map(np.asarray(moms[imom]), cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar=False, axes_format=["", ""],xlabel="", ylabel="",  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
                         cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[1], normalised_coords=True)                                            
                         cfp.show_or_save_plot(save=outpath+file[:-4]+"_"+moment_map+".pdf")
 
                         # Set with individual colorbars (Fig. 1)
-                        ret = cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar = True, cmap_label=cmap_labels[imom], xlabel=xlabel, ylabel=ylabel, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                        ret = cfp.plot_map(np.asarray(moms[imom]), cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar = True, cmap_label=cmap_labels[imom], xlabel=xlabel, ylabel=ylabel, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
                         cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[1], normalised_coords=True) 
                         cfp.plot(save=outpath+file[:-4]+"_"+moment_map+"_cb.pdf")
 
@@ -413,11 +413,11 @@ if __name__ == "__main__":
 
                 if get_LOS(file) == 1:
                     # getting the smoothed maps
-                    ret = cfp.plot_map(smooth_mom1, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=["",""], xlabel="", ylabel="", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+                    ret = cfp.plot_map(np.asarray(smooth_mom1), cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=["",""], xlabel="", ylabel="", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
                     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[1], normalised_coords=True)    
                     cfp.show_or_save_plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_smooth.pdf")
 
-                    ret = cfp.plot_map(isolated_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""],xlabel=xlabel, ylabel="", xlim=[-1,1], ylim=[-1,1], aspect_data='equal')  
+                    ret = cfp.plot_map(np.asarray(isolated_data), cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""],xlabel=xlabel, ylabel="", xlim=[-1,1], ylim=[-1,1], aspect_data='equal')  
                     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[1], normalised_coords=True)   
                     cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_isolated.pdf")
 
@@ -448,13 +448,13 @@ if __name__ == "__main__":
                     PDF_obj.append(K)
                     sigma.append(np.std(moms[1]))
                     #skewness.append(kurtosis(moms[1].flatten(), 's'))
-                    kurtosis.append(kurtosis(moms[1].flatten()))
+                    kurtosis.append(kurtosis_own(np.asarray(moms[1]).flatten()))
 
                     K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1)) # for after turbulence isolation
                     PDF_obj_isolated.append(K)
                     sigma_isolated.append(np.std(isolated_data))
                     #skewness_isolated.append(kurtosis(isolated_data.flatten(), 's'))
-                    kurtosis_isolated.append(kurtosis(isolated_data.flatten()))
+                    kurtosis_isolated.append(kurtosis_own(np.asarray(isolated_data).flatten()))
             
             # Doing the same as above for Data_SimEnd
             files = ["PPV_45.0.npy"] 
@@ -495,12 +495,12 @@ if __name__ == "__main__":
                         moms[imom] = moms[imom].T # transpose for only the 45.0
 
                     # For Appen. Fig.
-                    ret = cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar=False, axes_format=["", ""], xlabel="", ylabel="", xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                    ret = cfp.plot_map(np.asarray(moms[imom]), cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar=False, axes_format=["", ""], xlabel="", ylabel="", xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
                     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[1], normalised_coords=True)                      
                     cfp.show_or_save_plot(save=outpath+file[:-4]+"_"+moment_map+"_SE.pdf")
 
                     # Set with individual colorbars (Fig. 1)
-                    ret = cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar = True, cmap_label=cmap_labels[imom],xlabel=xlabel, ylabel=ylabel,  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                    ret = cfp.plot_map(np.asarray(moms[imom]), cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar = True, cmap_label=cmap_labels[imom],xlabel=xlabel, ylabel=ylabel,  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
                     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[1], normalised_coords=True)          
                     cfp.show_or_save_plot(save=outpath+file[:-4]+"_"+moment_map+"_cb_SE.pdf")
 
@@ -519,7 +519,7 @@ if __name__ == "__main__":
 
                 all_sigmas.append(('SE', file, np.std(isolated_data)))
 
-                ret = cfp.plot_map(isolated_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""],xlabel=xlabel, ylabel="",  xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig.
+                ret = cfp.plot_map(np.asarray(isolated_data), cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""],xlabel=xlabel, ylabel="",  xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig.
                 cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[1], normalised_coords=True)    
                 cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_isolated_SE.pdf")
 
@@ -533,9 +533,9 @@ if __name__ == "__main__":
                     PDF_obj_SE.append(K)
                     sigma_SE.append(np.std(isolated_data))
                     #skewness_SE_before.append(kurtosis(moms[1].flatten(), 's'))
-                    kurtosis_SE_before.append(kurtosis(moms[1].flatten()))
+                    kurtosis_SE_before.append(kurtosis_own(np.asarray(moms[1]).flatten()))
                     #skewness_SE_after.append(kurtosis(isolated_data.flatten(), 's'))
-                    kurtosis_SE_after.append(kurtosis(isolated_data.flatten()))
+                    kurtosis_SE_after.append(kurtosis_own(np.asarray(isolated_data).flatten()))
 
         # PPV cubes for CO (2-1) lines - 0 moment map and consequently first moment map; smoothing and also turbulence isolation
         if action == choices[3]:
@@ -590,12 +590,12 @@ if __name__ == "__main__":
                     
                     if get_LOS(file) == 1:
                         # For Appen. Fig.
-                        ret = cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar=False, axes_format=["", ""], xlabel="", ylabel="",  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                        ret = cfp.plot_map(np.asarray(moms[imom]), cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar=False, axes_format=["", ""], xlabel="", ylabel="",  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
                         cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[2], normalised_coords=True)  
                         cfp.show_or_save_plot(save=outpath+file[:-4]+"_"+moment_map+".pdf")
 
                         # Set with individual colorbars (Fig. 1)
-                        ret = cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar = True, cmap_label=cmap_labels[imom],xlabel=xlabel, ylabel=ylabel,  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                        ret = cfp.plot_map(np.asarray(moms[imom]), cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar = True, cmap_label=cmap_labels[imom],xlabel=xlabel, ylabel=ylabel,  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
                         cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[2], normalised_coords=True)  
                         cfp.show_or_save_plot(save=outpath+file[:-4]+"_"+moment_map+"_cb.pdf")
 
@@ -618,11 +618,11 @@ if __name__ == "__main__":
                 all_sigmas.append((file, np.std(isolated_data)))
                 if get_LOS(file) == 1:
                     # getting the smoothed maps
-                    ret = cfp.plot_map(smooth_mom1, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=["",""], xlabel="", ylabel="",  xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+                    ret = cfp.plot_map(np.asarray(smooth_mom1), cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=["",""], xlabel="", ylabel="",  xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
                     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[2], normalised_coords=True)  
                     cfp.show_or_save_plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_smooth.pdf")
 
-                    ret = cfp.plot_map(isolated_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlabel=xlabel, ylabel="", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
+                    ret = cfp.plot_map(np.asarray(isolated_data), cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlabel=xlabel, ylabel="", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') 
                     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[2], normalised_coords=True)  
                     cfp.plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_isolated.pdf")
 
@@ -653,13 +653,13 @@ if __name__ == "__main__":
                     PDF_obj.append(K)
                     sigma.append(np.std(moms[1]))
                     #skewness.append(kurtosis(moms[1].flatten(), 's'))
-                    kurtosis.append(kurtosis(moms[1].flatten()))
+                    kurtosis.append(kurtosis_own(np.asarray(moms[1]).flatten()))
 
                     K = cfp.get_pdf(isolated_data, range=(-0.1,+0.1)) # after turbulence isolation
                     PDF_obj_isolated.append(K)
                     sigma_isolated.append(np.std(isolated_data))
                     #skewness_isolated.append(kurtosis(isolated_data.flatten(), 's'))
-                    kurtosis_isolated.append(kurtosis(isolated_data.flatten()))
+                    kurtosis_isolated.append(kurtosis_own(np.asarray(isolated_data).flatten()))
             
             # Doing the same as above for Data_SimEnd
             files = ["PPV_45.0_J21_SE.npy"] 
@@ -700,12 +700,12 @@ if __name__ == "__main__":
                         CO_21_SE_mom2.append(moms[2])
                 
                     # For Appen. Fig.
-                    ret = cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar=False, axes_format=["", ""],xlabel="", ylabel="",  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                    ret = cfp.plot_map(np.asarray(moms[imom]), cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar=False, axes_format=["", ""],xlabel="", ylabel="",  xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
                     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[2], normalised_coords=True)  
                     cfp.show_or_save_plot(save=outpath+file[:-4]+"_"+moment_map+".pdf")
 
                     # Set with individual colorbars (Fig. 1)
-                    ret = cfp.plot_map(moms[imom], cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar = True, cmap_label=cmap_labels[imom], xlabel=xlabel, ylabel=ylabel, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+                    ret = cfp.plot_map(np.asarray(moms[imom]), cmap=cmaps[imom], vmin=vmin, vmax=vmax, colorbar = True, cmap_label=cmap_labels[imom], xlabel=xlabel, ylabel=ylabel, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
                     cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[2], normalised_coords=True)  
                     cfp.show_or_save_plot(save=outpath+file[:-4]+"_"+moment_map+"_cb.pdf")
         
@@ -724,7 +724,7 @@ if __name__ == "__main__":
 
                 all_sigmas.append(('SE', file, np.std(isolated_data)))
 
-                ret = cfp.plot_map(isolated_data, cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlabel=xlabel, ylabel="", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig. 
+                ret = cfp.plot_map(np.asarray(isolated_data), cmap=cmaps[1], vmin=vmin_1, vmax=vmax_1, colorbar=False , axes_format=[None,""], xlabel=xlabel, ylabel="", xlim=[-1,1], ylim=[-1,1], aspect_data='equal') # common colorbar for Appen. Fig. 
                 cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=img_names[2], normalised_coords=True)  
                 cfp.show_or_save_plot(save=outpath+file[:-4]+"_"+moment_maps[1]+"_isolated.pdf")
 
@@ -737,17 +737,17 @@ if __name__ == "__main__":
                 PDF_obj_SE.append(K)
                 sigma_SE.append(np.std(isolated_data))
                 #skewness_SE_before.append(kurtosis(moms[1].flatten(), 's'))
-                kurtosis_SE_before.append(kurtosis(moms[1].flatten()))
+                kurtosis_SE_before.append(kurtosis_own(np.asarray(moms[1]).flatten()))
                 #skewness_SE_after.append(kurtosis(isolated_data.flatten(), 's'))
-                kurtosis_SE_after.append(kurtosis(isolated_data.flatten()))
+                kurtosis_SE_after.append(kurtosis_own(np.asarray(isolated_data).flatten()))
 
     # Getting the correction factor maps and the PDFs
     ##################### Correction factor maps - MOMENT 1, BEFORE #######################
-    correction_CO_10_1tff_before = (CO_10_1tff_before[0]-ideal_1tff_before[0]) # 10 at 1tff
-    correction_CO_10_SE_before = (CO_10_SE_before[0]-ideal_SE_before[0]) # 10 at SE
+    correction_CO_10_1tff_before = np.asarray((CO_10_1tff_before[0]-ideal_1tff_before[0])) # 10 at 1tff
+    correction_CO_10_SE_before = np.asarray((CO_10_SE_before[0]-ideal_SE_before[0])) # 10 at SE
 
-    correction_CO_21_1tff_before = (CO_21_1tff_before[0]-ideal_1tff_before[0]) # 21 at 1tff
-    correction_CO_21_SE_before = (CO_21_SE_before[0]-ideal_SE_before[0]) # 21 at SE
+    correction_CO_21_1tff_before =np.asarray((CO_21_1tff_before[0]-ideal_1tff_before[0])) # 21 at 1tff
+    correction_CO_21_SE_before = np.asarray((CO_21_SE_before[0]-ideal_SE_before[0])) # 21 at SE
 
     corrections_before = [correction_CO_10_1tff_before, correction_CO_10_SE_before, correction_CO_21_1tff_before, correction_CO_21_SE_before]
 
@@ -784,11 +784,11 @@ if __name__ == "__main__":
     cfp.plot(xlabel=correction_xlabel, ylabel="PDF", fontsize='small', ylog=True, legend_loc='upper left', save=outpath+"correction_PDF_mom1_before.pdf")
 
     ##################### Correction factor maps - MOMENT 1, AFTER #######################
-    correction_CO_10_1tff = (CO_10_1tff[0]-ideal_1tff[0]) # 10 at 1tff
-    correction_CO_10_SE = (CO_10_SE[0]-ideal_SE[0]) # 10 at SE
+    correction_CO_10_1tff = np.asarray((CO_10_1tff[0]-ideal_1tff[0])) # 10 at 1tff
+    correction_CO_10_SE = np.asarray((CO_10_SE[0]-ideal_SE[0])) # 10 at SE
 
-    correction_CO_21_1tff = (CO_21_1tff[0]-ideal_1tff[0]) # 21 at 1tff
-    correction_CO_21_SE = (CO_21_SE[0]-ideal_SE[0]) # 21 at SE
+    correction_CO_21_1tff = np.asarray((CO_21_1tff[0]-ideal_1tff[0])) # 21 at 1tff
+    correction_CO_21_SE = np.asarray((CO_21_SE[0]-ideal_SE[0])) # 21 at SE
 
     corrections = [correction_CO_10_1tff, correction_CO_10_SE, correction_CO_21_1tff, correction_CO_21_SE]
 
@@ -826,11 +826,11 @@ if __name__ == "__main__":
 
     ###########CORRECTION FACTOR MAPS MOMENT ZERO#######################
     # Getting the correction factor maps and the PDFs
-    correction_CO_10_1tff_mom0 = (CO_10_1tff_mom0[0])/ideal_1tff_mom0[0] # 10 at 1tff
-    correction_CO_10_SE_mom0 = (CO_10_SE_mom0[0])/ideal_SE_mom0[0] # 10 at SE
+    correction_CO_10_1tff_mom0 = np.asarray((CO_10_1tff_mom0[0])/ideal_1tff_mom0[0]) # 10 at 1tff
+    correction_CO_10_SE_mom0 = np.asarray((CO_10_SE_mom0[0])/ideal_SE_mom0[0]) # 10 at SE
 
-    correction_CO_21_1tff_mom0 = (CO_21_1tff_mom0[0])/ideal_1tff_mom0[0] # 21 at 1tff
-    correction_CO_21_SE_mom0 = (CO_21_SE_mom0[0])/ideal_SE_mom0[0] # 21 at SE
+    correction_CO_21_1tff_mom0 = np.asarray((CO_21_1tff_mom0[0])/ideal_1tff_mom0[0]) # 21 at 1tff
+    correction_CO_21_SE_mom0 = np.asarray((CO_21_SE_mom0[0])/ideal_SE_mom0[0] )# 21 at SE
 
     corrections_0 = [correction_CO_10_1tff_mom0, correction_CO_10_SE_mom0, correction_CO_21_1tff_mom0, correction_CO_21_SE_mom0]
 
@@ -868,11 +868,11 @@ if __name__ == "__main__":
 
     ###################CORRECTION FACTOR MAPS - MOMENT 2 ######################
     # Getting the correction factor maps and the PDFs
-    correction_CO_10_1tff_2 = (CO_10_1tff_mom2[0])/ideal_1tff_mom2[0] # 10 at 1tff
-    correction_CO_10_SE_2 = (CO_10_SE_mom2[0])/ideal_SE_mom2[0] # 10 at SE
+    correction_CO_10_1tff_2 = np.asarray((CO_10_1tff_mom2[0])/ideal_1tff_mom2[0] )# 10 at 1tff
+    correction_CO_10_SE_2 = np.asarray((CO_10_SE_mom2[0])/ideal_SE_mom2[0] )# 10 at SE
 
-    correction_CO_21_1tff_2 = (CO_21_1tff_mom2[0])/ideal_1tff_mom2 # 21 at 1tff
-    correction_CO_21_SE_2 = (CO_21_SE_mom2[0])/ideal_SE_mom2[0] # 21 at SE
+    correction_CO_21_1tff_2 =np.asarray( (CO_21_1tff_mom2[0])/ideal_1tff_mom2 )# 21 at 1tff
+    correction_CO_21_SE_2 =np.asarray( (CO_21_SE_mom2[0])/ideal_SE_mom2[0]) # 21 at SE
 
     corrections_2 = [correction_CO_10_1tff_2, correction_CO_10_SE_2, correction_CO_21_1tff_2, correction_CO_21_SE_2]
 
@@ -952,6 +952,7 @@ if __name__ == "__main__":
     cfp.plot(x=img_PDF_names_xpos+0.003, y=img_PDF_names_ypos-0.55, text=img_types[1], backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
     cfp.plot(legend_loc='lower left', xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], fontsize='small', ylog=True,  xlog=True, save=outpath+"FT_after_SE.pdf")
 
+    ####### ALL PDFS #############
     # Plotting the PDFs for before isolation
     for i in range(len(PDF_obj)):
         cfp.plot(x=PDF_obj[i].bin_edges, y=PDF_obj[i].pdf, type='pdf', label=PDF_img_names(i, sigma[i]), color=line_colours[i])

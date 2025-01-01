@@ -97,18 +97,21 @@ def PDF_img_names(i, sigma):
     return img_names[i]+r": $\sigma$ = "+sigma+r"$~\mathrm{km\,s^{-1}}$"
 
 def gauss_func(x, mean, sigma):
-    gauss = 1.0/np.sqrt(2.0*np.pi*sigma**2) * np.exp(-0.5*(x-mean)**2/sigma**2)
-    return np.log(gauss)
+    gauss=[]
+    for i in range(len(x)):
+        gauss.append(np.log(1.0/np.sqrt(2.0*np.pi*sigma**2) * np.exp(-0.5*(x[i]-mean)**2/sigma**2)))
+        gauss_arr=np.asarray(gauss)
+    return gauss_arr
 
 def FT_slope_labels(err,n):
     err_n="0.1"
     return ";~slope="+n+r"$\pm$"+err_n
 
-def kurtosis(data):
+def kurtosis_own(data):
     return cfp.round(st.kurtosis(data), 2, str_ret=True)
 
 def func(x,a,n):
-    return np.log(a*(x**n))
+    return np.log(list(a*(x**n)))
 
 def func_gaussian(x,a,n):
     return np.log(a*(x**n))
@@ -121,7 +124,7 @@ def correction_bins(vmax_correc): # creates bins for the correction PDFs
 
 def PDF_img_names_correc(i, sigma):
         sigma=cfp.round(sigma, 2, str_ret=True)
-        correction_labels = [r"CO (1-0) at $1~t_\mathrm{ff}$", r"CO (1-0) at $1.2~t_\mathrm{ff}$", r"CO (2-1) at $1~t_\mathrm{ff}$", r"CO (2-1) at $1.2~t_\mathrm{ff}$"]
+        correction_labels = [r"$\mathrm{CO}_{(1-0)}$ $-$ $\mathrm{Ideal}$", r"$\mathrm{CO}_{(2-1)}$ $-$ $\mathrm{Ideal}$"]
         return correction_labels[i]+r": $\sigma$ = "+sigma
 
 def corrections(moment_map, ideal_moment_map, nth_moment):
@@ -136,19 +139,23 @@ def corrections(moment_map, ideal_moment_map, nth_moment):
     
     return correction, PDF_obj, sigma
 
-def axes_format(tot_panels, coords_of_fig, xlabel, ylabel):
+def axes_format_func(coords_of_fig, xlabel, ylabel):
     coords_of_fig=str(coords_of_fig)
-    rows=cols=int(np.sqrt(tot_panels))
-    if coords_of_fig == '00' or '10': 
-        axes_format=[None, ""]
+    #rows=cols=int(np.sqrt(tot_panels))
+    first = ['00', '10']
+    second = ['01', '02', '11', '12']
+    third = ['21', '22']
+    
+    if coords_of_fig in first:
+        axes_format=["", None]
         xlabel=None
         ylabel=ylabel
-    elif coords_of_fig == '01' or '02' or '11' or '12':
+    elif coords_of_fig in second:
         axes_format=["", ""]
         xlabel=None
         ylabel=None
-    elif coords_of_fig == '21' or '22':
-        axes_format=[None, ""]
+    elif coords_of_fig in third:
+        axes_format=[None,""]
         xlabel=xlabel
         ylabel=None
     else:
