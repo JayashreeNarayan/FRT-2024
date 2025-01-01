@@ -8,7 +8,7 @@ import argparse
 import os
 from scipy import stats as st
 from astropy import constants as c
-from universal_variables import *
+from util_scripts.universal_variables import *
 
 def find_plots():
     if not os.path.isdir(outpath):

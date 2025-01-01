@@ -83,6 +83,6 @@ FT_xy_labels = [r"$k$", r"$P_\mathrm{tot}$"]
 
 correction_cmap_lables =[
     r"$\left( \frac{I}{\langle I \rangle} \right)_{\mathrm{CO}} / \left( \frac{I}{\langle I \rangle} \right)_{\mathrm{Ideal}}$",
-    r"${\sigma_{v_{\mathrm{LOS,\ CO}}}}/ {\sigma_{v_{\mathrm{LOS,\ Ideal}}}}$", 
-    r"${{v_{\mathrm{LOS,\ CO}}}} - {{v_{\mathrm{LOS,\ Ideal}}}}$"]
+    r"${{v_{\mathrm{LOS,\ CO}}}} - {{v_{\mathrm{LOS,\ Ideal}}}~(\mathrm{km\,s^{-1}})}$",
+    r"${\sigma_{v_{\mathrm{LOS,\ CO}}}}/ {\sigma_{v_{\mathrm{LOS,\ Ideal}}}}$"]
 correction_labels = [r"$\mathrm{CO}\,(1-0)$", r"$\mathrm{CO}\,(2-1)$"]

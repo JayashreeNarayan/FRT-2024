@@ -9,8 +9,8 @@ import argparse
 import os
 from scipy import stats as st
 from astropy import constants as c
-from all_functions import *
-from universal_variables import *
+from util_scripts.all_functions import *
+from util_scripts.universal_variables import *
 
 # all the arrays or lists in this class are in the order of angles: 0, 45, 90, 45_SE
 class moments:
@@ -236,8 +236,8 @@ class first_moment_plotter:
         self.PDF_ymin=ymin
         self.PDF_ymax=ymax
 
-        self.correc_PDF_xmin = -0.35
-        self.correc_PDF_xmax = 0.35
+        self.correc_PDF_xmin = -0.3
+        self.correc_PDF_xmax = 0.3
         self.correc_PDF_ymin = 0.1
         self.correc_PDF_ymax = 70
 
@@ -247,38 +247,45 @@ class first_moment_plotter:
         self.FT_ypos = img_PDF_names_ypos-0.33
         self.params = {"a":[1e-4, 1e-2, 1], "n":[-4, -2, -1]}
     
+    # To plot any moment map with colorbars
     def with_colorbar(self, data, text, file):
         ret = cfp.plot_map(data, cmap=self.cmap, vmin=self.vmin, vmax=self.vmax, colorbar = True, cmap_label=self.cmap_label, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-        cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=text, xlabel=self.xlabel, ylabel=self.ylabel, normalised_coords=True)          
+        cfp.plot(ax=ret.ax()[0], xlabel=self.xlabel, ylabel=self.ylabel, normalised_coords=True)     
+        ret.ax()[0].text(x=img_names_xpos, y=img_names_ypos, s=text , color='black', bbox=dict(facecolor='white', alpha=0.3, edgecolor='none'), transform=plt.gca().transAxes)              
         cfp.show_or_save_plot(save=file+'_cb.pdf')
 
-    def without_colorbar(self, data, text, file, coords_of_fig, tot_panels, angle=None):
+    # To plot any moment map without colorbars
+    def without_colorbar(self, data, text, file, coords_of_fig, tot_panels):
         axes_format, xlabel, ylabel = axes_format_func(coords_of_fig, self.xlabel, self.ylabel)
         ret = cfp.plot_map(data, cmap=self.cmap, vmin=self.vmin, vmax=self.vmax, colorbar = False, cmap_label=self.cmap_label, axes_format=axes_format, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-        cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=text, xlabel=xlabel, ylabel=ylabel, normalised_coords=True)          
+        cfp.plot(ax=ret.ax()[0], xlabel=xlabel, ylabel=ylabel, normalised_coords=True)    
+        ret.ax()[0].text(x=img_names_xpos, y=img_names_ypos, s=text , color='black', bbox=dict(facecolor='white', alpha=0.3, edgecolor='none'), transform=plt.gca().transAxes)               
         cfp.show_or_save_plot(save=file+'.pdf')
         cfp.plot_colorbar(cmap=self.cmap, vmin=self.vmin, vmax=self.vmax, label=self.cmap_label, save=outpath+self.cmap+'_'+str(tot_panels/3)+"_colorbar.pdf", panels=tot_panels/3)
     
+    # To plot general PDFs
     def PDF_panel(self, PDF_obj, sigma, file, text):
         xfit = np.linspace(self.PDF_xmin, self.PDF_xmax, 500)
         for i in range(len(PDF_obj)):
             cfp.plot(x=PDF_obj[i].bin_edges, y=PDF_obj[i].pdf, type='pdf', label=PDF_img_names(i, sigma[i]), color=line_colours[i])
             good_ind = PDF_obj[i].pdf > 0
-            fitobj = cfp.fit(func=gauss_func, xdat=PDF_obj[i].bin_center[good_ind], ydat=np.log(PDF_obj[i].pdf[good_ind]), perr_method='systematic')
+            fitobj = cfp.fit(func=gauss_func, xdat=PDF_obj[i].bin_center[good_ind], ydat=np.log(PDF_obj[i].pdf[good_ind]), perr_method='statistical')
             cfp.plot(x=xfit, y=np.exp(gauss_func(xfit, *fitobj.popt)), alpha=0.5, color=line_colours[i], linestyle='dashed')
         cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos, text=text, backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
         cfp.plot(xlabel=cmap_labels[1], ylabel="PDF", fontsize='small', ylog=True, xlim=[self.PDF_xmin, self.PDF_xmax], ylim=[self.PDF_ymin,self.PDF_ymax], legend_loc='upper left', save=file)
     
+    # To plot the correction PDFs
     def PDF_corrections(self, PDF_obj, sigma, file, text):
         xfit = np.linspace(self.correc_PDF_xmin, self.correc_PDF_xmax, 500)
         for i in range(len(PDF_obj)):
             cfp.plot(x=PDF_obj[i].bin_edges, y=PDF_obj[i].pdf, type='pdf', label=PDF_img_names_correc(i, sigma[i]), color=line_colours[i])
             good_ind = PDF_obj[i].pdf > 0
-            fitobj = cfp.fit(func=gauss_func, xdat=PDF_obj[i].bin_center[good_ind], ydat=np.log(PDF_obj[i].pdf[good_ind]), perr_method='systematic')
+            fitobj = cfp.fit(func=gauss_func, xdat=PDF_obj[i].bin_center[good_ind], ydat=np.log(PDF_obj[i].pdf[good_ind]), perr_method='statistical')
             cfp.plot(x=xfit, y=np.exp(gauss_func(xfit, *fitobj.popt)), alpha=0.5, color=line_colours[i], linestyle='dashed')
         cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos+0.08, text=text, backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
         cfp.plot(xlabel=correction_cmap_lables[1], ylabel="PDF", fontsize='small', ylog=True, xlim = [self.correc_PDF_xmin, self.correc_PDF_xmax], ylim=[self.correc_PDF_ymin, self.correc_PDF_ymax], legend_loc='upper left', save=file)
     
+    # To plot all the power spectra graphs 
     def FT_panel(self, FTdata, file, text):
         for i in range(len(FTdata)):
             x=FTdata[i][0][1:self.kmax]; y=FTdata[i][1][1:self.kmax]
@@ -292,7 +299,17 @@ class first_moment_plotter:
         secax1.tick_params(axis='x', direction='in', length=0, which = 'minor', top=False, bottom=True)
         cfp.plot(x=self.FT_xpos, y=self.FT_ypos, text=text, backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
         cfp.plot(legend_loc='lower left', xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], fontsize='small', ylog=True,  xlog=True, save=file)
-
+    
+    # a function to plot the appendix figure 
+    def without_colorbar_appendix(self, data, text, file, coords_of_fig, tot_panels, xlabel_own, ylabel_own, angle):
+        axes_format, xlabel, ylabel = axes_format_func(coords_of_fig, xlabel_own, ylabel_own)
+        ret = cfp.plot_map(data, cmap=self.cmap, vmin=self.vmin, vmax=self.vmax, colorbar = False, cmap_label=self.cmap_label, axes_format=axes_format, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+        cfp.plot(ax=ret.ax()[0], xlabel=xlabel, ylabel=ylabel, normalised_coords=True)    
+        ret.ax()[0].text(x=img_names_xpos, y=img_names_ypos, s=text , color='black', bbox=dict(facecolor='white', alpha=0.3, edgecolor='none'), transform=plt.gca().transAxes)               
+        ret.ax()[0].text(x=LOS_labels_xpos, y=LOS_labels_ypos, s=angle, color='black', bbox=dict(facecolor='white', alpha=0.3, edgecolor='none'), transform=plt.gca().transAxes)
+        cfp.show_or_save_plot(save=file+'.pdf')
+        cfp.plot_colorbar(cmap=self.cmap, vmin=self.vmin, vmax=self.vmax, label=self.cmap_label, save=outpath+self.cmap+'_'+str(tot_panels/3)+"_colorbar.pdf", panels=tot_panels/3)
+    
 # class to plot zeroth moment maps
 class zeroth_moment_plotter:
     def __init__(self):
@@ -303,9 +320,11 @@ class zeroth_moment_plotter:
         self.ylabel=xyzlabels[3]
         self.cmap_label=cmap_labels[0]
     
+    # Plotting moment map with colorbars for zero moment
     def with_colorbar(self, data, text, file):
         ret = cfp.plot_map(data, cmap=self.cmap, vmin=self.vmin, vmax=self.vmax, colorbar = True, cmap_label=self.cmap_label, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-        cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=text, xlabel=self.xlabel, ylabel=self.ylabel, normalised_coords=True)          
+        cfp.plot(ax=ret.ax()[0], xlabel=self.xlabel, ylabel=self.ylabel, normalised_coords=True)   
+        ret.ax()[0].text(x=img_names_xpos, y=img_names_ypos, s=text , color='black', bbox=dict(facecolor='white', alpha=0.3, edgecolor='none'), transform=plt.gca().transAxes)                
         cfp.show_or_save_plot(save=file+'_cb.pdf')
 
 # class to plot second moment maps
@@ -318,9 +337,11 @@ class second_moment_plotter:
         self.ylabel=xyzlabels[3]
         self.cmap_label=cmap_labels[2]
     
+    # Plotting moment map with colorbars for 2nd moment
     def with_colorbar(self, data, text, file):
         ret = cfp.plot_map(data, cmap=self.cmap, vmin=self.vmin, vmax=self.vmax, colorbar = True, cmap_label=self.cmap_label, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
-        cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=text, xlabel=self.xlabel, ylabel=self.ylabel, normalised_coords=True)          
+        cfp.plot(ax=ret.ax()[0], xlabel=self.xlabel, ylabel=self.ylabel, normalised_coords=True)   
+        ret.ax()[0].text(x=img_names_xpos, y=img_names_ypos, s=text , color='black', bbox=dict(facecolor='white', alpha=0.3, edgecolor='none'), transform=plt.gca().transAxes)                
         cfp.show_or_save_plot(save=file+'_cb.pdf')
 
 # class to plot correction maps
@@ -333,7 +354,9 @@ class correction_moment_plotter:
         self.ylabel=xyzlabels[3]
         self.cmap_label=correction_cmap_lables
     
+    # Plotting moment map with colorbars for correction maps
     def with_colorbar(self, data, text, file, moment, log=False):
         ret = cfp.plot_map(data, cmap=self.cmap, vmin=self.vmin[moment], vmax=self.vmax[moment], colorbar = True, cmap_label=self.cmap_label[moment], xlim=[-1,1], ylim=[-1,1], log=log, aspect_data='equal')
-        cfp.plot(ax=ret.ax()[0], x=img_names_xpos, y=img_names_ypos, text=text, xlabel=self.xlabel, ylabel=self.ylabel, normalised_coords=True)          
+        cfp.plot(ax=ret.ax()[0], xlabel=self.xlabel, ylabel=self.ylabel, normalised_coords=True) 
+        ret.ax()[0].text(x=img_names_xpos, y=img_names_ypos, s=text , color='black', bbox=dict(facecolor='white', alpha=0.3, edgecolor='none'), transform=plt.gca().transAxes)         
         cfp.show_or_save_plot(save=file+'_cb.pdf')

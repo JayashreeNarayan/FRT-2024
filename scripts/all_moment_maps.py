@@ -10,7 +10,7 @@ import argparse
 import os
 from scipy import stats as st
 from astropy import constants as c
-from all_functions import *
+from util_scripts.all_functions import *
 
 # ===== the following applies in case we are running this in script mode =====
 if __name__ == "__main__":    

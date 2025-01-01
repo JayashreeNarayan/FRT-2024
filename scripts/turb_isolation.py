@@ -10,9 +10,9 @@ from cfpack import print, stop, hdfio, matplotlibrc
 from scipy import stats as st
 from astropy import constants as c
 
-from main import *
-from all_functions import *
-from universal_variables import *
+from util_scripts.main import *
+from util_scripts.all_functions import *
+from util_scripts.universal_variables import *
 
 moments_45_ = moments_45()
 fmp = first_moment_plotter()
