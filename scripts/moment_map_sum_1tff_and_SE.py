@@ -23,33 +23,36 @@ def mom_map_sum_1tff(): # makes the moment map summary for 1tff
     path='mom_map_sum_1tff/' # save these figures to a different subfolder
     if not os.path.isdir(outpath+path):
         cfp.run_shell_command('mkdir '+outpath+path)
-    fmp.with_colorbar(data=moments_45_.first_mom_ideal[0], text=img_names[0], file=outpath+path+files_ideal_npy[1][:-4])
-    fmp.with_colorbar(data=moments_45_.first_mom_co10[0], text=img_names[1], file=outpath+path+files_co10_npy[1][:-4]+'_fmp')
-    fmp.with_colorbar(data=moments_45_.first_mom_co21[0], text=img_names[2], file=outpath+path+files_co21_npy[1][:-4]+'_fmp')
+    fmp.without_colorbar(data=moments_45_.first_mom_ideal[0], text=img_names[0], file=outpath+path+files_ideal_npy[1][:-4], coords_of_fig='00')
+    fmp.without_colorbar(data=moments_45_.first_mom_co10[0], text=img_names[1], file=outpath+path+files_co10_npy[1][:-4]+'_fmp', coords_of_fig='01')
+    fmp.without_colorbar(data=moments_45_.first_mom_co21[0], text=img_names[2], file=outpath+path+files_co21_npy[1][:-4]+'_fmp', coords_of_fig='02')
+    fmp.colorbar(panels=1)
 
-    zmp.with_colorbar(data=moments_45_.zero_mom_ideal[0], text=img_names[0], file=outpath+path+files_ideal_npy[7][:-4])
-    zmp.with_colorbar(data=moments_45_.zero_mom_co10[0], text=img_names[1], file=outpath+path+files_co10_npy[1][:-4]+'_zmp')
-    zmp.with_colorbar(data=moments_45_.zero_mom_co21[0], text=img_names[2], file=outpath+path+files_co21_npy[1][:-4]+'_zmp')
+    zmp.without_colorbar(data=moments_45_.zero_mom_ideal[0], text=img_names[0], file=outpath+path+files_ideal_npy[7][:-4], coords_of_fig='10')
+    zmp.without_colorbar(data=moments_45_.zero_mom_co10[0], text=img_names[1], file=outpath+path+files_co10_npy[1][:-4]+'_zmp', coords_of_fig='11')
+    zmp.without_colorbar(data=moments_45_.zero_mom_co21[0], text=img_names[2], file=outpath+path+files_co21_npy[1][:-4]+'_zmp', coords_of_fig='12')
+    zmp.colorbar(panels=1)
 
-    smp.with_colorbar(data=moments_45_.second_mom_ideal[0], text=img_names[0], file=outpath+path+files_ideal_npy[4][:-4])
-    smp.with_colorbar(data=moments_45_.second_mom_co10[0], text=img_names[1], file=outpath+path+files_co10_npy[1][:-4]+'_smp')
-    smp.with_colorbar(data=moments_45_.second_mom_co21[0], text=img_names[2], file=outpath+path+files_co21_npy[1][:-4]+'_smp')
+    smp.without_colorbar(data=moments_45_.second_mom_ideal[0], text=img_names[0], file=outpath+path+files_ideal_npy[4][:-4], coords_of_fig='20')
+    smp.without_colorbar(data=moments_45_.second_mom_co10[0], text=img_names[1], file=outpath+path+files_co10_npy[1][:-4]+'_smp', coords_of_fig='21')
+    smp.without_colorbar(data=moments_45_.second_mom_co21[0], text=img_names[2], file=outpath+path+files_co21_npy[1][:-4]+'_smp', coords_of_fig='22')
+    smp.colorbar(panels=1)
 
 def mom_map_sum_SE(): # makes the moment map summary for 1.2tff 
     path='mom_map_sum_SE/' # save these figures to a different subfolder
     if not os.path.isdir(outpath+path):
         cfp.run_shell_command('mkdir '+outpath+path)
-    fmp.with_colorbar(data=moments_45_.first_mom_ideal[1], text=img_names[0], file=outpath+path+files_ideal_SE_npy[0][:-4])
-    fmp.with_colorbar(data=moments_45_.first_mom_co10[1], text=img_names[1], file=outpath+path+file_co10_SE_npy[0][:-4]+'_fmp')
-    fmp.with_colorbar(data=moments_45_.first_mom_co21[1], text=img_names[2], file=outpath+path+file_co21_SE_npy[0][:-4]+'_fmp')
+    fmp.without_colorbar(data=moments_45_.first_mom_ideal[1], text=img_names[0], file=outpath+path+files_ideal_SE_npy[0][:-4], coords_of_fig='00')
+    fmp.without_colorbar(data=moments_45_.first_mom_co10[1], text=img_names[1], file=outpath+path+file_co10_SE_npy[0][:-4]+'_fmp', coords_of_fig='01')
+    fmp.without_colorbar(data=moments_45_.first_mom_co21[1], text=img_names[2], file=outpath+path+file_co21_SE_npy[0][:-4]+'_fmp', coords_of_fig='02')
 
-    zmp.with_colorbar(data=moments_45_.zero_mom_ideal[1], text=img_names[0], file=outpath+path+files_ideal_SE_npy[2][:-4])
-    zmp.with_colorbar(data=moments_45_.zero_mom_co10[1], text=img_names[1], file=outpath+path+file_co10_SE_npy[0][:-4]+'_zmp')
-    zmp.with_colorbar(data=moments_45_.zero_mom_co21[1], text=img_names[2], file=outpath+path+file_co21_SE_npy[0][:-4]+'_zmp')
+    zmp.without_colorbar(data=moments_45_.zero_mom_ideal[1], text=img_names[0], file=outpath+path+files_ideal_SE_npy[2][:-4], coords_of_fig='10')
+    zmp.without_colorbar(data=moments_45_.zero_mom_co10[1], text=img_names[1], file=outpath+path+file_co10_SE_npy[0][:-4]+'_zmp', coords_of_fig='11')
+    zmp.without_colorbar(data=moments_45_.zero_mom_co21[1], text=img_names[2], file=outpath+path+file_co21_SE_npy[0][:-4]+'_zmp', coords_of_fig='12')
 
-    smp.with_colorbar(data=moments_45_.second_mom_ideal[1], text=img_names[0], file=outpath+path+files_ideal_SE_npy[1][:-4])
-    smp.with_colorbar(data=moments_45_.second_mom_co10[1], text=img_names[1], file=outpath+path+file_co10_SE_npy[0][:-4]+'_smp')
-    smp.with_colorbar(data=moments_45_.second_mom_co21[1], text=img_names[2], file=outpath+path+file_co21_SE_npy[0][:-4]+'_smp')
+    smp.without_colorbar(data=moments_45_.second_mom_ideal[1], text=img_names[0], file=outpath+path+files_ideal_SE_npy[1][:-4], coords_of_fig='20')
+    smp.without_colorbar(data=moments_45_.second_mom_co10[1], text=img_names[1], file=outpath+path+file_co10_SE_npy[0][:-4]+'_smp', coords_of_fig='21')
+    smp.without_colorbar(data=moments_45_.second_mom_co21[1], text=img_names[2], file=outpath+path+file_co21_SE_npy[0][:-4]+'_smp', coords_of_fig='22')
     
 
 mom_map_sum_1tff()

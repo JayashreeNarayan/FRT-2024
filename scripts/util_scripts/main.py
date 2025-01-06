@@ -255,13 +255,15 @@ class first_moment_plotter:
         cfp.show_or_save_plot(save=file+'_cb.pdf')
 
     # To plot any moment map without colorbars
-    def without_colorbar(self, data, text, file, coords_of_fig, tot_panels):
+    def without_colorbar(self, data, text, file, coords_of_fig):
         axes_format, xlabel, ylabel = axes_format_func(coords_of_fig, self.xlabel, self.ylabel)
         ret = cfp.plot_map(data, cmap=self.cmap, vmin=self.vmin, vmax=self.vmax, colorbar = False, cmap_label=self.cmap_label, axes_format=axes_format, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
         cfp.plot(ax=ret.ax()[0], xlabel=xlabel, ylabel=ylabel, normalised_coords=True)    
         ret.ax()[0].text(x=img_names_xpos, y=img_names_ypos, s=text , color='black', bbox=dict(facecolor='white', alpha=0.3, edgecolor='none'), transform=plt.gca().transAxes)               
         cfp.show_or_save_plot(save=file+'.pdf')
-        cfp.plot_colorbar(cmap=self.cmap, vmin=self.vmin, vmax=self.vmax, label=self.cmap_label, save=outpath+self.cmap+'_'+str(tot_panels/3)+"_colorbar.pdf", panels=tot_panels/3)
+    
+    def colorbar(self, panels):
+        cfp.plot_colorbar(cmap=self.cmap, vmin=self.vmin, vmax=self.vmax, label=self.cmap_label, save=outpath+self.cmap+'_'+str(panels)+"_colorbar.pdf", panels=panels)
     
     # To plot general PDFs
     def PDF_panel(self, PDF_obj, sigma, file, text):
@@ -301,14 +303,13 @@ class first_moment_plotter:
         cfp.plot(legend_loc='lower left', xlabel=FT_xy_labels[0], ylabel=FT_xy_labels[1], fontsize='small', ylog=True,  xlog=True, save=file)
     
     # a function to plot the appendix figure 
-    def without_colorbar_appendix(self, data, text, file, coords_of_fig, tot_panels, xlabel_own, ylabel_own, angle):
+    def without_colorbar_appendix(self, data, text, file, coords_of_fig,  xlabel_own, ylabel_own, angle):
         axes_format, xlabel, ylabel = axes_format_func(coords_of_fig, xlabel_own, ylabel_own)
         ret = cfp.plot_map(data, cmap=self.cmap, vmin=self.vmin, vmax=self.vmax, colorbar = False, cmap_label=self.cmap_label, axes_format=axes_format, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
         cfp.plot(ax=ret.ax()[0], xlabel=xlabel, ylabel=ylabel, normalised_coords=True)    
         ret.ax()[0].text(x=img_names_xpos, y=img_names_ypos, s=text , color='black', bbox=dict(facecolor='white', alpha=0.3, edgecolor='none'), transform=plt.gca().transAxes)               
         ret.ax()[0].text(x=LOS_labels_xpos, y=LOS_labels_ypos, s=angle, color='black', bbox=dict(facecolor='white', alpha=0.3, edgecolor='none'), transform=plt.gca().transAxes)
         cfp.show_or_save_plot(save=file+'.pdf')
-        cfp.plot_colorbar(cmap=self.cmap, vmin=self.vmin, vmax=self.vmax, label=self.cmap_label, save=outpath+self.cmap+'_'+str(tot_panels/3)+"_colorbar.pdf", panels=tot_panels/3)
     
 # class to plot zeroth moment maps
 class zeroth_moment_plotter:
@@ -327,6 +328,18 @@ class zeroth_moment_plotter:
         ret.ax()[0].text(x=img_names_xpos, y=img_names_ypos, s=text , color='black', bbox=dict(facecolor='white', alpha=0.3, edgecolor='none'), transform=plt.gca().transAxes)                
         cfp.show_or_save_plot(save=file+'_cb.pdf')
 
+    # To plot any moment map without colorbars
+    def without_colorbar(self, data, text, file, coords_of_fig):
+        axes_format, xlabel, ylabel = axes_format_func(coords_of_fig, self.xlabel, self.ylabel)
+        ret = cfp.plot_map(data, cmap=self.cmap, vmin=self.vmin, vmax=self.vmax, colorbar = False, cmap_label=self.cmap_label, axes_format=axes_format, xlim=[-1,1], ylim=[-1,1], log=True, aspect_data='equal')
+        cfp.plot(ax=ret.ax()[0], xlabel=xlabel, ylabel=ylabel, normalised_coords=True)    
+        ret.ax()[0].text(x=img_names_xpos, y=img_names_ypos, s=text , color='black', bbox=dict(facecolor='white', alpha=0.3, edgecolor='none'), transform=plt.gca().transAxes)               
+        cfp.show_or_save_plot(save=file+'.pdf')
+    
+    def colorbar(self, panels):
+        cfp.plot_colorbar(cmap=self.cmap, vmin=self.vmin, vmax=self.vmax, label=self.cmap_label, save=outpath+self.cmap+'_'+str(panels)+"_colorbar.pdf", log=True, panels=panels)
+    
+
 # class to plot second moment maps
 class second_moment_plotter:
     def __init__(self):
@@ -343,20 +356,44 @@ class second_moment_plotter:
         cfp.plot(ax=ret.ax()[0], xlabel=self.xlabel, ylabel=self.ylabel, normalised_coords=True)   
         ret.ax()[0].text(x=img_names_xpos, y=img_names_ypos, s=text , color='black', bbox=dict(facecolor='white', alpha=0.3, edgecolor='none'), transform=plt.gca().transAxes)                
         cfp.show_or_save_plot(save=file+'_cb.pdf')
+    
+    # To plot any moment map without colorbars
+    def without_colorbar(self, data, text, file, coords_of_fig):
+        axes_format, xlabel, ylabel = axes_format_func(coords_of_fig, self.xlabel, self.ylabel)
+        ret = cfp.plot_map(data, cmap=self.cmap, vmin=self.vmin, vmax=self.vmax, colorbar = False, cmap_label=self.cmap_label, axes_format=axes_format, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+        cfp.plot(ax=ret.ax()[0], xlabel=xlabel, ylabel=ylabel, normalised_coords=True)    
+        ret.ax()[0].text(x=img_names_xpos, y=img_names_ypos, s=text , color='black', bbox=dict(facecolor='white', alpha=0.3, edgecolor='none'), transform=plt.gca().transAxes)               
+        cfp.show_or_save_plot(save=file+'.pdf')
+    
+    def colorbar(self, panels):
+        cfp.plot_colorbar(cmap=self.cmap, vmin=self.vmin, vmax=self.vmax, label=self.cmap_label, save=outpath+self.cmap+'_'+str(panels)+"_colorbar.pdf", panels=panels)
 
 # class to plot correction maps
 class correction_moment_plotter:
     def __init__(self):
         self.cmap=cmaps[3]
-        self.vmin=[0.1, -0.3, 1]
-        self.vmax=[10, 0.3, 4]
+        self.vmin=[0.1, -0.3, 0.1]
+        self.vmax=[10, 0.3, 10]
         self.xlabel=xyzlabels[1]
         self.ylabel=xyzlabels[3]
+        self.log=[True, False, True]
         self.cmap_label=correction_cmap_lables
     
     # Plotting moment map with colorbars for correction maps
-    def with_colorbar(self, data, text, file, moment, log=False):
-        ret = cfp.plot_map(data, cmap=self.cmap, vmin=self.vmin[moment], vmax=self.vmax[moment], colorbar = True, cmap_label=self.cmap_label[moment], xlim=[-1,1], ylim=[-1,1], log=log, aspect_data='equal')
+    def with_colorbar(self, data, text, file, moment):
+        ret = cfp.plot_map(data, cmap=self.cmap, vmin=self.vmin[moment], vmax=self.vmax[moment], colorbar = True, cmap_label=self.cmap_label[moment], xlim=[-1,1], ylim=[-1,1], log=self.log[moment], aspect_data='equal')
         cfp.plot(ax=ret.ax()[0], xlabel=self.xlabel, ylabel=self.ylabel, normalised_coords=True) 
         ret.ax()[0].text(x=img_names_xpos, y=img_names_ypos, s=text , color='black', bbox=dict(facecolor='white', alpha=0.3, edgecolor='none'), transform=plt.gca().transAxes)         
         cfp.show_or_save_plot(save=file+'_cb.pdf')
+    
+    # To plot any moment map without colorbars
+    def without_colorbar(self, data, text, file, moment, coords_of_fig):
+        axes_format, xlabel, ylabel = axes_format_func(coords_of_fig, self.xlabel, self.ylabel)
+        ret = cfp.plot_map(data, cmap=self.cmap, vmin=self.vmin[moment], vmax=self.vmax[moment], colorbar = False, cmap_label=self.cmap_label[moment], log=self.log[moment], axes_format=axes_format, xlim=[-1,1], ylim=[-1,1], aspect_data='equal')
+        cfp.plot(ax=ret.ax()[0], xlabel=xlabel, ylabel=ylabel, normalised_coords=True)    
+        ret.ax()[0].text(x=img_names_xpos, y=img_names_ypos, s=text , color='black', bbox=dict(facecolor='white', alpha=0.3, edgecolor='none'), transform=plt.gca().transAxes)               
+        cfp.show_or_save_plot(save=file+'.pdf')
+    
+    def colorbar(self, panels, moment):
+        cfp.plot_colorbar(cmap=self.cmap, vmin=self.vmin[moment], vmax=self.vmax[moment], label=self.cmap_label[moment], log=self.log[moment], save=outpath+self.cmap+'_'+str(panels)+"_moment_"+str(moment)+"_colorbar.pdf", panels=panels)
+    
