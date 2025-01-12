@@ -372,8 +372,8 @@ class second_moment_plotter:
 class correction_moment_plotter:
     def __init__(self):
         self.cmap=cmaps[3]
-        self.vmin=[0.1, -0.3, 0.1]
-        self.vmax=[10, 0.3, 10]
+        self.vmin=[0.1, -0.3, 0.2]
+        self.vmax=[10, 0.3, 5]
         self.xlabel=xyzlabels[1]
         self.ylabel=xyzlabels[3]
         self.log=[True, False, True]
