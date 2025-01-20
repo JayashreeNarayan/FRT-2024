@@ -280,10 +280,10 @@ class first_moment_plotter:
     def PDF_corrections(self, PDF_obj, sigma, file, text):
         xfit = np.linspace(self.correc_PDF_xmin, self.correc_PDF_xmax, 500)
         for i in range(len(PDF_obj)):
-            cfp.plot(x=PDF_obj[i].bin_edges, y=PDF_obj[i].pdf, type='pdf', label=PDF_img_names_correc(i, sigma[i]), color=line_colours[i])
+            cfp.plot(x=PDF_obj[i].bin_edges, y=PDF_obj[i].pdf, type='pdf', label=PDF_img_names_correc(i, sigma[i]), color=line_colours[i+1])
             good_ind = PDF_obj[i].pdf > 0
             fitobj = cfp.fit(func=gauss_func, xdat=PDF_obj[i].bin_center[good_ind], ydat=np.log(PDF_obj[i].pdf[good_ind]), perr_method='statistical')
-            cfp.plot(x=xfit, y=np.exp(gauss_func(xfit, *fitobj.popt)), alpha=0.5, color=line_colours[i], linestyle='dashed')
+            cfp.plot(x=xfit, y=np.exp(gauss_func(xfit, *fitobj.popt)), alpha=0.5, color=line_colours[i+1], linestyle='dashed')
         cfp.plot(x=img_PDF_names_xpos, y=img_PDF_names_ypos+0.08, text=text, backgroundcolor="white", fontsize='small', transform=plt.gca().transAxes)
         cfp.plot(xlabel=correction_cmap_lables[1], ylabel="PDF", fontsize='small', ylog=True, xlim = [self.correc_PDF_xmin, self.correc_PDF_xmax], ylim=[self.correc_PDF_ymin, self.correc_PDF_ymax], legend_loc='upper left', save=file)
     

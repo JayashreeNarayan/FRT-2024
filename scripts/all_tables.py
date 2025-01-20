@@ -112,10 +112,10 @@ LOS & $\sigv \left[\,\kmps\right]$ & $f_\mathrm{rel}$ & $\sigv \left[\,\kmps\rig
 
         table += fr"{los} & {values['idealised_before']:.2f} & 1.0 " \
                  fr"& {values['idealised_after']:.2f} & 1.0 " \
-                 fr"& {values['cooz_before']:.2f} & {f_rel_cooz_before:.1f} " \
-                 fr"& {values['cooz_after']:.2f} & {f_rel_cooz_after:.1f} " \
-                 fr"& {values['coto_before']:.2f} & {f_rel_coto_before:.1f} " \
-                 fr"& {values['coto_after']:.2f} & {f_rel_coto_after:.1f} \\ \n"
+                 fr"& {values['cooz_before']:.2f} & {f_rel_cooz_before:.3f} " \
+                 fr"& {values['cooz_after']:.2f} & {f_rel_cooz_after:.3f} " \
+                 fr"& {values['coto_before']:.2f} & {f_rel_coto_before:.3f} " \
+                 fr"& {values['coto_after']:.2f} & {f_rel_coto_after:.3f} \\ "
 
     # Add table footer
     table += r"""
